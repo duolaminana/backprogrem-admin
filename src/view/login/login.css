@@ -1,0 +1,130 @@
+ol,
+ul,
+li,
+dl,
+dd {
+  margin: 0;
+  padding: 0;
+  list-style-type: none;
+}
+/*Clear Fix*/
+.clearfix:after {
+  content: ".";
+  display: block;
+  height: 0;
+  clear: both;
+  visibility: hidden;
+}
+.login {
+  width: 100%;
+  height: 100%;
+  background-color: #eee;
+  background-size: cover;
+  background-position: center;
+  position: relative;
+}
+.login .login_bg {
+  width: 100%;
+  height: 320px;
+  background: url("../../assets/images/login_bg.png") no-repeat;
+}
+.login .logo {
+  position: absolute;
+  top: 26px;
+  left: 180px;
+  width: 118px;
+  height: 50px;
+}
+.login .logo img {
+  display: inline-block;
+  width: 100%;
+  height: 100%;
+}
+.login .phone {
+  position: absolute;
+  top: 26px;
+  right: 180px;
+  width: 220px;
+  height: 50px;
+}
+.login .phone img {
+  margin-right: 10px;
+}
+.login .phone .text {
+  display: inline-block;
+  font-size: 18px;
+  color: #fff;
+}
+.login-con {
+  position: absolute;
+  left: 50%;
+  top: 40%;
+  transform: translate(-50%, -50%);
+  width: 432px;
+}
+.login-con .ivu-input-wrapper {
+  width: 318px !important;
+}
+.login-con .ivu-form-item {
+  margin-bottom: 0 !important;
+}
+.login-con .ivu-card {
+  padding: 16px 40px;
+  width: 100%;
+  height: 100%;
+}
+.login-con-header {
+  font-size: 16px;
+  font-weight: 300;
+  text-align: center;
+  padding: 30px 0;
+}
+.login-con .form-con {
+  padding: 10px 0 0;
+}
+.login-con .login-tip {
+  float: right;
+  margin-top: 20px;
+}
+.login-con .login-tip .forget {
+  margin-right: 20px;
+}
+.login .systemExplanation {
+  width: 100%;
+  position: absolute;
+  bottom: 10%;
+}
+.login .systemExplanation ul {
+  display: flex;
+  align-items: center;
+  justify-content: space-around;
+}
+.login .systemExplanation ul li {
+  flex: 1;
+  width: 248px;
+  text-align: center;
+}
+.login .systemExplanation ul li .img {
+  background: url("../../assets/images/login_bg_icon.png") no-repeat;
+  width: 58px;
+  height: 58px;
+  margin: 0 auto;
+  margin-bottom: 15px;
+}
+.login .systemExplanation ul li p {
+  font-size: 16px;
+  color: #515A6E;
+  margin-bottom: 5px;
+}
+.login .systemExplanation ul li span {
+  color: #AFB2B7;
+}
+.login .systemExplanation ul :nth-child(2) .img {
+  background-position: -60px 0;
+}
+.login .systemExplanation ul :nth-child(3) .img {
+  background-position: -120px 0;
+}
+.login .systemExplanation ul :nth-child(4) .img {
+  background-position: -180px 0;
+}
