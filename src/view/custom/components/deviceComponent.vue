@@ -95,6 +95,7 @@ export default {
   props:['selectList','query','priceTemplate','machineCode','channelId'],
   data(){
     return{
+      setWidthAfterNum:this.query.setWidthAfterNum,
       isReset:false,
       nowStock:0,
       goodsDel:false,
@@ -156,8 +157,29 @@ export default {
         this.$Spin.show()
         const url = `/machineRoad/resetRoad?machineType=${this.query.machineType}`;
         netWorkDevice(url,null,'get').then(res => {
-          this.listData = res.result;
+          this.listData = [];
+          setTimeout(()=>{
+            this.listData = res.result;
+            this.listData.forEach((v,i)=>{
+              v.AddMachineTypeRoadDto.forEach((val,index)=>{
+                val.roadType =  val.roadType?val.roadType.toString():'1';
+                val.rowData =  val.rowData?val.rowData:{};
+                val.id = null;
+                val.maxStock = this.stock;
+                val.channelId = this.$store.state.user.channelId;
+                setTimeout(()=>{  //延时让组件先渲染 否则为空
+                  if(this.listData[i].AddMachineTypeRoadDto[index].merged){
+                    if(this.listData[i].AddMachineTypeRoadDto[index].roadStatus==1){
+                      this.setWidthAfterNum = index;
+                      console.log(this.setWidthAfterNum)
+                    }
+                    this.setWidthAfter(i,index)
+                  }
+                },1)
+              })
+            })
           this.$Spin.hide();
+          },1000)
           this.isReset = true;
         }).catch(err => {
           this.$Spin.hide()
@@ -400,7 +422,6 @@ export default {
           let width = parseInt(this.$refs[("box"+index1+""+(index2+1))][0].$el.style.width)
           // this.$refs[("box"+index1+""+(i-1))][0].$el.style.width = w-10-width+'px';
           this.$refs[("box"+index1+""+(i-1))][0].$el.style.width = '160px';
-          console.log(w,width,index1+'=='+index2+'===i:'+i)
         }else{
           break;
         }
@@ -436,17 +457,25 @@ export default {
     },
     setWidthAfter(index1,index2){ //加载数据时 判断
       let i  = this.isFalseAfter(index1,index2+1);
-      if(i===0||i){
+      let b = index2>0?(index2-1):index2
+      // if(i===0||i){
         let w = parseInt(this.$refs[("box"+index1+""+index2)][0].$el.style.width) //点击合并盒子的宽度
-        let width = parseInt(this.$refs[("box"+index1+""+i)][0].$el.style.width);
-        this.$refs[("box"+index1+""+i)][0].$el.style.width = 10+w+width+'px';
-      }
+        let width = parseInt(this.$refs[("box"+index1+""+b)][0].$el.style.width);
+        if(index2!=0||i!=0){
+          console.log(w,width)
+          if((index2!=i)&&(index2!=0&&i!=0)){
+            this.$refs[("box"+index1+""+i)][0].$el.style.width = width+'px';
+          }else{
+            this.$refs[("box"+index1+""+i)][0].$el.style.width = 10+w+width+'px';
+          }
+        }
+      // }
     },
     isFalseAfter(index1,index2){ //判断后面是否被合并
       if(this.listData[index1].AddMachineTypeRoadDto[index2].roadStatus==3){
-        return false;
+        return index2-1;
       }else{
-        return index2-1-1;
+        return this.setWidthAfterNum?this.setWidthAfterNum:this.query.setWidthAfterNum;
       }
     },
     generate(){

@@ -137,10 +137,14 @@ export default {
             val.roadType =  val.roadType?val.roadType.toString():'1';
             val.rowData =  val.rowData?val.rowData:{};
             setTimeout(()=>{  //延时让组件先渲染 否则为空
-              if(index>0&&this.query.list[i].AddMachineTypeRoadDto[index].merged){
+              if(this.query.list[i].AddMachineTypeRoadDto[index].merged){
+                if(this.query.list[i].AddMachineTypeRoadDto[index].roadStatus==1){
+                  this.query.setWidthAfterNum = index;
+                }
                 this.$refs.device.setWidthAfter(i,index)
               }
             },1)
+            console.log(1111111)
           })
         })
         this.$Spin.hide()

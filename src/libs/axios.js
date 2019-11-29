@@ -116,25 +116,34 @@ class HttpRequest {
         //   }
         // }
         // addErrorLog(errorInfo)
-        const {status} = error.response;
-        console.log(status)
-        switch(status){
-          case 400:
-            Message.error('（错误请求）服务器不理解请求的语法');
-            break;
-          case 401:
-            Message.error('未登录系统');
-            break;
-          case 403:
-            Message.error('服务器拒绝请求');
-            break;
-          case 404:
-            Message.error('服务器找不到请求');
-            break;
-          case 500:
-            Message.error('服务器遇到错误，无法完成请求');
-            break;
+        if (error.response) {
+            const {status} = error.response;
+            switch(status){
+              case 400:
+                Message.error('（错误请求）服务器不理解请求的语法');
+                break;
+              case 401:
+                Message.error('未登录系统');
+                break;
+              case 403:
+                Message.error('服务器拒绝请求');
+                break;
+              case 404:
+                Message.error('服务器找不到请求');
+                break;
+              case 500:
+                Message.error('服务器遇到错误，无法完成请求');
+                break;
+            }
+            // alert('失败')
+            console.log(error.config)
+        } else if (error.request) {
+            if(error.request.readyState == 4 && error.request.status == 0){
+                //我在这里重新请求
+                axios(error.config)
+            }
         }
+        
         return Promise.reject(error)
       }
     )
@@ -144,7 +153,7 @@ class HttpRequest {
     const instance = axios.create()
     options = Object.assign(this.getInsideConfig(), options)
     this.interceptors(instance, options.url)
-    axios.defaults.timeout = 15000
+    axios.defaults.timeout = 12000
     return instance(options)
   }
 }

@@ -265,4 +265,10 @@ html,body{
     width: 350px!important;
     margin-left: 50px;
   }
+  .trBgColor{
+    background: #EEEEEE
+  }
+  .trBgColor>td{
+    background:transparent!important
+  }
 </style>

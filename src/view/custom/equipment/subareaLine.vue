@@ -5,7 +5,8 @@
         <channel-tree @clickTreeRow='clickTreeRow'></channel-tree>
       </div> -->
       <div class="leftBox">
-        <Cascader :data="channelList" v-model="channelValue" @on-change='channerChanges' change-on-select></Cascader>
+        <!-- <Cascader :data="channelList" v-model="channelValue" @on-change='channerChanges' change-on-select></Cascader> -->
+        <Input :value="$store.state.user.channelName"  readonly/>
         <div style='font-size:14px;color:#2d8cf0;font-weight:700;margin-top:20px;'>线路列表</div>
         <coustom-tree 
           :treeData='treeData'
@@ -190,6 +191,7 @@ export default {
       this.routeID = null;
       this.channelId = this.$store.state.user.channelId;
       this.pickTreeData = null;
+      this.channelValue = [];
       this.getPageDatas();
       this.getTreeData();
     },
@@ -334,7 +336,7 @@ export default {
   },
   mounted () {
     this.getPageDatas();
-    this.getChannelList();
+    // this.getChannelList();
     this.getTreeData();
   }
 }

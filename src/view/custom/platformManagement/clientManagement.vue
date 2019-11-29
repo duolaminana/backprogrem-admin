@@ -7,7 +7,14 @@
       <Button type="primary" @click="reset">重置</Button>
 
       <!-- 表格 -->
-      <Table ref="table" border :columns="columns" :data="dataTable" style="margin:20px 0">
+      <Table
+        highlight-row
+        ref="table"
+        border
+        :columns="columns"
+        :data="dataTable"
+        style="margin:20px 0"
+      >
         <!-- 联系电话 -->
         <template slot-scope="{row,index}" slot="memberPhone">{{row.memberPhone|text}}</template>
         <!-- 返现金额 -->
@@ -44,6 +51,7 @@
       <!-- 交易订单明细弹出框 -->
       <Modal v-model="isShow" width="1000" title="交易明细">
         <Table
+          height="500"
           :columns="columnsOrder"
           :data="dataTableOrder"
           border

@@ -326,10 +326,10 @@ export default {
         if(this.listData[index1].AddMachineTypeRoadDto[i].roadStatus==3){
           this.$set(this.listData[index1].AddMachineTypeRoadDto[i],'merged',false);
           this.$set(this.listData[index1].AddMachineTypeRoadDto[i],'roadStatus',1);
-          console.log(index1,index2)
           let w = parseInt(this.$refs[("box"+index1+""+index2)][0].$el.style.width) //点击合并盒子的宽度
           let width = parseInt(this.$refs[("box"+index1+""+(index2+1))][0].$el.style.width)
-          this.$refs[("box"+index1+""+index2)][0].$el.style.width = w-10-width+'px';
+          // this.$refs[("box"+index1+""+(i-1))][0].$el.style.width = w-10-width+'px';
+          this.$refs[("box"+index1+""+(i-1))][0].$el.style.width = '160px';
         }else{
           break;
         }
@@ -364,17 +364,25 @@ export default {
     },
     setWidthAfter(index1,index2){ //加载数据时 判断
       let i  = this.isFalseAfter(index1,index2+1);
-      if(i===0||i){
+      let b = index2>0?(index2-1):index2
+      // if(i===0||i){
         let w = parseInt(this.$refs[("box"+index1+""+index2)][0].$el.style.width) //点击合并盒子的宽度
-        let width = parseInt(this.$refs[("box"+index1+""+i)][0].$el.style.width);
-        this.$refs[("box"+index1+""+i)][0].$el.style.width = 10+w+width+'px';
-      }
+        let width = parseInt(this.$refs[("box"+index1+""+b)][0].$el.style.width);
+        if(index2!=0||i!=0){
+          console.log(w,width)
+          if((index2!=i)&&(index2!=0&&i!=0)){
+            this.$refs[("box"+index1+""+i)][0].$el.style.width = width+'px';
+          }else{
+            this.$refs[("box"+index1+""+i)][0].$el.style.width = 10+w+width+'px';
+          }
+        }
+      // }
     },
     isFalseAfter(index1,index2){ //判断后面是否被合并
       if(this.listData[index1].AddMachineTypeRoadDto[index2].roadStatus==3){
-        return false;
+        return index2-1;
       }else{
-        return index2-1-1;
+        return this.query.setWidthAfterNum;
       }
     },
     generate(){

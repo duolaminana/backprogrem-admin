@@ -38,6 +38,10 @@
         @on-select-all="selectAll"
         @on-select-all-cancel="selectAllCancel"
       >
+        <!-- 身份证号 -->
+        <template slot-scope="{row,index}" slot="cardNo">
+          <span>{{row.cardNo|cardNo}}</span>
+        </template>
         <!-- 点位名称 -->
         <template slot-scope="{row,index}" slot="positionName">
           <a class="lookDetails" @click="showPositin(row)">{{row.positionName}}</a>
@@ -57,25 +61,31 @@
         </template>
         <!-- 利益分配 -->
         <template slot-scope="{row,index}" slot="templateName">
-          <a class="lookDetails" @click.stop="toLinkInterest(row)">查看详情</a>
+          <a class="lookDetails" @click="toLinkInterest(row)">查看详情</a>
         </template>
         <!-- 交易状态 -->
         <template slot-scope="{row,index}" slot="orderStatus">
           <span v-show="row.orderStatus==1">待支付</span>
-          <span v-show="row.orderStatus==2" style="color:#ff9900">待出货</span>
-          <span v-show="row.orderStatus==3||row.orderStatus==6" style="color:#19be6b">交易正常</span>
+          <span v-show="row.orderStatus==2" style="color:#2d8cf0">待出货</span>
+          <span v-show="row.orderStatus==3" style="color:#19be6b">交易正常</span>
+          <span v-show="row.orderStatus==6" style="color:#ff9900">交易异常</span>
           <span v-show="row.orderStatus==4||row.orderStatus==5" style="color:#ed4014">交易失败</span>
         </template>
         <!-- 出货状态 -->
         <template slot-scope="{row,index}" slot="Status">
           <span v-show="row.orderStatus==3" style="color:#19be6b">出货成功</span>
-          <span v-show="row.orderStatus==6" style="color:#19be6b">出货成功</span>
-          <span v-show="row.orderStatus==4" style="color:ed4014">出货失败</span>
-          <span v-show="row.orderStatus==5" style="color:ed4014">订单关闭</span>
+          <span v-show="row.orderStatus==6" style="color:#ff9900">部分出货成功</span>
+          <span v-show="row.orderStatus==4" style="color:#ed4014">出货失败</span>
+          <span v-show="row.orderStatus==5" style="color:#ed4014">订单关闭</span>
         </template>
         <template slot-scope="{row,index}" slot="operation">
           <!-- 退款按钮 -->
-          <Button type="primary" size="small" @click="refund(row)" v-if="hasPerm('set:tranlist:refund')">退款</Button>
+          <Button
+            type="primary"
+            size="small"
+            @click="refund(row)"
+            v-if="hasPerm('set:tranlist:refund')"
+          >退款</Button>
         </template>
       </Table>
       <Page
@@ -160,7 +170,7 @@ export default {
       newlyAdded: false,
       totalMore: null, // 页码数
       pageNumMore: 1, // 页码
-      pageSizeMore: 2, // 页容量
+      pageSizeMore: 15, // 页容量
       orderNoMore: null, //订单编号
       productCode: null, //商品编码
       productName: null, //商品名称
@@ -192,13 +202,13 @@ export default {
         },
         {
           title: "序号",
-          type: "index1",
+          type: "index",
           maxWidth: 60,
           minWidth: 30,
-          align: "center",
-          render: (h, params) => {
-            return h("span", params.index+(this.pageNum-1)*this.pageSize+1)
-          }
+          align: "center"
+          // render: (h, params) => {
+          //   return h("span", params.index+(this.pageNum-1)*this.pageSize+1)
+          // }
         },
         {
           title: "订单编号",
@@ -209,10 +219,10 @@ export default {
         },
         {
           title: "消费者",
-          key: "cardNo",
+          slot: "cardNo",
           align: "center",
-          minWidth: 40,
-          tooltip: true
+          minWidth: 80,
+          tooltip: true,
         },
         {
           title: "设备编码",
@@ -247,11 +257,11 @@ export default {
           title: "使用返利金额",
           key: "couponAcquire",
           align: "center",
-          minWidth: 30,
+          minWidth: 50,
           tooltip: true
         },
         {
-          title: "抽成比例(%)",
+          title: "利润抽成比例(%)",
           key: "commissionPercent",
           align: "center",
           minWidth: 50,
@@ -261,7 +271,7 @@ export default {
           }
         },
         {
-          title: "抽成金额(元)",
+          title: "利润抽成金额(元)",
           slot: "commissionAmount",
           align: "center",
           minWidth: 50,
@@ -306,7 +316,7 @@ export default {
           title: "出货状态",
           slot: "Status",
           align: "center",
-          minWidth: 60,
+          minWidth: 80,
           tooltip: true
         },
         {
@@ -391,8 +401,8 @@ export default {
           }
         },
         {
-          title: "渠道商id",
-          key: "accountId",
+          title: "收款方",
+          key: "beneficiary",
           align: "center",
           // minWidth: 60,
           tooltip: true
@@ -408,7 +418,7 @@ export default {
           title: "收款账户",
           key: "account",
           align: "center",
-          // minWidth: 60,
+          minWidth: 100,
           tooltip: true
         }
       ],
@@ -456,6 +466,9 @@ export default {
         realVal = "——";
       }
       return realVal;
+    },
+    cardNo(value) {
+      return `${value.substring(0,3)}****${value.substring(value.length-4)}`
     }
   },
   methods: {

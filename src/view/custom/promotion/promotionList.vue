@@ -16,8 +16,8 @@
         v-if="channelId==$store.state.user.channelId&&hasPerm('act:actList:add')"
       >新增</Button>
 
-      <Table :columns="columns" :data="dataTable" border ref="table" style="margin:20px 0">
-        <!-- 优惠详情 -->
+      <Table highlight-row :columns="columns" :data="dataTable" border ref="table" style="margin:20px 0">
+        <!-- 活动详情 -->
         <template slot-scope="{row,index}" slot="activityMore">
           <a class="lookDetails" @click="seeMore(row)">查看详情</a>
         </template>
@@ -798,7 +798,7 @@ export default {
                   this.isShow = false;
                   this.$Message.info("新增成功");
                   this.getActivity();
-                }else{
+                } else {
                   this.loading = false;
                 }
               })
@@ -818,7 +818,7 @@ export default {
                   this.isShow = false;
                   this.$Message.info("修改成功");
                   this.getActivity();
-                }else{
+                } else {
                   this.loading = false;
                 }
               })

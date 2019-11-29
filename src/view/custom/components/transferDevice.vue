@@ -24,7 +24,7 @@
       <h2>是否要将设备转入【{{rowData.channelName}}】,转移后设备与原有商品将被清空，是否清空?</h2>
       <div slot="footer">
         <Button size="large" @click="transferNewlyAdded=false" >取消</Button>
-        <Button size="large" @click="transferBtn(false)" >否</Button>
+        <!-- <Button size="large" @click="transferBtn(false)" >否</Button> -->
         <Button size="large" type="primary" @click="transferBtn(true)" >是</Button>
       </div>
     </Modal>

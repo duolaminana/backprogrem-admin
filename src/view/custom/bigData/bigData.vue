@@ -170,7 +170,7 @@
       </div>
     </div>
     <div class='nav'>
-      <Select v-model="selectValue"  class='marginRight' >
+      <Select v-model="selectValue" clearable  class='marginRight' @on-change='selectChange' >
         <Option v-for="item in list" :value="item.value" :key="item.value">{{ item.label }}</Option>
       </Select>
       <Button @click='timeBtn("before")' style="margin-right:10px">前一{{index==1?'天':index==2?'月':'年'}}</Button>
@@ -234,8 +234,8 @@ export default {
         // {name: "芙蓉王", value: 1}
       ],
       dateValue:new Date(),
-      index:1,
-      selectValue:null,
+      index:3,
+      selectValue:0,
       list:[],
       options:{
         disabledDate (date) {
@@ -261,6 +261,12 @@ export default {
     }
   },
   methods:{
+    selectChange(value){
+      if(!value){
+        this.selectValue = 0;
+      }
+      this.getFindProductSales();
+    },
     timeBtn(type){
       let time
       if(this.index==1){
@@ -296,10 +302,13 @@ export default {
         }
       }
       time = time.join('-');
-      console.log(time)
+      this.getFindCompanySales();
+      this.getFindProductSales();
     },
     tabNav(value){
-      this.index = value
+      this.index = value;
+      this.getFindCompanySales();
+      this.getFindProductSales();
     },
     getFindAllCount(){
       const url = `/product/findAllCount`;
@@ -320,12 +329,30 @@ export default {
       })
     },
     getFindCompanySales(){
-      netWorkOrder('/orderDetail/findCompanySales',null,'get').then(res=>{
+      let time;
+      if(this.index==1){
+        time =  format(this.dateValue, "YYYY-MM-DD");
+      }else if(this.index==2){
+        time =  format(this.dateValue, "YYYY-MM");
+      }else{
+        time =  format(this.dateValue, "YYYY");
+      }
+      const url = `/orderDetail/findCompanySales?createTime=${time}&&dateType=${this.index}`
+      netWorkOrder(url,null,'get').then(res=>{
         this.cylindricalData = res.result;
       })
     },
     getFindProductSales(){
-      netWorkOrder('/orderDetail/findProductSales',null,'get').then(res=>{
+      let time;
+      if(this.index==1){
+        time =  format(this.dateValue, "YYYY-MM-DD");
+      }else if(this.index==2){
+        time =  format(this.dateValue, "YYYY-MM");
+      }else{
+        time =  format(this.dateValue, "YYYY");
+      }
+      const url = `/orderDetail/findProductSales?createTime=${time}&&dateType=${this.index}&&categoryId=${this.selectValue}`
+      netWorkOrder(url,null,'get').then(res=>{
         this.pieData = res.result;
       })
     },

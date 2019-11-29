@@ -14,7 +14,7 @@
       </Select>
       <Button type="primary" @click="getQRcode" v-if="hasPerm('sys:merchantinfo:search')">查询</Button>
       <Button type="primary" @click="reset" v-if="hasPerm('sys:merchantinfo:reset')">重置</Button>
-      <Table :columns="columns" :data="dataTable" border>
+      <Table highlight-row :columns="columns" :data="dataTable" border>
         <template slot-scope="{ row, index }" slot="payType">{{row.payType | payTypeText}}</template>
         <template slot-scope="{ row, index }" slot="operation">
           <!-- 按钮 -->
@@ -24,7 +24,7 @@
             style="margin-right: 5px"
             @click="checkModal(row)"
             v-if="hasPerm('sys:merchantinfo:checked')&&row.auditType==1"
-          >&npsb审核</Button>
+          >&nbsp&nbsp审核&nbsp&nbsp</Button>
 
           <Button
             size="small"
@@ -32,13 +32,7 @@
             v-if="row.auditType==2||row.auditType==3"
             disabled
           >已审核</Button>
-          <Button
-            type="primary"
-            size="small"
-            style="margin-right: 5px"
-            v-if="row.auditType==2||row.auditType==3"
-            @click="seeResult(row)"
-          >查看</Button>
+          <Button type="primary" size="small" style="margin-right: 5px" @click="seeResult(row)">查看</Button>
 
           <!-- 删除按钮 -->
           <Button
@@ -115,10 +109,10 @@
         </div>
       </div>
       <div slot="footer">
-        <div v-if="formValidateWX.auditType!=1">
+        <div v-if="isSee">
           <Button type="primary" @click="isShowWX=false">关闭</Button>
         </div>
-        <div v-if="formValidateWX.auditType==1">
+        <div v-if="!isSee">
           <Button type="text" @click="cancel">取消</Button>
           <Poptip
             confirm
@@ -185,10 +179,10 @@
       </div>
 
       <div slot="footer">
-        <div v-if="formValidateZFB.auditType!=1">
+        <div v-if="isSee">
           <Button type="primary" @click="isShowZFB=false">关闭</Button>
         </div>
-        <div v-if="formValidateZFB.auditType==1">
+        <div v-if="!isSee">
           <Button type="text" @click="cancel">取消</Button>
           <Poptip
             confirm
@@ -206,10 +200,9 @@
                 v-model.trim="formValidateZFB.remark"
               ></Input>
             </div>
-            <Button type="text" style="border:1px solid #c6c9ce">审核不通过</Button>
+            <Button type="text" style="border:1px solid #c6c9ce" :loading="loadingNo">审核不通过</Button>
           </Poptip>
-
-          <Button type="primary" @click="checkPass('formValidateZFB')">审核通过</Button>
+          <Button type="primary" @click="checkPass('formValidateZFB')" :loading="loading">审核通过</Button>
         </div>
       </div>
     </Modal>
@@ -228,6 +221,9 @@ export default {
   name: "QRcode",
   data() {
     return {
+      isSee: false,
+      loading: false,
+      loadingNo: false,
       // 模态框微信表单数据
       formValidateWX: {
         appId: "", //微信appid
@@ -432,6 +428,7 @@ export default {
     },
     seeResult(row) {
       console.log(row);
+      this.isSee = true;
       row.payType == 1
         ? (this.formValidateWX = JSON.parse(JSON.stringify(row)))
         : (this.formValidateZFB = JSON.parse(JSON.stringify(row)));
@@ -440,6 +437,7 @@ export default {
     // 审核点击事件
     checkModal(row) {
       console.log(row);
+      this.isSee = false;
       row.payType == 1
         ? (this.formValidateWX = JSON.parse(JSON.stringify(row)))
         : (this.formValidateZFB = JSON.parse(JSON.stringify(row)));
@@ -452,6 +450,7 @@ export default {
 
     // 审核通过事件
     checkPass(name) {
+      this.loading = true;
       if (this.tabIndex == 1) {
         this.formValidateWX.auditType = 2;
         this.formValidateWX.auditOperator = this.$store.state.user.userId;
@@ -459,13 +458,20 @@ export default {
           new Date(),
           "YYYY-MM-DD hh:mm:ss"
         );
-        editQRcode(this.formValidateWX).then(res => {
-          if (res.data.code == 200) {
-            this.$Message.info("审核通过");
-            this.getQRcode(); // 重新获取数据
-            this.isShowWX = false;
-          }
-        });
+        editQRcode(this.formValidateWX)
+          .then(res => {
+            if (res.data.code == 200) {
+              this.loading = false;
+              this.isShowWX = false;
+              this.$Message.info("审核通过");
+              this.getQRcode(); // 重新获取数据
+            } else {
+              this.loading = false;
+            }
+          })
+          .catch(err => {
+            this.loading = false;
+          });
       } else if (this.tabIndex == 2) {
         this.formValidateZFB.auditType = 2;
         this.formValidateZFB.auditOperator = this.$store.state.user.userId;
@@ -473,17 +479,25 @@ export default {
           new Date(),
           "YYYY-MM-DD hh:mm:ss"
         );
-        editQRcode(this.formValidateZFB).then(res => {
-          if (res.data.code == 200) {
-            this.$Message.info("审核通过");
-            this.getQRcode(); // 重新获取数据
-            this.isShowZFB = false;
-          }
-        });
+        editQRcode(this.formValidateZFB)
+          .then(res => {
+            if (res.data.code == 200) {
+              this.loading = false;
+              this.isShowZFB = false;
+              this.$Message.info("审核通过");
+              this.getQRcode(); // 重新获取数据
+            } else {
+              this.loading = false;
+            }
+          })
+          .catch(err => {
+            this.loading = false;
+          });
       }
     },
     // 审核不通过事件
     checkNoPass(name) {
+      this.loadingNo = true;
       if (this.tabIndex == 1) {
         this.formValidateWX.auditType = 3;
         this.formValidateWX.auditOperator = this.$store.state.user.userId;
@@ -491,14 +505,21 @@ export default {
           new Date(),
           "YYYY-MM-DD hh:mm:ss"
         );
-        editQRcode(this.formValidateWX).then(res => {
-          if (res.data.code == 200) {
-            this.formValidateWX.remark = "";
-            this.isShowWX = false;
-            this.$Message.info("审核不通过");
-            this.getQRcode(); // 重新获取数据
-          }
-        });
+        editQRcode(this.formValidateWX)
+          .then(res => {
+            if (res.data.code == 200) {
+              this.loadingNo = false;
+              this.isShowWX = false;
+              this.formValidateWX.remark = "";
+              this.$Message.info("审核不通过");
+              this.getQRcode(); // 重新获取数据
+            } else {
+              this.loadingNo = false;
+            }
+          })
+          .catch(err => {
+            this.loadingNo = false;
+          });
       } else if (this.tabIndex == 2) {
         this.formValidateZFB.auditType = 3;
         this.formValidateWX.auditOperator = this.$store.state.user.userId;
@@ -506,14 +527,21 @@ export default {
           new Date(),
           "YYYY-MM-DD hh:mm:ss"
         );
-        editQRcode(this.formValidateZFB).then(res => {
-          if (res.data.code == 200) {
-            this.formValidateZFB.remark = "";
-            this.isShowZFB = false;
-            this.$Message.info("审核不通过");
-            this.getQRcode(); // 重新获取数据
-          }
-        });
+        editQRcode(this.formValidateZFB)
+          .then(res => {
+            if (res.data.code == 200) {
+              this.loadingNo = false;
+              this.isShowZFB = false;
+              this.formValidateZFB.remark = "";
+              this.$Message.info("审核不通过");
+              this.getQRcode(); // 重新获取数据
+            } else {
+              this.loadingNo = false;
+            }
+          })
+          .catch9(err => {
+            this.loading = false;
+          });
       }
     },
 

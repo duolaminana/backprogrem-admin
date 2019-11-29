@@ -19,16 +19,16 @@
           <Button  type="success" @click='importTemplate'>导入</Button>
           <Table border ref="selection" :highlight-row='true' :columns="columns" :data="datas" @on-row-click='tableClick'>
             <template slot-scope="{ row, index }" slot="edit">
-              <Button type="success" size="small" v-if='row.status==0' @click.stop='showNewlyAdded("sh",index,row)'  class='marBtn' >审核</Button>
-              <Button type="primary" size="small" @click.stop='showNewlyAdded("bj",index,row)' class='marBtn' >编辑</Button>
+              <Button type="success" size="small" v-if='row.status==0' @click='showNewlyAdded("sh",index,row)'  class='marBtn' >审核</Button>
+              <Button type="primary" size="small" @click='showNewlyAdded("bj",index,row)' class='marBtn' >编辑</Button>
               <Button  type="error" size="small" class='marBtn' @click="modalDel=true;delID=row.id;delIndex=index" >删除</Button>
             </template>
             <template slot-scope="{ row, index }" slot="info">
-              <a class='lookDetails' @click.stop='showNewlyAdded("ck",index,row)'>查看详情</a>
+              <a class='lookDetails' @click='showNewlyAdded("ck",index,row)'>查看详情</a>
             </template>
             <template slot-scope="{ row, index }" slot="position">
-              <a class='lookDetails' v-if='row.positionId' :disabled='row.status!=3' @click.stop='positionInfo(row,index,false)'>{{row.positionName}}</a>
-              <a v-else-if='!row.positionId&&(row.status==1||row.status==7)' @click.stop='positionInfo(row,index,true)' class='green' >去设定</a>
+              <a class='lookDetails' v-if='row.positionId' :disabled='row.status!=3' @click='positionInfo(row,index,false)'>{{row.positionName}}</a>
+              <a v-else-if='!row.positionId&&(row.status==1||row.status==7)' @click='positionInfo(row,index,true)' class='green' >去设定</a>
               <a v-else class='gray'>去设定</a>
             </template>
             <template slot-scope="{ row, index }" slot="network">
@@ -50,19 +50,20 @@
               <span v-show='!row.activateDate' class='gray'>未激活</span>
             </template>
             <template slot-scope="{ row, index }" slot="expireEdit">
-              <Button v-if='row.status==3||row.status==1' type="primary" size="small" @click.stop='renewal(row,index)'>续租</Button>
+              <Button v-if='row.status==3||row.status==1' type="primary" size="small" @click='renewal(row,index)'>续租</Button>
             </template>
             <!-- <template slot-scope="{ row, index }" slot="cargoWay">
-              <a class='lookDetails' @click.stop='toLink(row)'>查看详情</a>
+              <a class='lookDetails' @click='toLink(row)'>查看详情</a>
             </template> -->
             <template slot-scope="{ row, index }" slot="cargoModal">
-              <a class='lookDetails' :disabled="!row.machineType" @click.stop='cargoModalToLink(row)'>查看详情</a>
+              <a class='lookDetails' :disabled="!row.machineType" @click='cargoModalToLink(row)'>查看详情</a>
             </template>
             <template slot-scope="{ row, index }" slot="kaimen">
-              <a class='lookDetails' @click.stop='openTheDoor(row)'>查看详情</a>
+              <a class='lookDetails' @click='openTheDoor(row)'>查看详情</a>
             </template>
             <template slot-scope="{ row, index }" slot="surplusDays">
-              <span>{{row.surplusDays>=0?row.surplusDays:'已到期'}}</span>
+              <span v-if='row.surplusDays>=0'>{{row.surplusDays}}</span>
+              <span v-else class='red'>已到期</span>
             </template>
           </Table>
           <Page :total="total" show-elevator :current='pageNum' @on-change='pageChange' :page-size='pageSize' @on-page-size-change='sizeChange'  show-sizer/>
@@ -367,12 +368,13 @@ export default {
   computed:{
     surplusDay(){
       if(this.endTime&&this.rowData){
-        if(this.rowData.expireDate){
+        console.log(this.rowData.expireDate)
+        if(this.rowData.expireDate&&new Date(this.rowData.expireDate).valueOf()>Date.now()){
           return parseInt(((new Date(this.endTime).valueOf())-(new Date(this.rowData.expireDate).valueOf()))/(1000 * 60 * 60 * 24));
         }
           return parseInt(((new Date(this.endTime).valueOf())-(new Date().valueOf()))/(1000 * 60 * 60 * 24));
       }
-        return null
+        return '0'
     }
   },
   data(){
@@ -765,7 +767,10 @@ export default {
               val.roadType =  val.roadType?val.roadType.toString():'1';
               val.rowData =  val.rowData?val.rowData:{};
               setTimeout(()=>{  //延时让组件先渲染 否则为空
-                if(index>0&&this.query.list[i].AddMachineTypeRoadDto[index].merged){
+                if(this.query.list[i].AddMachineTypeRoadDto[index].merged){
+                  if(this.query.list[i].AddMachineTypeRoadDto[index].roadStatus==1){
+                    this.query.setWidthAfterNum = index;
+                  }
                   this.$refs.device.setWidthAfter(i,index)
                 }
               },1)

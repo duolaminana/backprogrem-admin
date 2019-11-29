@@ -70,7 +70,7 @@
         class="xzbtn"
       >新增子商户</Button>
       <Button type="primary" @click="reset" v-if="hasPerm('sys:merchantinfo:reset')">重置</Button>
-      <Table :columns="columns" :data="dataTable" border>
+      <Table highlight-row :columns="columns" :data="dataTable" border>
         <template slot-scope="{ row, index }" slot="businessScope">
           <span>{{row.businessScope|businessScopeText|text(saleList)}}</span>
         </template>
@@ -79,14 +79,14 @@
             v-if="(channelId==$store.state.user.channelId&&row.auditStatus==2)||(channelId==row.channelId&&row.auditStatus==2)"
             size="small"
             disabled
-          >审核中...</Button> -->
+          >审核中...</Button>-->
           <!-- 按钮 -->
           <Button
             type="success"
             size="small"
             style="margin-right: 5px"
             @click="changeAuditStatus(row)"
-            v-if="channelId==$store.state.user.channelId&&hasPerm('sys:merchantinfo:submit')&&row.auditStatus==1"
+            v-if="(channelId==$store.state.user.channelId&&hasPerm('sys:merchantinfo:submit')&&row.auditStatus==1)||(row.channelId!=$store.state.user.channelId&&row.auditStatus==1)"
           >提交</Button>
 
           <Button
@@ -1072,11 +1072,11 @@ export default {
       receiveTerminal: this.$store.state.user.merchant.receiveTerminal, //收钱码是否开启
       QRcodeList: [], //收钱码数组
       auditType: null, //收钱码审核状态
-      loadingWX:false,
-      loadingZFB:false,
-      isQRShow: false, 
-      isSaveWX: true, 
-      isSaveZFB: true, 
+      loadingWX: false,
+      loadingZFB: false,
+      isQRShow: false,
+      isSaveWX: true,
+      isSaveZFB: true,
       modalDel: false,
       modal_loading: false, //删除的loading
       delID: null, //删除的ID
@@ -1637,6 +1637,7 @@ export default {
     // 右上角关闭按钮
     close() {
       this.isShow = false;
+      this.loading = false;
       this.channelId = this.$store.state.user.channelId;
       this.$refs.formValidatePre.resetFields();
       this.$refs.formValidateEnt.resetFields();
@@ -1645,14 +1646,17 @@ export default {
     cancel() {
       this.isShow = false;
       this.isQRShow = false;
+      this.loading = false;
       this.$Message.info("取消操作");
       this.$refs.formValidatePre.resetFields();
       this.$refs.formValidateEnt.resetFields();
+      this.channelId = this.$store.state.user.channelId;
     },
 
     // 关闭按钮
     closeModal() {
       this.isShow = false;
+      this.loading = false;
       this.channelId = this.$store.state.user.channelId;
     },
     // 提交的点击事件
@@ -1796,17 +1800,23 @@ export default {
       // row.receiveType == 1
       //   ? (this.isReceiveType = "1")
       //   : (this.isReceiveType = "2");
-      let array = row.areaIds.split(",");
-      var array2 = [];
+      // let array = row.areaIds.split(",");
+      let array2 = [];
       // 字符串数组 转数字数组
-      array.forEach(function(data, index) {
-        array2[index] = parseInt(data);
+      // array.forEach(function(data, index) {
+      //   array2[index] = parseInt(data);
+      // });
+      row.areaIds.split(",").forEach(item => {
+        array2.push(parseInt(item));
       });
-      let arr = row.businessScope.split(",");
-      var arr2 = [];
+      // let arr = row.businessScope.split(",");
+      let arr2 = [];
       // 字符串数组 转数字数组
-      arr.forEach(function(data, index) {
-        arr2[index] = parseInt(data);
+      // arr.forEach(function(data, index) {
+      //   arr2[index] = parseInt(data);
+      // });
+      row.businessScope.split(",").forEach(item => {
+        arr2.push(parseInt(item));
       });
       if (row.accountType == 1) {
         this.isPerson = true;
@@ -1925,54 +1935,58 @@ export default {
               //   ? (this.formValidatePre.receiveType = 1)
               //   : (this.formValidatePre.receiveType = 2);
               if (this.strPre == JSON.stringify(this.formValidatePre)) {
-                return (this.isShow = false);
+                this.isShow = false;
+                this.loading = false;
+              } else {
+                this.formValidatePre.auditStatus = 1;
+                this.formValidatePre.areaNames = this.formValidatePre.NewareaNames.join(
+                  ","
+                );
+                this.formValidatePre.receiveName = this.formValidatePre.name;
+                this.formValidatePre.receiveCard = this.formValidatePre.card;
+                editChannelApply(this.formValidatePre)
+                  .then(res => {
+                    if (res.data.code == 200) {
+                      this.loading = false;
+                      this.isShow = false;
+                      this.$Message.info("修改成功");
+                      this.getMerchant();
+                    } else {
+                      this.loading = false;
+                    }
+                  })
+                  .catch(err => {
+                    this.loading = false;
+                  });
               }
-              this.formValidatePre.auditStatus = 1;
-              this.formValidatePre.areaNames = this.formValidatePre.NewareaNames.join(
-                ","
-              );
-              this.formValidatePre.receiveName = this.formValidatePre.name;
-              this.formValidatePre.receiveCard = this.formValidatePre.card;
-              editChannelApply(this.formValidatePre)
-                .then(res => {
-                  if (res.data.code == 200) {
-                    this.loading = false;
-                    this.isShow = false;
-                    this.$Message.info("修改成功");
-                    this.getMerchant();
-                  } else {
-                    this.loading = false;
-                  }
-                })
-                .catch(err => {
-                  this.loading = false;
-                });
             } else if (this.tabIndex == 2) {
               // this.isReceiveType == "1"
               //   ? (this.formValidateEnt.receiveType = 1)
               //   : (this.formValidateEnt.receiveType = 2);
               if (this.strEnt == JSON.stringify(this.formValidateEnt)) {
-                return (this.isShow = false);
+                this.isShow = false;
+                this.loading = false;
+              } else {
+                this.formValidateEnt.auditStatus = 1;
+                this.formValidateEnt.areaNames = this.formValidateEnt.NewareaNames.join(
+                  ","
+                );
+                this.formValidateEnt.companyName = this.formValidateEnt.channelName;
+                editChannelApply(this.formValidateEnt)
+                  .then(res => {
+                    if (res.data.code == 200) {
+                      this.loading = false;
+                      this.isShow = false;
+                      this.$Message.info("修改成功");
+                      this.getMerchant();
+                    } else {
+                      this.loading = false;
+                    }
+                  })
+                  .catch(err => {
+                    this.loading = false;
+                  });
               }
-              this.formValidateEnt.auditStatus = 1;
-              this.formValidateEnt.areaNames = this.formValidateEnt.NewareaNames.join(
-                ","
-              );
-              this.formValidateEnt.companyName = this.formValidateEnt.channelName;
-              editChannelApply(this.formValidateEnt)
-                .then(res => {
-                  if (res.data.code == 200) {
-                    this.loading = false;
-                    this.isShow = false;
-                    this.$Message.info("修改成功");
-                    this.getMerchant();
-                  } else {
-                    this.loading = false;
-                  }
-                })
-                .catch(err => {
-                  this.loading = false;
-                });
             }
           }
         }

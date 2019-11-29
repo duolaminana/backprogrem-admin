@@ -22,7 +22,7 @@
       </Select>
       <Button type="primary" @click="getMerchant" v-if="hasPerm('sys:merchantinfo:search')">查询</Button>
       <Button type="primary" @click="reset" v-if="hasPerm('sys:merchantinfo:reset')">重置</Button>
-      <Table :columns="columns" :data="dataTable" border>
+      <Table highlight-row :columns="columns" :data="dataTable" border>
         <template slot-scope="{ row, index }" slot="businessScope">
           <span>{{row.businessScope|businessScopeText|text(saleList)}}</span>
         </template>
@@ -241,6 +241,7 @@
               <!-- 抽成比例 -->
               <template slot-scope="{ row, index }" slot="businessScope">
                 <InputNumber
+                  :disabled="receiveTerminal"
                   :max="100"
                   :min="row.customerRebate+row.recommenderRebate"
                   v-model="row.benefitPercent"
@@ -453,6 +454,7 @@
               <!-- 抽成比例 -->
               <template slot-scope="{ row, index }" slot="businessScope">
                 <InputNumber
+                  :disabled="receiveTerminal"
                   :max="100"
                   :min="row.customerRebate+row.recommenderRebate"
                   v-model="row.benefitPercent"
@@ -503,17 +505,18 @@
             ></Input>
           </div>
           <Button
-            v-if="(formValidateEnt.auditStatus==2&&tabIndex==2)||(formValidateEnt.auditStatus==4&&tabIndex==2)"
+            v-if="(formValidateEnt.auditStatus!=1&&tabIndex==2)"
             type="text"
             style="border:1px solid #c6c9ce"
             size="large"
+            :loading="loadingNo"
           >审核不通过</Button>
         </Poptip>
         <Button
-          v-if="(formValidateEnt.auditStatus==2&&tabIndex==2)||(formValidateEnt.auditStatus==4&&tabIndex==2)"
+          v-if="(formValidateEnt.auditStatus!=1&&tabIndex==2)"
           type="primary"
           size="large"
-          :loading="loadingEnt"
+          :loading="loading"
           @click="checkPass('formValidateEnt')"
         >审核通过</Button>
         <!-- 个人注册按钮 -->
@@ -534,17 +537,18 @@
             ></Input>
           </div>
           <Button
-            v-if="(formValidatePre.auditStatus==2&&tabIndex==1)||(formValidatePre.auditStatus==4&&tabIndex==1)"
+            v-if="(formValidatePre.auditStatus!=1&&tabIndex==1)"
             type="text"
             style="border:1px solid #c6c9ce"
             size="large"
+            :loading="loadingNo"
           >审核不通过</Button>
         </Poptip>
         <Button
-          v-if="(formValidatePre.auditStatus==2&&tabIndex==1)||(formValidatePre.auditStatus==4&&tabIndex==1)"
+          v-if="(formValidatePre.auditStatus!=1&&tabIndex==1)"
           type="primary"
           size="large"
-          :loading="loadingPre"
+          :loading="loading"
           @click="checkPass('formValidatePre')"
         >审核通过</Button>
       </div>
@@ -576,7 +580,7 @@ export default {
   name: "merchantManagement",
   data() {
     return {
-      loading: false,
+      receiveTerminal: false,
       isSpan: false,
       saleDataList: [],
       businessStr: "",
@@ -622,8 +626,8 @@ export default {
       delFormVisible: false, // 删除模态框显示方式
       isShow: false, // 弹框显示状态
       isAdd: false, // 判断当前弹框是否新增
-      loadingPre: false, //模态框个人确定按钮的延时
-      loadingEnt: false, //模态框企业确定按钮的延时
+      loading: false, //通过按钮的延时
+      loadingNo: false, //不通过按钮的延时
       // 个人模态框表单数据
       formValidatePre: {
         channelBusinessDtoList: [], //业务范围对象
@@ -736,7 +740,7 @@ export default {
           title: "经营范围",
           slot: "businessScope",
           align: "center",
-          minWidth: 100,
+          minWidth: 120,
           tooltip: true
         },
         {
@@ -750,35 +754,35 @@ export default {
           title: "利润抽成比(%)",
           key: "channelBusinessInfo",
           align: "center",
-          minWidth: 80,
+          minWidth: 120,
           tooltip: true
         },
         {
           title: "联系电话",
           key: "phone",
           align: "center",
-          minWidth: 40,
+          minWidth: 80,
           tooltip: true
         },
         {
           title: "创建时间",
           key: "createDate",
           align: "center",
-          minWidth: 50,
+          minWidth: 80,
           tooltip: true
         },
         {
           title: "审核状态",
           slot: "status",
           align: "center",
-          minWidth: 30,
+          minWidth: 80,
           tooltip: true
         },
         {
           title: "审核时间",
           key: "auditDate",
           align: "center",
-          minWidth: 50,
+          minWidth: 80,
           tooltip: true
         },
         {
@@ -832,8 +836,6 @@ export default {
     changeValue(value) {
       this.formValidatePre.businessScope = value.join(",");
       this.formValidateEnt.businessScope = value.join(",");
-      console.log(value);
-      console.log(this.saleList);
       let arrSale = [];
       this.saleList.forEach(item => {
         value.forEach(i => {
@@ -902,15 +904,15 @@ export default {
     },
 
     cancel() {
-      this.loadingPre = false;
-      this.loadingEnt = false;
+      this.loading = false;
+      this.loadingNo = false;
       this.isShow = false;
       this.$Message.info("取消操作");
     },
     // 右上角关闭按钮
     close() {
-      this.loadingPre = false;
-      this.loadingEnt = false;
+      this.loading = false;
+      this.loadingNo = false;
       this.isShow = false;
     },
 
@@ -939,15 +941,40 @@ export default {
     },
 
     changeReceive($event) {
+      console.log(this.tabIndex);
+
       if ($event) {
+        this.receiveTerminal = false;
         this.tabIndex == 1
-          ? (this.formValidatePre.receiveTerminal = 2)
-          : (this.formValidateEnt.receiveTerminal = 2);
+          ? (this.formValidatePre.receiveTerminal = true)
+          : (this.formValidateEnt.receiveTerminal = true);
       } else {
+        this.receiveTerminal = true;
         this.tabIndex == 1
-          ? (this.formValidatePre.receiveTerminal = 1)
-          : (this.formValidateEnt.receiveTerminal = 1);
+          ? (this.formValidatePre.receiveTerminal = false)
+          : (this.formValidateEnt.receiveTerminal = false);
+        let str = "";
+        this.tabIndex == 1
+          ? (str = this.formValidatePre.businessScope)
+          : (str = this.formValidateEnt.businessScope);
+        console.log(str);
+        console.log(str.split(","));
+        let arr = [];
+        str.split(",").forEach(item => {
+          arr.push(parseInt(item));
+        });
+        let arrSale = [];
+        this.saleList.forEach(item => {
+          arr.forEach(i => {
+            if (item.value == i) {
+              item.benefitPercent = 0;
+              arrSale.push(item);
+            }
+          });
+        });
+        this.saleData = arrSale;
       }
+      console.log(this.formValidateEnt.receiveTerminal);
     },
     blurInputNumber(row, index) {
       if (this.this.saleData[index].benefitPercent > 100) {
@@ -1012,6 +1039,9 @@ export default {
         row.receiveTerminal == 1
           ? (this.formValidatePre.receiveTerminal = false)
           : (this.formValidatePre.receiveTerminal = true);
+        row.receiveTerminal == 1
+          ? (this.receiveTerminal = true)
+          : (this.receiveTerminal = false);
         this.channelId = row.channelId;
         this.businessStr = row.businessScope;
         await this.getMerchantCategorySale();
@@ -1027,6 +1057,9 @@ export default {
         row.receiveTerminal == 1
           ? (this.formValidateEnt.receiveTerminal = false)
           : (this.formValidateEnt.receiveTerminal = true);
+        row.receiveTerminal == 1
+          ? (this.receiveTerminal = true)
+          : (this.receiveTerminal = false);
         this.channelId = row.channelId;
         this.businessStr = row.businessScope;
         await this.getMerchantCategorySale();
@@ -1041,7 +1074,7 @@ export default {
           : (item.activityAuthority = 2);
       });
       if (this.tabIndex == 1) {
-        this.loadingPre = true;
+        this.loading = true;
         this.formValidatePre.auditDate = format(
           new Date(),
           "YYYY-MM-DD hh:mm:ss"
@@ -1051,17 +1084,23 @@ export default {
           ? (this.formValidatePre.receiveTerminal = 2)
           : (this.formValidatePre.receiveTerminal = 1);
         this.formValidatePre.channelBusinessDtoList = this.saleData;
-        auditChannel(this.formValidatePre).then(res => {
-          if (res.data.code == 200) {
-            this.isShow = false;
-            this.loadingPre = false;
-            this.$Message.info("审核通过");
-            this.channelId = this.$store.state.user.channelId;
-            this.getMerchant(); // 重新获取数据
-          }
-        });
+        auditChannel(this.formValidatePre)
+          .then(res => {
+            if (res.data.code == 200) {
+              this.isShow = false;
+              this.loading = false;
+              this.$Message.info("审核通过");
+              this.channelId = this.$store.state.user.channelId;
+              this.getMerchant(); // 重新获取数据
+            } else {
+              this.loading = false;
+            }
+          })
+          .catch(err => {
+            this.loading = false;
+          });
       } else if (this.tabIndex == 2) {
-        this.loadingEnt = true;
+        this.loading = true;
         this.formValidateEnt.auditDate = format(
           new Date(),
           "YYYY-MM-DD hh:mm:ss"
@@ -1071,15 +1110,21 @@ export default {
           ? (this.formValidateEnt.receiveTerminal = 2)
           : (this.formValidateEnt.receiveTerminal = 1);
         this.formValidateEnt.channelBusinessDtoList = this.saleData;
-        auditChannel(this.formValidateEnt).then(res => {
-          if (res.data.code == 200) {
-            this.loadingEnt = false;
-            this.isShow = false;
-            this.$Message.info("审核通过");
-            this.channelId = this.$store.state.user.channelId;
-            this.getMerchant(); // 重新获取数据
-          }
-        });
+        auditChannel(this.formValidateEnt)
+          .then(res => {
+            if (res.data.code == 200) {
+              this.loading = false;
+              this.isShow = false;
+              this.$Message.info("审核通过");
+              this.channelId = this.$store.state.user.channelId;
+              this.getMerchant(); // 重新获取数据
+            } else {
+              this.loading = false;
+            }
+          })
+          .catch(err => {
+            this.loading = false;
+          });
       }
     },
     // 审核不通过事件
@@ -1090,6 +1135,7 @@ export default {
           : (item.activityAuthority = 2);
       });
       if (this.tabIndex == 1) {
+        this.loadingNo = true;
         this.formValidatePre.auditDate = format(
           new Date(),
           "YYYY-MM-DD hh:mm:ss"
@@ -1099,16 +1145,24 @@ export default {
           ? (this.formValidatePre.receiveTerminal = 2)
           : (this.formValidatePre.receiveTerminal = 1);
         this.formValidatePre.channelBusinessDtoList = this.saleData;
-        auditChannel(this.formValidatePre).then(res => {
-          if (res.data.code == 200) {
-            this.formValidatePre.remark = "";
-            this.isShow = false;
-            this.channelId = this.$store.state.user.channelId;
-            this.$Message.info("审核不通过");
-            this.getMerchant(); // 重新获取数据
-          }
-        });
+        auditChannel(this.formValidatePre)
+          .then(res => {
+            if (res.data.code == 200) {
+              this.loadingNo = false;
+              this.formValidatePre.remark = "";
+              this.isShow = false;
+              this.channelId = this.$store.state.user.channelId;
+              this.$Message.info("审核不通过");
+              this.getMerchant(); // 重新获取数据
+            } else {
+              this.loadingNo = false;
+            }
+          })
+          .catch(err => {
+            this.loadingNo = false;
+          });
       } else if (this.tabIndex == 2) {
+        this.loadingNo = true;
         this.formValidateEnt.auditDate = format(
           new Date(),
           "YYYY-MM-DD hh:mm:ss"
@@ -1118,15 +1172,22 @@ export default {
           ? (this.formValidateEnt.receiveTerminal = 2)
           : (this.formValidateEnt.receiveTerminal = 1);
         this.formValidateEnt.channelBusinessDtoList = this.saleData;
-        auditChannel(this.formValidateEnt).then(res => {
-          if (res.data.code == 200) {
-            this.formValidateEnt.remark = "";
-            this.isShow = false;
-            this.channelId = this.$store.state.user.channelId;
-            this.$Message.info("审核不通过");
-            this.getMerchant(); // 重新获取数据
-          }
-        });
+        auditChannel(this.formValidateEnt)
+          .then(res => {
+            if (res.data.code == 200) {
+              this.loadingNo = false;
+              this.formValidateEnt.remark = "";
+              this.isShow = false;
+              this.channelId = this.$store.state.user.channelId;
+              this.$Message.info("审核不通过");
+              this.getMerchant(); // 重新获取数据
+            } else {
+              this.loadingNo = false;
+            }
+          })
+          .catch(err => {
+            this.loadingNo = false;
+          });
       }
     },
     // 获取商户信息
@@ -1155,7 +1216,6 @@ export default {
         if (res.data.code == 200) {
           this.saleList = res.data.result;
           this.saleList.forEach(item => {
-            console.log(item);
             item.categoryId = item.id;
             item.benefitPercent == null
               ? (item.benefitPercent = 0)
@@ -1197,9 +1257,6 @@ export default {
             item.benefitPercent == null
               ? (item.benefitPercent = 0)
               : (item.benefitPercent = item.benefitPercent);
-            // item.categoryId = this.saleList.find(
-            //   v => v.categoryName == item.categoryName
-            // ).id;
           });
         }
       });

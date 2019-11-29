@@ -8,7 +8,7 @@
         <Input v-model="name"  placeholder="设备编码" clearable class='marginRight'/>
         <Button @click="clickQuery" type="primary">查询</Button>
         <Button @click='reset' type="primary">重置</Button>
-        <Button v-if="hasPerm('pos:dev:add')"  type="primary" @click='showNewlyAdded("xz")' class='xzbtn' icon="md-add">新增</Button>
+        <Button v-if="channelId==$store.state.user.userVo.channelId && hasPerm('pos:dev:add')"  type="primary" @click='showNewlyAdded("xz")' class='xzbtn' icon="md-add">新增</Button>
         <Button v-if='channelId==$store.state.user.userVo.channelId'  type="primary" @click='transferNewlyAdded = true' :disabled='!tableRowData'>设备转移</Button>
         <Poptip placement="right" trigger='hover' >
           <Button  type="success" @click='exportTemplate'>导出模板</Button>
@@ -19,62 +19,62 @@
           </div>
         </Poptip>
         <!-- <Button  type="success" @click='importNewlyAdded=true'>导入</Button> -->
-        <Table border ref="selection" :highlight-row='true' :columns="columns" :data="datas" @on-row-click='tableClick'>
+        <Table :row-class-name='trBgColor' border ref="selection" :highlight-row='true' :columns="columns" :data="datas" @on-row-click='tableClick'>
           <template slot-scope="{ row, index }" slot="edit">
-              <Button v-if="hasPerm('pos:dev:up')" type="success" size="small" class='marBtn' @click='enable(row,index,true)' v-show='row.enable==0'>启用</Button>
-              <Button v-if="hasPerm('pos:dev:up')" type="error" size="small" class='marBtn' @click='enable(row,index,false)' v-show='row.enable==1'>停用</Button>
-              <Button v-if="hasPerm('pos:dev:edit')" type="primary" size="small" class='marBtn' @click.stop='showNewlyAdded("bj",index,row)' :disabled='$store.state.user.userVo.type!=2||row.ownership!=3||row.status!=0||row.status!=2'>编辑</Button>
-              <Button v-if="hasPerm('pos:dev:del')" type="error" size="small" class='marBtn' @click="modalDel=true;delID=row.id;delIndex=index" :disabled='$store.state.user.userVo.type!=2||row.ownership!=3'>删除</Button>
+              <Button v-if="channelId==$store.state.user.userVo.channelId&&hasPerm('pos:dev:up')&&row.enable==0" type="success" size="small" class='marBtn' @click='enable(row,index,true)'  :disabled='row.surplusDays<0'>启用</Button>
+              <Button v-if="channelId==$store.state.user.userVo.channelId&&hasPerm('pos:dev:up')&&row.enable==1" type="error" size="small" class='marBtn' @click='enable(row,index,false)' :disabled='row.surplusDays<0'>停用</Button>
+              <Button v-if="channelId==$store.state.user.userVo.channelId&&hasPerm('pos:dev:edit')" type="primary" size="small" class='marBtn' @click='showNewlyAdded("bj",index,row)' :disabled='$store.state.user.userVo.type!=2||row.ownership!=3||row.status!=0||row.status!=2||row.surplusDays<0'>编辑</Button>
+              <Button v-if="channelId==$store.state.user.userVo.channelId&&hasPerm('pos:dev:del')" type="error" size="small" class='marBtn' @click="modalDel=true;delID=row.id;delIndex=index" :disabled='$store.state.user.userVo.type!=2||row.ownership!=3||row.surplusDays<0'>删除</Button>
           </template>
           <template slot-scope="{ row, index }" slot="info">
-              <a class='lookDetails' @click.stop='showNewlyAdded("ck",index,row)'>查看详情</a>
+              <a class='lookDetails' @click='showNewlyAdded("ck",index,row)' :disabled="row.surplusDays<0">查看详情</a>
           </template>
           <template slot-scope="{ row, index }" slot="position">
-              <a class='lookDetails'  v-if='row.positionId' :disabled='row.status!=3' @click.stop='positionInfo(row,index,false)'>{{row.positionName}}</a>
-              <a v-else-if='!row.positionId&&(row.status==1||row.status==7)' @click.stop='positionInfo(row,index,true)' class='green' >去设定</a>
+              <a class='lookDetails'  v-if='row.positionId' :disabled='row.status!=3||row.surplusDays<0||channelId!=$store.state.user.userVo.channelId' @click='positionInfo(row,index,false)'>{{row.positionName}}</a>
+              <a v-else-if='!row.positionId&&(row.status==1||row.status==7)' @click='positionInfo(row,index,true)' :disabled="row.surplusDays<0||channelId!=$store.state.user.userVo.channelId" class='green' >去设定</a>
               <a v-else class='gray'>去设定</a>
           </template>
           <template slot-scope="{ row, index }" slot="cargoWay">
-              <a class='lookDetails' :disabled='!row.machineType' @click.stop='toLink(row)'>查看详情</a>
+              <a class='lookDetails' :disabled='!row.machineType||row.surplusDays<0||channelId!=$store.state.user.userVo.channelId' @click='toLink(row)'>查看详情</a>
           </template>
           <template slot-scope="{ row, index }" slot="interest">
-              <a class='lookDetails' v-if='row.num>0&&$store.state.user.userVo.type==2'  @click.stop='toLinkInterest(row,false)'>去查看</a>
-              <a v-else-if='row.num<=0&&$store.state.user.userVo.type==2' @click.stop='toLinkInterest(row,true)' class='green'>去设定</a>
+              <a class='lookDetails' v-if='row.num>0&&$store.state.user.userVo.type==2'  @click='toLinkInterest(row,false)' :disabled="row.surplusDays<0||channelId!=$store.state.user.userVo.channelId">去查看</a>
+              <a v-else-if='row.num<=0&&$store.state.user.userVo.type==2' @click='toLinkInterest(row,true)' class='green' :disabled="row.surplusDays<0||channelId!=$store.state.user.userVo.channelId">去设定</a>
               <a v-else class='gray'>去设定</a>
           </template>
           <template slot-scope="{ row, index }" slot="network">
-              <span v-show='row.networkStatus==1' class='green'>在线</span>
+              <span v-show='row.networkStatus==1' :class='row.surplusDays<0?"gray":"green"' >在线</span>
               <span v-show='row.networkStatus==0' class='gray'>离线</span>
           </template>
           <template slot-scope="{ row, index }" slot="deviceStatus">
-              <span v-show='row.enable==1' class='green'>已启用</span>
+              <span v-show='row.enable==1'  :class='row.surplusDays<0?"gray":"green"'>已启用</span>
               <span v-show='row.enable==0' class='gray'>未启用</span>
           </template>
           <template slot-scope="{ row, index }" slot="status">
               <span v-show='row.status==0' class='gray'>待审核</span>
-              <span v-show='row.status==1' class='green'>待使用</span>
-              <span v-show='row.status==2' class='red'>审核不通过</span>
-              <span v-show='row.status==3' class='green'>点位中</span>
+              <span v-show='row.status==1'  :class='row.surplusDays<0?"gray":"green"'>待使用</span>
+              <span v-show='row.status==2'  :class='row.surplusDays<0?"gray":"green"'>审核不通过</span>
+              <span v-show='row.status==3'  :class='row.surplusDays<0?"gray":"green"'>点位中</span>
               <span v-show='row.status==4' class='gray'>故障中</span>
               <span v-show='row.status==5' class='gray'>维修中</span>
               <span v-show='row.status==6' class='gray'>报废</span>
               <span v-show='row.status==7' class='gray'>待激活</span>
           </template>
           <template slot-scope="{ row, index }" slot="time">
-              <span v-show='row.activateDate'>{{row.activateDate}}</span>
+              <span v-show='row.activateDate' >{{row.activateDate}}</span>
               <span v-show='!row.activateDate' class='gray'>未激活</span>
           </template>
           <template slot-scope="{ row, index }" slot="stock">
-              <input @click.stop='' @keydown.enter='stockChange(row)' @blur="stockChange(row)" class='stockInput' type="number" v-model='row.stockWarning'>
+              <input @click='' @keydown.enter='stockChange(row)' @blur="stockChange(row)" class='stockInput' type="number" v-model='row.stockWarning' :disabled="row.surplusDays<0||channelId!=$store.state.user.userVo.channelId">
           </template>
           <template slot-scope="{ row, index }" slot="erweima">
-            <img @click.stop='erweimaClick(row)' :src="require('../../../assets/images/erweima.png')">
+            <img @click='erweimaClick(row)' :src="require('../../../assets/images/erweima.png')">
           </template>
           <template slot-scope="{ row, index }" slot="kaimen">
-            <a class='lookDetails' @click.stop='openTheDoor(row)'>查看详情</a>
+            <a class='lookDetails' @click='openTheDoor(row)' :disabled="row.surplusDays<0||channelId!=$store.state.user.userVo.channelId">查看详情</a>
           </template>
           <template slot-scope="{ row, index }" slot="expireDate">
-            <span v-if='row.surplusDays<0'>已到期</span>
+            <span v-if='row.surplusDays<0' class='red'>已到期</span>
             <span v-else>{{row.expireDate}}</span>
           </template>
           </Table>
@@ -377,21 +377,28 @@ export default {
           title: '开门时间',
           key: 'openDate',
           align: 'center',
-          width: 170,
+          width: 127,
           tooltip:true
         },
         {
           title: '用户',
           key: 'operatorName',
           align: 'center',
-          width: 170,
+          width: 127,
+          tooltip:true
+        },
+        {
+          title: '开门方式',
+          key: 'operatorName',
+          align: 'center',
+          width: 127,
           tooltip:true
         },
         {
           title: '手机号',
           key: 'operatorName',
           align: 'center',
-          width: 170,
+          width: 127,
           tooltip:true
         },
       ],
@@ -600,13 +607,6 @@ export default {
           tooltip:true
         },
         {
-          title: '启用状态',
-          slot: 'deviceStatus',
-          align: 'center',
-          width:60,
-          tooltip:true
-        },
-        {
           title: '设备维护费用/年',
           key: 'annualFees',
           align: 'center',
@@ -649,10 +649,17 @@ export default {
           tooltip:true
         },
         {
+          title: '启用状态',
+          slot: 'deviceStatus',
+          align: 'center',
+          width:60,
+          tooltip:true
+        },
+        {
           title: '操作',
           slot: 'edit',
           align: 'center',
-          width:'180',
+          width:160,
           tooltip:true
         }
       ],
@@ -664,6 +671,12 @@ export default {
     }
   },
   methods:{
+    trBgColor(row,index){
+      if(row.surplusDays<0){
+        return 'trBgColor';
+      }
+      return '';
+    },
     clickQuery(){
       this.pageNum = 1;
       this.getPageDatas();
@@ -984,18 +997,37 @@ export default {
             this.query.list = [];
             this.getselectList(row);
           }
-          this.query.list.forEach((v,i)=>{
-            v.AddMachineTypeRoadDto.forEach((val,index)=>{
-              val.roadType =  val.roadType?val.roadType.toString():'1';
-              val.rowData =  val.rowData?val.rowData:{};
-              setTimeout(()=>{  //延时让组件先渲染 否则为空
-                if(index>0&&this.query.list[i].AddMachineTypeRoadDto[index].merged){
-                  this.$refs.device.setWidthAfter(i,index)
-                }
-              },1)
+          if( this.query.list.length){
+            this.query.list.forEach((v,i)=>{
+              v.AddMachineTypeRoadDto.forEach((val,index)=>{
+                val.roadType =  val.roadType?val.roadType.toString():'1';
+                val.rowData =  val.rowData?val.rowData:{};
+                setTimeout(()=>{  //延时让组件先渲染 否则为空
+                  if(this.query.list[i].AddMachineTypeRoadDto[index].merged){
+                    if(this.query.list[i].AddMachineTypeRoadDto[index].roadStatus==1){
+                      this.query.setWidthAfterNum = index;
+                    }
+                    this.$refs.device.setWidthAfter(i,index)
+                  }
+                },1)
+              })
             })
-          })
-          console.log(this.query)
+          }else{
+            this.query.list1.forEach((v,i)=>{
+              v.AddMachineTypeRoadDto.forEach((val,index)=>{
+                val.roadType =  val.roadType?val.roadType.toString():'1';
+                val.rowData =  val.rowData?val.rowData:{};
+                setTimeout(()=>{  //延时让组件先渲染 否则为空
+                  if(this.query.list1[i].AddMachineTypeRoadDto[index].merged){
+                    if(this.query.list1[i].AddMachineTypeRoadDto[index].roadStatus==1){
+                      this.query.setWidthAfterNum = index;
+                    }
+                    this.$refs.device.setWidthAfter(i,index)
+                  }
+                },1)
+              })
+            })
+          }
           this.isDetail = true;
           resolve();
         }).catch(err => {

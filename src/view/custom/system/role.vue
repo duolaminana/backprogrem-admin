@@ -34,7 +34,7 @@
           <Button
             type="primary"
             size="small"
-            style="margin-right: 5px"
+            
             @click="editModal(row)"
             v-if="channelId==$store.state.user.channelId&&hasPerm('sys:role:edit')"
           >编辑</Button>
@@ -199,7 +199,7 @@ export default {
           title: "角色",
           key: "role",
           align: "center",
-          // maxWidth: 100,
+          minWidth: 60,
           tooltip: true
         },
         {
@@ -213,7 +213,7 @@ export default {
           title: "创建时间",
           key: "createDate",
           align: "center",
-          // maxWidth: 100,
+          minWidth: 80,
           tooltip: true
         },
 
@@ -221,7 +221,7 @@ export default {
           title: "操作",
           align: "center",
           slot: "operation",
-          minWidth: 80,
+          minWidth: 120,
           tooltip: true
         }
       ],

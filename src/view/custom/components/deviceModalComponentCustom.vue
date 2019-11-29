@@ -26,10 +26,10 @@
             <img :src="require('../../../assets/images/huodao_quxiaohebing.png')" v-show='value.merged&&value.roadStatus!=2' @click='cancelMerger(i,index,1)' title='取消合并'>
             <img :src="require('../../../assets/images/huodao_hebing.png')" v-show='value.roadStatus!=3&&index!=0&&value.roadStatus!=2' @click='merge(i,index,3)' title='合并'>
             </p>
-            <div>
+            <div style="text-align: center">
               <Input v-model='value.roadNo' placeholder="货道编码"></Input>
               <p style="padding-left:45px;font-size:14px;margin-top:30px;">货道编码</p>
-              </div>
+            </div>
           </div>
         </Card>
       </Card>
@@ -186,6 +186,7 @@ export default {
       }
     },
     cancelMerger(index1,index2,num){
+      console.log(index1,index2,num)
       this.$set(this.listData[index1].AddMachineTypeRoadDto[index2],'roadStatus',num);
       this.$set(this.listData[index1].AddMachineTypeRoadDto[index2],'merged',false);
       if(this.listData[index1].AddMachineTypeRoadDto[index2+1].roadStatus!=3){
@@ -196,10 +197,10 @@ export default {
         if(this.listData[index1].AddMachineTypeRoadDto[i].roadStatus==3){
           this.$set(this.listData[index1].AddMachineTypeRoadDto[i],'merged',false);
           this.$set(this.listData[index1].AddMachineTypeRoadDto[i],'roadStatus',1);
-          console.log(index1,index2)
           let w = parseInt(this.$refs[("box"+index1+""+index2)][0].$el.style.width) //点击合并盒子的宽度
           let width = parseInt(this.$refs[("box"+index1+""+(index2+1))][0].$el.style.width)
-          this.$refs[("box"+index1+""+index2)][0].$el.style.width = w-10-width+'px';
+          // this.$refs[("box"+index1+""+(i-1))][0].$el.style.width = w-10-width+'px';
+          this.$refs[("box"+index1+""+(i-1))][0].$el.style.width = '160px';
         }else{
           break;
         }
@@ -234,17 +235,25 @@ export default {
     },
     setWidthAfter(index1,index2){ //加载数据时 判断
       let i  = this.isFalseAfter(index1,index2+1);
-      if(i===0||i){
+      let b = index2>0?(index2-1):index2
+      // if(i===0||i){
         let w = parseInt(this.$refs[("box"+index1+""+index2)][0].$el.style.width) //点击合并盒子的宽度
-        let width = parseInt(this.$refs[("box"+index1+""+i)][0].$el.style.width);
-        this.$refs[("box"+index1+""+i)][0].$el.style.width = 10+w+width+'px';
-      }
+        let width = parseInt(this.$refs[("box"+index1+""+b)][0].$el.style.width);
+        if(index2!=0||i!=0){
+          console.log(w,width)
+          if((index2!=i)&&(index2!=0&&i!=0)){
+            this.$refs[("box"+index1+""+i)][0].$el.style.width = width+'px';
+          }else{
+            this.$refs[("box"+index1+""+i)][0].$el.style.width = 10+w+width+'px';
+          }
+        }
+      // }
     },
     isFalseAfter(index1,index2){ //判断后面是否被合并
       if(this.listData[index1].AddMachineTypeRoadDto[index2].roadStatus==3){
-        return false;
+        return index2-1;
       }else{
-        return index2-1-1;
+        return this.query.setWidthAfterNum;
       }
     },
     generate(){

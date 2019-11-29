@@ -4,7 +4,7 @@
       <Col span="6">
         <Card :bordered="false" dis-hover>
           <p style="font-size:16px;margin-top:8px">总商品库存</p>
-          <Table border ref="stockData" :columns="stockColumns" :data="stockDatas">
+          <Table highlight-row border ref="stockData" :columns="stockColumns" :data="stockDatas">
             <!-- 商品名称 -->
             <template slot-scope="{row}" slot="productName">
               <a @click="searchProduct(row)">{{row.productName}}</a>

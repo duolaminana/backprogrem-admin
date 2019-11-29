@@ -207,6 +207,8 @@ export default {
   },
   data() {
     return {
+      strWX: "",
+      strZFB: "",
       idWX: "",
       idZFB: "",
       channelId: store.state.user.channelId, //渠道id
@@ -382,22 +384,23 @@ export default {
     editModalWX() {
       this.isdisabledWX = false;
       this.$emit("update:isSaveWX", true);
+      this.strWX = JSON.stringify(this.formValidateWX);
     },
     // 编辑支付宝
     editModalZFB() {
       this.isdisabledZFB = false;
       this.$emit("update:isSaveZFB", true);
+      this.strZFB = JSON.stringify(this.formValidateZFB);
     },
     // 微信收钱码
     WXQRModal(name) {
       this.$refs[name].validate(valid => {
         if (valid) {
-          console.log(valid);
           this.$emit("update:loadingWX", true);
-          this.formValidateWX.auditType = 1;
-          this.formValidateWX.configStat = 1;
           // 新增
           if (this.formValidateWX.id == null) {
+            this.formValidateWX.auditType = 1;
+            this.formValidateWX.configStat = 1;
             addQRcode(this.formValidateWX)
               .then(res => {
                 if (res.data.code == 200) {
@@ -414,20 +417,28 @@ export default {
               });
           } else if (this.formValidateWX.id != null) {
             // 编辑
-            editQRcode(this.formValidateWX)
-              .then(res => {
-                if (res.data.code == 200) {
-                  this.isdisabledWX = true;
-                  this.$emit("update:isSaveWX", false);
+            if (this.strWX == JSON.stringify(this.formValidateWX)) {
+              this.isdisabledWX = true;
+              this.$emit("update:isSaveWX", false);
+              this.$emit("update:loadingWX", false);
+            } else {
+              this.formValidateWX.auditType = 1;
+              this.formValidateWX.configStat = 1;
+              editQRcode(this.formValidateWX)
+                .then(res => {
+                  if (res.data.code == 200) {
+                    this.isdisabledWX = true;
+                    this.$emit("update:isSaveWX", false);
+                    this.$emit("update:loadingWX", false);
+                    this.$Message.info("微信支付编辑成功,请等待审核");
+                  } else {
+                    this.$emit("update:loadingWX", false);
+                  }
+                })
+                .catch(err => {
                   this.$emit("update:loadingWX", false);
-                  this.$Message.info("微信支付编辑成功,请等待审核");
-                } else {
-                  this.$emit("update:loadingWX", false);
-                }
-              })
-              .catch(err => {
-                this.$emit("update:loadingWX", false);
-              });
+                });
+            }
           }
         }
       });
@@ -438,10 +449,10 @@ export default {
       this.$refs[name].validate(valid => {
         if (valid) {
           this.$emit("update:loadingZFB", true);
-          this.formValidateZFB.auditType = 1;
-          this.formValidateZFB.configStat = 1;
           // 新增
           if (this.formValidateZFB.id == null) {
+            this.formValidateZFB.auditType = 1;
+            this.formValidateZFB.configStat = 1;
             addQRcode(this.formValidateZFB)
               .then(res => {
                 if (res.data.code == 200) {
@@ -458,20 +469,28 @@ export default {
               });
           } else if (this.formValidateZFB.id != null) {
             // 编辑
-            editQRcode(this.formValidateZFB)
-              .then(res => {
-                if (res.data.code == 200) {
-                  this.isdisabledZFB = true;
-                  this.$emit("update:isSaveZFB", false);
+            if (this.strZFB == JSON.stringify(this.formValidateZFB)) {
+              this.isdisabledZFB = true;
+              this.$emit("update:isSaveZFB", false);
+              this.$emit("update:loadingZFB", false);
+            } else {
+              this.formValidateZFB.auditType = 1;
+              this.formValidateZFB.configStat = 1;
+              editQRcode(this.formValidateZFB)
+                .then(res => {
+                  if (res.data.code == 200) {
+                    this.isdisabledZFB = true;
+                    this.$emit("update:isSaveZFB", false);
+                    this.$emit("update:loadingZFB", false);
+                    this.$Message.info("支付宝编辑成功,请等待审核");
+                  } else {
+                    this.$emit("update:loadingZFB", false);
+                  }
+                })
+                .catch(err => {
                   this.$emit("update:loadingZFB", false);
-                  this.$Message.info("支付宝编辑成功,请等待审核");
-                } else {
-                  this.$emit("update:loadingZFB", false);
-                }
-              })
-              .catch(err => {
-                this.$emit("update:loadingZFB", false);
-              });
+                });
+            }
           }
         }
       });

@@ -66,9 +66,9 @@
     <!-- 结算详情弹框的模态框 -->
     <Modal v-model="isShow" :mask-closable="false" :title="'结算详情('+deductAccount+')'" width="1300">
       <Table :columns="columnsMore" :data="dataTableMore" border ref="table" style="margin:20px 0">
-        <template slot-scope="{row,index}" slot="price">
+        <!-- <template slot-scope="{row,index}" slot="price">
           <span>{{row.benefitPrice-row.activityAmount}}</span>
-        </template>
+        </template> -->
       </Table>
       <Page
         :total="totalMore"
@@ -331,6 +331,13 @@ export default {
           tooltip: true
         },
         {
+          title: "利润(元)",
+          key: "profitPrice",
+          align: "center",
+          minWidth: 60,
+          tooltip: true
+        },
+        {
           title: "利润百分比",
           key: "profitPercent",
           align: "center",
@@ -342,7 +349,7 @@ export default {
         },
         {
           title: "待结算金额",
-          slot: "price",
+          key: "benefitPrice",
           align: "center",
           minWidth: 50,
           tooltip: true

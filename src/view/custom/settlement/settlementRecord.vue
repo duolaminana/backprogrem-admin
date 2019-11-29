@@ -355,6 +355,13 @@ export default {
           tooltip: true
         },
         {
+          title: "利润(元)",
+          key: "profitPrice",
+          align: "center",
+          minWidth: 60,
+          tooltip: true
+        },
+        {
           title: "利润百分比",
           key: "profitPercent",
           align: "center",

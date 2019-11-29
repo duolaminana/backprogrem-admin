@@ -120,6 +120,7 @@
     <device-modal-component-custom
       v-if='isCustom'
       :query = 'query'
+      ref='deviceCustom'
       :formValidate = 'formValidate'
       @toBack =  'toBack'
     >
@@ -313,16 +314,27 @@ export default {
       // if(row.channelId&&row.maxClomun&&row.maxLayer&&row.machineName&&row.id){
         let url = `/machineTypeRoad/queryByType?machineType=${row.id}`;
         netWorkDevice(url,null,'get').then(res => {
+          if(row.isAutomatic!=1){
+            this.isCustom = true;
+            this.formValidate = {};
+          }
           this.query = res.result;
           if(this.query.list){
             this.query.list.forEach((v,i)=>{
-              console.log(v)
               v.AddMachineTypeRoadDto.forEach((val,index)=>{
                 val.roadType =  val.roadType?val.roadType.toString():'1';
                 val.rowData =  val.rowData?val.rowData:{};
                 setTimeout(()=>{  //延时让组件先渲染 否则为空
-                  if(index>0&&this.query.list[i].AddMachineTypeRoadDto[index].merged){
-                    this.$refs.device.setWidthAfter(i,index)
+                  if(this.query.list[i].AddMachineTypeRoadDto[index].merged){
+                    if(this.query.list[i].AddMachineTypeRoadDto[index].roadStatus==1){
+                      this.query.setWidthAfterNum = index;
+                    }
+                    if(this.isCustom){
+                      console.log(11111111)
+                      this.$refs.deviceCustom.setWidthAfter(i,index)
+                    }else{
+                      this.$refs.device.setWidthAfter(i,index)
+                    }
                   }
                 },1)
               })
@@ -332,10 +344,6 @@ export default {
           }
           console.log(this.query)
           this.isDetail = true;
-          if(row.isAutomatic!=1){
-            this.isCustom = true;
-            this.formValidate = {};
-          }
         })
       // }else{
       //   this.$Message.error('缺少参数');

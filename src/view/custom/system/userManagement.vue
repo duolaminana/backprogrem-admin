@@ -602,7 +602,7 @@ export default {
           title: "操作",
           align: "center",
           slot: "operation",
-          minWidth: 60,
+          minWidth: 100,
           tooltip: true
         }
       ],
