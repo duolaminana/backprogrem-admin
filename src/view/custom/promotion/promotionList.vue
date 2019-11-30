@@ -28,6 +28,7 @@
         <!-- 关联设备 -->
         <template slot-scope="{row,index}" slot="num">
           <a
+          :disabled="channelId!=$store.state.user.channelId"
             class="lookDetails"
             v-show="row.activityMode==2"
             @click="showRelation(row)"

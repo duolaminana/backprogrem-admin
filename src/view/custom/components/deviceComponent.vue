@@ -3,7 +3,7 @@
     <div class=headBox>
       <Button type="primary" size="large" class='keep' icon='md-albums' @click='keep'>保存</Button>
       <Button type="primary"  size="large" @click='toBack' style="float:left;margin-right:30px;">返回</Button>
-      <strong style="margin-right:30px;">{{query.machineName}}</strong>
+      <strong style="margin-right:30px;">{{query.machineCode}}</strong>
       <Select v-model="modal" :disabled='isKong>0'  @on-change='deviceChange' class='marginRight' :clearable='true' placeholder="货道商品模板">
           <Option v-for="item in selectList" :value="item.value" :key="item.value">{{ item.label }}</Option>
       </Select>

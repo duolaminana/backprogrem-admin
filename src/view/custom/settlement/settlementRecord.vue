@@ -66,7 +66,12 @@
         <!-- 操作 -->
         <template slot-scope="{row,index}" slot="operation">
           <!-- 再次结算 -->
-          <Button v-if="hasPerm('set:rec:setmore')&&row.clearingStatus==3" type="primary" size="small" @click="setMore(row)">再次结算</Button>
+          <Button
+            v-if="hasPerm('set:rec:setmore')&&row.clearingStatus==3"
+            type="primary"
+            size="small"
+            @click="setMore(row)"
+          >再次结算</Button>
         </template>
       </Table>
       <Page
@@ -82,8 +87,14 @@
     <!-- 结算详情弹框的模态框 -->
     <Modal v-model="isShow" :mask-closable="false" :title="'结算详情('+deductAccount+')'" width="1300">
       <Table :columns="columnsMore" :data="dataTableMore" border ref="table" style="margin:20px 0">
-        <template slot-scope="{row,index}" slot="price">
-          <span>{{row.benefitPrice-row.activityAmount}}</span>
+        <template slot-scope="{row,index}" slot="Price">
+          <span>{{(row.actualPrice-row.buyPrice)*row.productProduce*(row.commissionPercent/100)}}</span>
+        </template>
+        <template slot-scope="{row,index}" slot="primayCapital">
+          <span>{{row.primayCapital|primayCapital}}</span>
+        </template>
+        <template slot-scope="{row,index}" slot="cardNo">
+          <span>{{row.cardNo|cardNo}}</span>
         </template>
       </Table>
       <Page
@@ -286,7 +297,7 @@ export default {
         },
         {
           title: "消费者",
-          key: "cardNo",
+          slot: "cardNo",
           align: "center",
           minWidth: 40,
           tooltip: true
@@ -348,10 +359,17 @@ export default {
           tooltip: true
         },
         {
-          title: "利润(元)",
-          key: "profitPrice",
+          title: "本金(元)",
+          slot: "primayCapital",
           align: "center",
-          minWidth: 60,
+          minWidth: 80,
+          tooltip: true
+        },
+        {
+          title: "抽成金额(元)",
+          slot: "Price",
+          align: "center",
+          minWidth: 80,
           tooltip: true
         },
         {
@@ -442,10 +460,24 @@ export default {
       };
     }
   },
-  methods: {
-    setMore(row){
-
+  // 过滤器
+  filters: {
+    primayCapital(value) {
+      let realVal = "";
+      if (value) {
+        // 截取当前数据到小数点后两位
+        realVal = parseFloat(value).toFixed(2);
+      } else {
+        realVal = "——";
+      }
+      return realVal;
     },
+    cardNo(value) {
+      return `${value.substring(0,3)}****${value.substring(value.length-4)}`
+    }
+  },
+  methods: {
+    setMore(row) {},
     handleChangeStart(value) {
       this.clearingStartDate = value;
     },

@@ -37,7 +37,7 @@
             </template>
             <template slot-scope="{ row, index }" slot="status">
               <span v-show='row.status==0' class='gray'>待审核</span>
-              <span v-show='row.status==1' class='green'>待使用</span>
+              <span v-show='row.status==1' class='orange'>待使用</span>
               <span v-show='row.status==2' class='red'>审核不通过</span>
               <span v-show='row.status==3' class='green'>点位中</span>
               <span v-show='row.status==4' class='gray'>故障中</span>

@@ -75,11 +75,6 @@
           <span>{{row.businessScope|businessScopeText|text(saleList)}}</span>
         </template>
         <template slot-scope="{ row, index }" slot="operation">
-          <!-- <Button
-            v-if="(channelId==$store.state.user.channelId&&row.auditStatus==2)||(channelId==row.channelId&&row.auditStatus==2)"
-            size="small"
-            disabled
-          >审核中...</Button>-->
           <!-- 按钮 -->
           <Button
             type="success"

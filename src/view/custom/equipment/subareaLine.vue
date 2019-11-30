@@ -18,13 +18,13 @@
         <Select v-model="routeType"  class='marginRight' placeholder="线路类型" :clearable='true'>
             <Option v-for="item in routeTypeList" :value="item.value" :key="item.value">{{ item.label }}</Option>
         </Select>
-        <Button @click='clickQuery' type="primary" >查询</Button>
-        <Button @click='reset' type="primary">重置</Button>
-        <Button  type="primary" @click='showNewlyAdded("xz")' class='xzbtn' icon="md-add">新增</Button>
+        <Button v-if="hasPerm('pos:sub:select')" @click='clickQuery' type="primary" >查询</Button>
+        <Button v-if="hasPerm('pos:sub:reset')"  @click='reset' type="primary">重置</Button>
+        <Button v-if="channelId==$store.state.user.userVo.channelId && hasPerm('pos:sub:add') " type="primary" @click='showNewlyAdded("xz")' class='xzbtn' icon="md-add">新增</Button>
         <Table border ref="selection" :columns="columns" :data="datas">
           <template slot-scope="{ row, index }"  slot="edit">
-              <Button type="primary" size="small" @click='showNewlyAdded("bj",index,row)' class='marBtn' >编辑</Button>
-              <Button type="error" size="small" @click="modalDel=true;delID=row.id;delIndex=index">删除</Button>
+              <Button v-if="channelId==$store.state.user.userVo.channelId && hasPerm('pos:sub:edit') " type="primary" size="small" @click='showNewlyAdded("bj",index,row)' class='marBtn' >编辑</Button>
+              <Button v-if="channelId==$store.state.user.userVo.channelId && hasPerm('pos:sub:del') " type="error" size="small" @click="modalDel=true;delID=row.id;delIndex=index">删除</Button>
           </template>
           <template slot-scope="{ row, index }"  slot="routeType" >
               <!-- <span v-show='row.routeType==1' class='blue'>分区</span> -->

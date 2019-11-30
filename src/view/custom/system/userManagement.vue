@@ -183,6 +183,7 @@
         </FormItem>
         <FormItem prop="route" label="管理分区" style="margin-bottom:20px;display:inline-block">
           <Cascader
+            v-model="valueData"
             class="routeDatas"
             :data="routeDatas"
             @on-change="routeSelectChange"
@@ -190,7 +191,6 @@
             :render-format="formatRoute"
             placeholder="请选择分区"
             change-on-select
-            trigger="hover"
           ></Cascader>
         </FormItem>
         <div class="routes">
@@ -389,6 +389,7 @@ export default {
       }
     };
     return {
+      valueData: [],
       formValidateStr: "",
       formValidateDepStr: "",
       isDefault: true,
@@ -621,6 +622,7 @@ export default {
         if (this.cacheValue)
           this.routeList = [...this.routeList, this.cacheValue];
       }
+      this.valueData = [];
     },
     routeSelectChange(val, data) {
       let { label, value } = data[data.length - 1];

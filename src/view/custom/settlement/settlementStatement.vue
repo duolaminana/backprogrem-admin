@@ -50,7 +50,12 @@
         <!-- 操作 -->
         <template slot-scope="{row,index}" slot="operation">
           <!-- 结算 -->
-          <Button type="primary" size="small" @click="getSettlementClick(row)" v-if="hasPerm('set:sta:set')">结算</Button>
+          <Button
+            type="primary"
+            size="small"
+            @click="getSettlementClick(row)"
+            v-if="hasPerm('set:sta:set')"
+          >结算</Button>
         </template>
       </Table>
       <Page
@@ -64,11 +69,17 @@
       />
     </div>
     <!-- 结算详情弹框的模态框 -->
-    <Modal v-model="isShow" :mask-closable="false" :title="'结算详情('+deductAccount+')'" width="1300">
+    <Modal v-model="isShow" :mask-closable="false" :title="'结算详情('+deductAccount+')'" width="1400">
       <Table :columns="columnsMore" :data="dataTableMore" border ref="table" style="margin:20px 0">
-        <!-- <template slot-scope="{row,index}" slot="price">
-          <span>{{row.benefitPrice-row.activityAmount}}</span>
-        </template> -->
+        <template slot-scope="{row,index}" slot="Price">
+          <span>{{(row.actualPrice-row.buyPrice)*row.productProduce*(row.commissionPercent/100)}}</span>
+        </template>
+        <template slot-scope="{row,index}" slot="primayCapital">
+          <span>{{row.primayCapital|primayCapital}}</span>
+        </template>
+        <template slot-scope="{row,index}" slot="cardNo">
+          <span>{{row.cardNo|cardNo}}</span>
+        </template>
       </Table>
       <Page
         :total="totalMore"
@@ -242,22 +253,21 @@ export default {
         {
           title: "序号",
           type: "index",
-          maxWidth: 60,
-          minWidth: 40,
+          minWidth: 50,
           align: "center"
         },
         {
           title: "订单编号",
           key: "orderNo",
           align: "center",
-          minWidth: 150,
+          minWidth: 80,
           tooltip: true
         },
         {
           title: "消费者",
-          key: "cardNo",
+          slot: "cardNo",
           align: "center",
-          minWidth: 60,
+          minWidth: 100,
           tooltip: true
         },
         {
@@ -278,42 +288,35 @@ export default {
           title: "商品进价",
           key: "buyPrice",
           align: "center",
-          minWidth: 40,
+          minWidth: 70,
           tooltip: true
         },
         {
           title: "实际售价",
           key: "actualPrice",
           align: "center",
-          minWidth: 40,
+          minWidth: 70,
           tooltip: true
         },
         {
           title: "活动售价",
           key: "activityPrice",
           align: "center",
-          minWidth: 40,
+          minWidth: 70,
           tooltip: true
         },
         {
           title: "购买数量",
           key: "productNumber",
           align: "center",
-          minWidth: 40,
+          minWidth: 70,
           tooltip: true
         },
         {
           title: "出货数量",
           key: "productProduce",
           align: "center",
-          minWidth: 40,
-          tooltip: true
-        },
-        {
-          title: "活动扣款金额",
-          key: "activityAmount",
-          align: "center",
-          minWidth: 50,
+          minWidth: 70,
           tooltip: true
         },
         {
@@ -324,10 +327,17 @@ export default {
           tooltip: true
         },
         {
-          title: "利润(元)",
-          key: "profitPrice",
+          title: "本金(元)",
+          slot: "primayCapital",
           align: "center",
           minWidth: 60,
+          tooltip: true
+        },
+        {
+          title: "抽成金额(元)",
+          slot: "Price",
+          align: "center",
+          minWidth: 80,
           tooltip: true
         },
         {
@@ -341,7 +351,7 @@ export default {
           title: "利润百分比",
           key: "profitPercent",
           align: "center",
-          minWidth: 50,
+          minWidth: 60,
           tooltip: true,
           render: (h, param) => {
             return h("div", param.row.profitPercent + "%");
@@ -351,7 +361,7 @@ export default {
           title: "待结算金额",
           key: "benefitPrice",
           align: "center",
-          minWidth: 50,
+          minWidth: 60,
           tooltip: true
         }
       ],
@@ -409,6 +419,22 @@ export default {
           return time < new Date(limitTime);
         }
       };
+    }
+  },
+  // 过滤器
+  filters: {
+    primayCapital(value) {
+      let realVal = "";
+      if (value) {
+        // 截取当前数据到小数点后两位
+        realVal = parseFloat(value).toFixed(2);
+      } else {
+        realVal = "——";
+      }
+      return realVal;
+    },
+    cardNo(value) {
+      return `${value.substring(0,3)}****${value.substring(value.length-4)}`
     }
   },
   methods: {

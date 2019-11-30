@@ -52,7 +52,7 @@
           </template>
           <template slot-scope="{ row, index }" slot="status">
               <span v-show='row.status==0' class='gray'>待审核</span>
-              <span v-show='row.status==1'  :class='row.surplusDays<0?"gray":"green"'>待使用</span>
+              <span v-show='row.status==1'  :class='row.surplusDays<0?"gray":"orange"'>待使用</span>
               <span v-show='row.status==2'  :class='row.surplusDays<0?"gray":"green"'>审核不通过</span>
               <span v-show='row.status==3'  :class='row.surplusDays<0?"gray":"green"'>点位中</span>
               <span v-show='row.status==4' class='gray'>故障中</span>

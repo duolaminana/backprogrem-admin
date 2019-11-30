@@ -135,15 +135,15 @@ class HttpRequest {
                 Message.error('服务器遇到错误，无法完成请求');
                 break;
             }
-            // alert('失败')
-            console.log(error.config)
         } else if (error.request) {
             if(error.request.readyState == 4 && error.request.status == 0){
                 //我在这里重新请求
                 axios(error.config)
             }
+        }else{
+          console.log('失败')
+          console.log(error.config)
         }
-        
         return Promise.reject(error)
       }
     )

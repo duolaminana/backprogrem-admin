@@ -40,7 +40,8 @@
       >
         <!-- 身份证号 -->
         <template slot-scope="{row,index}" slot="cardNo">
-          <span>{{row.cardNo|cardNo}}</span>
+          <span v-if="$store.state.user.channelId!=1">{{row.cardNo|cardNo}}</span>
+          <span v-if="$store.state.user.channelId==1">{{row.cardNo}}</span>
         </template>
         <!-- 点位名称 -->
         <template slot-scope="{row,index}" slot="positionName">
@@ -359,21 +360,21 @@ export default {
           tooltip: true
         },
         {
-          title: "商品进价",
+          title: "商品进价(元)",
           key: "buyPrice",
           align: "center",
           // minWidth: 60,
           tooltip: true
         },
         {
-          title: "实际售价",
+          title: "实际售价(元)",
           key: "actualPrice",
           align: "center",
           // minWidth: 60,
           tooltip: true
         },
         {
-          title: "活动售价",
+          title: "活动售价(元)",
           key: "activityPrice",
           align: "center",
           // minWidth: 60,
@@ -453,6 +454,9 @@ export default {
           return "本金";
           break;
         case 2:
+          return "利润";
+          break;
+        case 3:
           return "利润";
           break;
       }

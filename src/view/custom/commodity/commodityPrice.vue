@@ -5,8 +5,8 @@
           <Option v-for="item in rangeList" :value="item.value" :key="item.value">{{ item.label }}</Option>
         </Select>
         <Input v-model="name"  placeholder="模板名称" clearable class='marginRight'/>
-        <Button @click='clickQuery' type="primary">查询</Button>
-        <Button @click='reset' type="primary">重置</Button>
+        <Button v-if="hasPerm('pro:price:select')" @click='clickQuery' type="primary">查询</Button>
+        <Button v-if="hasPerm('pro:price:reset')" @click='reset' type="primary">重置</Button>
         <Button  v-if="hasPerm('pro:price:add')"  type="primary" @click='showNewlyAdded("xz")' class='xzbtn' icon="md-add">新增</Button>
         <Table border ref="selection" :columns="columns" :data="datas">
           <template slot-scope="{ row, index }" slot="templateName">
