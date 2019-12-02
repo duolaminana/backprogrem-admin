@@ -20,8 +20,8 @@
           :key="item.value"
         >{{ item.label }}</Option>
       </Select>
-      <Button type="primary" @click="getMerchant" v-if="hasPerm('sys:merchantinfo:search')">查询</Button>
-      <Button type="primary" @click="reset" v-if="hasPerm('sys:merchantinfo:reset')">重置</Button>
+      <Button type="primary" @click="getMerchant" v-if="hasPerm('sys:merchantinfoMang:see')">查询</Button>
+      <Button type="primary" @click="reset" v-if="hasPerm('sys:merchantinfoMang:see')">重置</Button>
       <Table highlight-row :columns="columns" :data="dataTable" border>
         <template slot-scope="{ row, index }" slot="businessScope">
           <span>{{row.businessScope|businessScopeText|text(saleList)}}</span>
@@ -32,7 +32,7 @@
             type="primary"
             size="small"
             style="margin-right: 5px"
-            v-if="row.auditStatus==4||row.auditStatus==3||row.auditStatus==2"
+            v-if="hasPerm('sys:merchantinfoMang:check')&&(row.auditStatus==4||row.auditStatus==3||row.auditStatus==2)"
             @click="checkModal(row)"
             :disabled="row.auditStatus==2"
           >编辑</Button>
@@ -42,13 +42,13 @@
             size="small"
             style="margin-right: 5px"
             @click="checkModal(row)"
-            v-if="hasPerm('sys:merchantinfo:checked')&&row.auditStatus==2"
+            v-if="hasPerm('sys:merchantinfo:check')&&row.auditStatus==2"
           >&nbsp&nbsp审核&nbsp&nbsp</Button>
 
           <Button
             size="small"
             style="margin-right: 5px"
-            v-if="row.auditStatus==4||row.auditStatus==3"
+            v-if="hasPerm('sys:merchantinfoMang:check')&&(row.auditStatus==4||row.auditStatus==3)"
             disabled
           >已审核</Button>
 

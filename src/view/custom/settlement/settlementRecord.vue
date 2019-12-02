@@ -25,8 +25,8 @@
         @on-change="handleChangeEnd"
         style="width: 160px"
       ></DatePicker>
-      <Button type="primary" @click="searchSettlementOver" v-if="hasPerm('set:rec:search')">查询</Button>
-      <Button type="primary" @click="reset" v-if="hasPerm('set:rec:reset')">重置</Button>
+      <Button type="primary" @click="searchSettlementOver" v-if="hasPerm('set:rec:see')||hasPerm('set:rec:seeback')">查询</Button>
+      <Button type="primary" @click="reset" v-if="hasPerm('set:rec:see')||hasPerm('set:rec:seeback')">重置</Button>
       <Table
         highlight-row
         :columns="columns"
@@ -67,7 +67,7 @@
         <template slot-scope="{row,index}" slot="operation">
           <!-- 再次结算 -->
           <Button
-            v-if="hasPerm('set:rec:setmore')&&row.clearingStatus==3"
+            v-if="(hasPerm('set:rec:setmore')||hasPerm('set:rec:setmoreback'))&&row.clearingStatus==3"
             type="primary"
             size="small"
             @click="setMore(row)"

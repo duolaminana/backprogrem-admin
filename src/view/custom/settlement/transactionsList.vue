@@ -23,9 +23,9 @@
         @on-change="handleChangeEnd"
         style="width: 160px"
       ></DatePicker>
-      <Button type="primary" @click="searchOrder" v-if="hasPerm('set:tranlist:search')">查询</Button>
-      <Button type="primary" @click="reset" v-if="hasPerm('set:tranlist:reset')">重置</Button>
-      <Button type="primary" @click="exportTable" v-if="hasPerm('set:tranlist:exp')">导出</Button>
+      <Button type="primary" @click="searchOrder" v-if="hasPerm('set:tranlist:see')||hasPerm('set:tranlist:seeback')">查询</Button>
+      <Button type="primary" @click="reset" v-if="hasPerm('set:tranlist:see')||hasPerm('set:tranlist:seeback')">重置</Button>
+      <Button type="primary" @click="exportTable" v-if="hasPerm('set:tranlist:see')||hasPerm('set:tranlist:seeback')">导出</Button>
       <Table
         highlight-row
         :columns="columns"
@@ -85,7 +85,7 @@
             type="primary"
             size="small"
             @click="refund(row)"
-            v-if="hasPerm('set:tranlist:refund')"
+            v-if="hasPerm('set:tranlist:refund')||hasPerm('set:tranlist:refundback')"
           >退款</Button>
         </template>
       </Table>

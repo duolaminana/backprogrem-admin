@@ -3,8 +3,8 @@
     <div class="clientManagementContent">
       <Input class="input" v-model="memberName" clearable placeholder="会员姓名" />
       <Input class="input" v-model="cardNo" placeholder="身份证号" clearable />
-      <Button type="primary" @click="getMember">查询</Button>
-      <Button type="primary" @click="reset">重置</Button>
+      <Button type="primary" @click="getMember" v-if="hasPerm('client:search')">查询</Button>
+      <Button type="primary" @click="reset" v-if="hasPerm('client:reset')">重置</Button>
 
       <!-- 表格 -->
       <Table

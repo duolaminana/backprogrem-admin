@@ -3,14 +3,14 @@
     <div style='display: inline-block;vertical-align: top;width:39%;margin-right:2%'>
       <div style="overflow: hidden;">
         <Input v-model="templateName"  placeholder="模板名称" clearable class='marginRight'/>
-        <Button @click='clickQuery' type="primary" >查询</Button>
+        <Button  @click='clickQuery' type="primary" >查询</Button>
         <Button @click='reset' type="primary">重置</Button>
-        <Button  type="primary" @click='showNewlyAdded("xz")' class='xzbtn' icon="md-add">新增</Button>
+        <Button v-if="hasPerm('pos:bet:edit')"  type="primary" @click='showNewlyAdded("xz")' class='xzbtn' icon="md-add">新增</Button>
       </div>
       <Table  border ref="selection" :columns="columns" :data="datas" :highlight-row='true' @on-row-click='tableClick'>
         <template slot-scope="{ row, index }"  slot="edit">
-          <Button type="primary" size="small" class='marBtn' @click='showNewlyAdded("bj",index,row)'>编辑</Button>
-          <Button type="error" size="small" @click="modalDel=true;delID=row.id;delIndex=index">删除</Button>
+          <Button v-if="hasPerm('pos:bet:edit')" type="primary" size="small" class='marBtn' @click='showNewlyAdded("bj",index,row)'>编辑</Button>
+          <Button v-if="hasPerm('pos:bet:edit')" type="error" size="small" @click="modalDel=true;delID=row.id;delIndex=index">删除</Button>
         </template>
       </Table>
       <Page :total="total" show-elevator :current='pageNum' @on-change='pageChange' :page-size='pageSize' @on-page-size-change='sizeChange'  show-sizer/>

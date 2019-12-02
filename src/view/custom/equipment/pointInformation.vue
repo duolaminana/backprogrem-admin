@@ -5,10 +5,10 @@
             <Option v-for="item in routeNameList" :value="item.value" :key="item.value">{{ item.label }}</Option>
         </Select>
         <Cascader :data="cityData" v-model="areaIds" placeholder="区域" class='marginRight'></Cascader>
-        <Button v-if="hasPerm('pos:pfm:select')" @click='inquiry' type="primary">查询</Button>
-        <Button v-if="hasPerm('pos:pfm:reset')" @click='reset' type="primary">重置</Button>
-        <Button v-if="hasPerm('pos:pfm:add')" type="primary" @click='showNewlyAdded("xz")' class='xzbtn' icon="md-add">新增</Button>
-        <Button v-if="hasPerm('pos:pfm:rep')" type="primary" @click='replace' :disabled='!tableRowData' class='xzbtn' >更改设备</Button>
+        <Button  @click='inquiry' type="primary">查询</Button>
+        <Button  @click='reset' type="primary">重置</Button>
+        <Button v-if="hasPerm('pos:pfm:edit')" type="primary" @click='showNewlyAdded("xz")' class='xzbtn' icon="md-add">新增</Button>
+        <Button v-if="hasPerm('pos:pfm:edit')" type="primary" @click='replace' :disabled='!tableRowData' class='xzbtn' >更改设备</Button>
         <Table :highlight-row='true' border ref="selection" :columns="columns" :data="datas" @on-row-click='tableClick'>
           <template slot-scope="{ row, index }" slot="cooperationType">
             <span v-show='row.cooperationType==1'>分成</span>
@@ -44,10 +44,10 @@
               <Button type="success" size="small" class='marBtn' v-show='row.positionStatus==2' @click.stop='rowData=row;rowIndex=index;examine=true'>审核</Button> -->
               <!-- <Button type="success" size="small" class='marBtn' v-show='row.enable==0' @click.stop='enable(row,index)'>启用</Button>
               <Button type="error" size="small" class='marBtn' v-show='row.enable==1' @click.stop='enable(row,index)'>停用</Button> -->
-              <Button v-if="hasPerm('pos:pfm:bind')" type="error" size="small" class='marBtn' v-show='row.machineCode' @click.stop='untying(row,index)'>解绑设备</Button>
-              <Button v-if="hasPerm('pos:pfm:bind')" type="primary" size="small" class='marBtn' v-show='!row.machineCode' @click.stop='binded(row)'>绑定设备</Button>
+              <Button v-if="hasPerm('pos:pfm:edit')" type="error" size="small" class='marBtn' v-show='row.machineCode' @click.stop='untying(row,index)'>解绑设备</Button>
+              <Button v-if="hasPerm('pos:pfm:edit')" type="primary" size="small" class='marBtn' v-show='!row.machineCode' @click.stop='binded(row)'>绑定设备</Button>
               <Button v-if="hasPerm('pos:pfm:edit')" type="primary" size="small" class='marBtn' @click.stop='showNewlyAdded("bj",index)'>编辑</Button>
-              <Button v-if="hasPerm('pos:pfm:del')" type="error" size="small" @click.stop="itemDelete(row,index)" >删除</Button>
+              <Button v-if="hasPerm('pos:pfm:edit')" type="error" size="small" @click.stop="itemDelete(row,index)" >删除</Button>
           </template>
           <template slot-scope="{ row, index }" slot="priceTemplate">
             <a @click.stop='rowData=row;lookPriceTemplate(row,index)' v-if='row.priceTemplate'>查看详情</a>

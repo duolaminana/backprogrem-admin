@@ -6,18 +6,17 @@
         type="primary"
         icon="md-add-circle"
         @click="addModalDep"
-        v-if="hasPerm('sys:dept:add')"
       >添加部门</Button>
       <!-- 下拉菜单 -->
       <Dropdown style="margin-left: 10px" @on-click="getDropdownData">
-        <Button v-if="hasPerm('sys:dept:more')">
+        <Button>
           更多操作
           <Icon type="ios-arrow-down"></Icon>
         </Button>
         <DropdownMenu slot="list">
-          <DropdownItem :name="deptId" v-if="hasPerm('sys:dept:edit')">编辑部门</DropdownItem>
-          <DropdownItem @click.native="delOneDep" v-if="hasPerm('sys:dept:del')">删除部门</DropdownItem>
-          <DropdownItem @click.native="refresh" v-if="hasPerm('sys:dept:refresh')">刷新</DropdownItem>
+          <DropdownItem :name="deptId">编辑部门</DropdownItem>
+          <DropdownItem @click.native="delOneDep">删除部门</DropdownItem>
+          <DropdownItem @click.native="refresh">刷新</DropdownItem>
         </DropdownMenu>
       </Dropdown>
       <!-- 警告 -->
@@ -38,9 +37,9 @@
       <Select v-model="status" clearable placeholder="用户状态" style="margin-right:10px">
         <Option v-for="item in List" :value="item.value" :key="item.value">{{ item.label }}</Option>
       </Select>
-      <Button type="primary" @click="searchuserManagement" v-if="hasPerm('sys:user:search')">查询</Button>
-      <Button type="primary" @click="addModal" class="xzbtn" v-if="hasPerm('sys:user:add')">新增</Button>
-      <Button type="primary" @click="reset" v-if="hasPerm('sys:user:reset')">重置</Button>
+      <Button type="primary" @click="searchuserManagement">查询</Button>
+      <Button type="primary" @click="addModal" class="xzbtn">新增</Button>
+      <Button type="primary" @click="reset">重置</Button>
       <Table highlight-row :columns="columns11" :data="dataTable" border ref="table">
         <!-- 图像 -->
         <template slot-scope="{ row, index }" slot="img">
@@ -69,14 +68,14 @@
             size="small"
             style="margin-right: 5px"
             @click="editModal(row)"
-            v-if="hasPerm('sys:user:edit')&&row.type!=2"
+            v-if="row.type!=2"
           >编辑</Button>
           <!-- 删除按钮 -->
           <Button
             type="error"
             size="small"
             @click="modalDel=true;delID=row.id;delIndex=index;isDep=false"
-            v-if="hasPerm('sys:user:del')&&row.type!=2"
+            v-if="row.type!=2"
           >删除</Button>
         </template>
       </Table>

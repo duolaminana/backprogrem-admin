@@ -5,9 +5,9 @@
           <Option v-for="item in rangeList" :value="item.value" :key="item.value">{{ item.label }}</Option>
         </Select>
         <Input v-model="name"  placeholder="模板名称" clearable class='marginRight'/>
-        <Button v-if="hasPerm('pro:price:select')" @click='clickQuery' type="primary">查询</Button>
-        <Button v-if="hasPerm('pro:price:reset')" @click='reset' type="primary">重置</Button>
-        <Button  v-if="hasPerm('pro:price:add')"  type="primary" @click='showNewlyAdded("xz")' class='xzbtn' icon="md-add">新增</Button>
+        <Button @click='clickQuery' type="primary">查询</Button>
+        <Button @click='reset' type="primary">重置</Button>
+        <Button  v-if="hasPerm('pro:price:edit')"  type="primary" @click='showNewlyAdded("xz")' class='xzbtn' icon="md-add">新增</Button>
         <Table border ref="selection" :columns="columns" :data="datas">
           <template slot-scope="{ row, index }" slot="templateName">
               <Poptip placement="right" width="300" trigger='hover' @on-popper-show='popperShow(row)' >
@@ -28,9 +28,9 @@
               {{row.templateName}}
           </template>
           <template slot-scope="{ row, index }"    slot="edit">
-              <Button v-if="hasPerm('pro:price:modal')" type="success" size="small" class='marBtn' @click='clickTemplate(row)'>模板</Button>
+              <Button v-if="hasPerm('pro:price:edit')" type="success" size="small" class='marBtn' @click='clickTemplate(row)'>模板</Button>
               <Button v-if="hasPerm('pro:price:edit')" type="primary" size="small" class='marBtn' @click='showNewlyAdded("bj",index)'>编辑</Button>
-              <Button v-if="hasPerm('pro:price:del')" type="error" size="small" @click="modalDel=true;delID=row.id;delIndex=index">删除</Button>
+              <Button v-if="hasPerm('pro:price:edit')" type="error" size="small" @click="modalDel=true;delID=row.id;delIndex=index">删除</Button>
           </template>
         </Table>
         <Page :total="total" show-elevator :current='pageNum' @on-change='pageChange' :page-size='pageSize' @on-page-size-change='sizeChange'  show-sizer/>

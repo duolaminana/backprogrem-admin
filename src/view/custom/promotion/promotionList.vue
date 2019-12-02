@@ -6,14 +6,14 @@
     <div class="rightDiv">
       <Input v-model="activityName" style="margin-right:10px" placeholder="活动名称" clearable />
       <Input v-model="machineCode" style="margin-right:10px" placeholder="设备编码" clearable />
-      <Button type="primary" @click="searchSearchActivity" v-if="hasPerm('act:actList:add')">查询</Button>
-      <Button type="primary" @click="reset" v-if="hasPerm('act:actList:reset')">重置</Button>
+      <Button type="primary" @click="searchSearchActivity" v-if="hasPerm('act:actList:see')">查询</Button>
+      <Button type="primary" @click="reset" v-if="hasPerm('act:actList:see')">重置</Button>
       <Button
         type="primary"
         @click="addModal"
         class="xzbtn"
         relationDatarelationData
-        v-if="channelId==$store.state.user.channelId&&hasPerm('act:actList:add')"
+        v-if="channelId==$store.state.user.channelId&&hasPerm('act:actList:edit')"
       >新增</Button>
 
       <Table highlight-row :columns="columns" :data="dataTable" border ref="table" style="margin:20px 0">
@@ -49,23 +49,23 @@
             type="primary"
             size="small"
             @click="toOpen(row)"
-            v-if="channelId==$store.state.user.channelId&&hasPerm('act:actList:start')&&!row.publish&&row.status!=2"
+            v-if="channelId==$store.state.user.channelId&&hasPerm('act:actList:edit')&&!row.publish&&row.status!=2"
           >启用</Button>
           <Button
             disabled
             size="small"
-            v-if="channelId==$store.state.user.channelId&&hasPerm('act:actList:start')&&!row.publish&&row.status==2"
+            v-if="channelId==$store.state.user.channelId&&hasPerm('act:actList:edit')&&!row.publish&&row.status==2"
           >启用</Button>
           <Button
             type="error"
             size="small"
             @click="toClose(row)"
-            v-if="channelId==$store.state.user.channelId&&hasPerm('act:actList:end')&&row.publish&&row.status!=2"
+            v-if="channelId==$store.state.user.channelId&&hasPerm('act:actList:edit')&&row.publish&&row.status!=2"
           >停用</Button>
           <Button
             disabled
             size="small"
-            v-if="channelId==$store.state.user.channelId&&hasPerm('act:actList:end')&&row.publish&&row.status==2"
+            v-if="channelId==$store.state.user.channelId&&hasPerm('act:actList:edit')&&row.publish&&row.status==2"
           >停用</Button>
           <!-- 编辑按钮 -->
           <Button
@@ -81,7 +81,7 @@
             size="small"
             :disabled="row.status==1&&row.publish"
             @click="modalDel=true;delID=row.id;delIndex=index;changeData.id=row.id"
-            v-if="channelId==$store.state.user.channelId&&hasPerm('act:actList:del')"
+            v-if="channelId==$store.state.user.channelId&&hasPerm('act:actList:edit')"
           >删除</Button>
         </template>
       </Table>

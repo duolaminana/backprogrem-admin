@@ -25,8 +25,8 @@
         @on-change="handleChangeEnd"
         style="width: 160px"
       ></DatePicker>
-      <Button type="primary" @click="searchSettlement" v-if="hasPerm('set:sta:search')">查询</Button>
-      <Button type="primary" @click="reset" v-if="hasPerm('set:sta:reset')">重置</Button>
+      <Button type="primary" @click="searchSettlement" v-if="hasPerm('set:sta:see')||hasPerm('set:sta:seeback')">查询</Button>
+      <Button type="primary" @click="reset" v-if="hasPerm('set:sta:see')||hasPerm('set:sta:seeback')">重置</Button>
       <Table
         highlight-row
         :columns="columns"
@@ -54,7 +54,7 @@
             type="primary"
             size="small"
             @click="getSettlementClick(row)"
-            v-if="hasPerm('set:sta:set')"
+            v-if="hasPerm('set:sta:set')||hasPerm('set:sta:setback')"
           >结算</Button>
         </template>
       </Table>
@@ -331,21 +331,24 @@ export default {
           slot: "primayCapital",
           align: "center",
           minWidth: 60,
-          tooltip: true
+          tooltip: true,
+          className: "demo-table-info-column"
         },
         {
           title: "抽成金额(元)",
           slot: "Price",
           align: "center",
           minWidth: 80,
-          tooltip: true
+          tooltip: true,
+          className: "demo-table-info-column"
         },
         {
           title: "利润(元)",
           key: "profitPrice",
           align: "center",
           minWidth: 60,
-          tooltip: true
+          tooltip: true,
+          className: "demo-table-info-column"
         },
         {
           title: "利润百分比",
@@ -355,14 +358,16 @@ export default {
           tooltip: true,
           render: (h, param) => {
             return h("div", param.row.profitPercent + "%");
-          }
+          },
+          className: "demo-table-info-column"
         },
         {
           title: "待结算金额",
           key: "benefitPrice",
           align: "center",
           minWidth: 60,
-          tooltip: true
+          tooltip: true,
+          className: "demo-table-info-column"
         }
       ],
       dataTableMore: [], //结算详情数据
@@ -434,7 +439,7 @@ export default {
       return realVal;
     },
     cardNo(value) {
-      return `${value.substring(0,3)}****${value.substring(value.length-4)}`
+      return `${value.substring(0, 3)}****${value.substring(value.length - 4)}`;
     }
   },
   methods: {
@@ -649,6 +654,9 @@ export default {
   }
   .lookDetails {
     text-decoration: underline;
+  }
+  /deep/ .ivu-table td.demo-table-info-column {
+    color: #2d8cf0;
   }
 }
 </style>

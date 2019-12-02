@@ -62,14 +62,14 @@
           :key="item.value"
         >{{ item.label }}</Option>
       </Select>
-      <Button type="primary" @click="searchMerchant" v-if="hasPerm('sys:merchantinfo:search')">查询</Button>
+      <Button type="primary" @click="searchMerchant" v-if="hasPerm('sys:merchantinfo:see')">查询</Button>
       <Button
         type="primary"
         @click="addModal"
-        v-if="channelId==$store.state.user.channelId&&hasPerm('sys:merchantinfo:add')"
+        v-if="channelId==$store.state.user.channelId&&hasPerm('sys:merchantinfo:edit')"
         class="xzbtn"
       >新增子商户</Button>
-      <Button type="primary" @click="reset" v-if="hasPerm('sys:merchantinfo:reset')">重置</Button>
+      <Button type="primary" @click="reset" v-if="hasPerm('sys:merchantinfo:see')">重置</Button>
       <Table highlight-row :columns="columns" :data="dataTable" border>
         <template slot-scope="{ row, index }" slot="businessScope">
           <span>{{row.businessScope|businessScopeText|text(saleList)}}</span>
@@ -81,7 +81,7 @@
             size="small"
             style="margin-right: 5px"
             @click="changeAuditStatus(row)"
-            v-if="(channelId==$store.state.user.channelId&&hasPerm('sys:merchantinfo:submit')&&row.auditStatus==1)||(row.channelId!=$store.state.user.channelId&&row.auditStatus==1)"
+            v-if="(channelId==$store.state.user.channelId&&hasPerm('sys:merchantinfo:edit')&&row.auditStatus==1)||(row.channelId!=$store.state.user.channelId&&row.auditStatus==1)"
           >提交</Button>
 
           <Button
@@ -89,7 +89,7 @@
             size="small"
             style="margin-right: 5px"
             @click="seeReason(row)"
-            v-if="(channelId==$store.state.user.channelId&&hasPerm('sys:merchantinfo:seeReason')&&(row.auditStatus==4||row.auditStatus==2))||(row.channelId!=$store.state.user.channelId&&(row.auditStatus==4||row.auditStatus==2))"
+            v-if="hasPerm('sys:merchantinfo:see')&&((channelId==$store.state.user.channelId&&(row.auditStatus==4||row.auditStatus==2))||(row.channelId!=$store.state.user.channelId&&(row.auditStatus==4||row.auditStatus==2)))"
           >查看</Button>
 
           <!-- 编辑按钮 -->
@@ -98,23 +98,22 @@
             size="small"
             style="margin-right: 5px"
             @click="editModal(row)"
-            v-if="(channelId==$store.state.user.channelId&&hasPerm('sys:merchantinfo:edit')&&row.auditStatus!=2&&row.channelId==$store.state.user.channelId)||row.auditStatus==3"
+            v-if="(channelId==$store.state.user.channelId&&hasPerm('sys:merchantinfo:edit')&&row.auditStatus!=2&&row.channelId==$store.state.user.channelId)||(hasPerm('sys:merchantinfo:edit')&&row.auditStatus==3)"
           >编辑</Button>
 
           <!-- 删除按钮 -->
           <Button
-            v-show="row.auditStatus==1"
             type="error"
             size="small"
             @click="modalDel=true;delID=row.id;delIndex=index"
-            v-if="false"
+            v-if="hasPerm('sys:merchantinfo:edit')&&row.auditStatus==3"
           >删除</Button>
         </template>
         <!-- 状态 -->
         <template slot-scope="{ row, index }" slot="status">
           <span v-show="row.auditStatus==1" style="color:#2d8cf0">待提交</span>
           <span v-show="row.auditStatus==2" style="color:#ffbd72">待审核</span>
-          <Tooltip :content="row.remark">
+          <Tooltip :content="row.remark" placement="top">
             <!-- <div slot="content">{{row.remark}}</div> -->
             <span v-show="row.auditStatus==3" style="color:#ed4014">审核失败</span>
           </Tooltip>

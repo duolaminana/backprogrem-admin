@@ -6,9 +6,9 @@
     <div class='rightDiv'>
         <Input v-model="routeName	"  placeholder="分区线路" clearable class='marginRight'/>
         <Input v-model="name"  placeholder="设备编码" clearable class='marginRight'/>
-        <Button @click="clickQuery" type="primary">查询</Button>
-        <Button @click='reset' type="primary">重置</Button>
-        <Button v-if="channelId==$store.state.user.userVo.channelId && hasPerm('pos:dev:add')"  type="primary" @click='showNewlyAdded("xz")' class='xzbtn' icon="md-add">新增</Button>
+        <Button  @click="clickQuery" type="primary">查询</Button>
+        <Button  @click='reset' type="primary">重置</Button>
+        <Button v-if="channelId==$store.state.user.userVo.channelId && hasPerm('pos:dev:edit')"  type="primary" @click='showNewlyAdded("xz")' class='xzbtn' icon="md-add">新增</Button>
         <Button v-if='channelId==$store.state.user.userVo.channelId'  type="primary" @click='transferNewlyAdded = true' :disabled='!tableRowData'>设备转移</Button>
         <Poptip placement="right" trigger='hover' >
           <Button  type="success" @click='exportTemplate'>导出模板</Button>
@@ -21,10 +21,10 @@
         <!-- <Button  type="success" @click='importNewlyAdded=true'>导入</Button> -->
         <Table :row-class-name='trBgColor' border ref="selection" :highlight-row='true' :columns="columns" :data="datas" @on-row-click='tableClick'>
           <template slot-scope="{ row, index }" slot="edit">
-              <Button v-if="channelId==$store.state.user.userVo.channelId&&hasPerm('pos:dev:up')&&row.enable==0" type="success" size="small" class='marBtn' @click='enable(row,index,true)'  :disabled='row.surplusDays<0'>启用</Button>
-              <Button v-if="channelId==$store.state.user.userVo.channelId&&hasPerm('pos:dev:up')&&row.enable==1" type="error" size="small" class='marBtn' @click='enable(row,index,false)' :disabled='row.surplusDays<0'>停用</Button>
+              <Button v-if="channelId==$store.state.user.userVo.channelId&&hasPerm('pos:dev:edit')&&row.enable==0" type="success" size="small" class='marBtn' @click='enable(row,index,true)'  :disabled='row.surplusDays<0'>启用</Button>
+              <Button v-if="channelId==$store.state.user.userVo.channelId&&hasPerm('pos:dev:edit')&&row.enable==1" type="error" size="small" class='marBtn' @click='enable(row,index,false)' :disabled='row.surplusDays<0'>停用</Button>
               <Button v-if="channelId==$store.state.user.userVo.channelId&&hasPerm('pos:dev:edit')" type="primary" size="small" class='marBtn' @click='showNewlyAdded("bj",index,row)' :disabled='$store.state.user.userVo.type!=2||row.ownership!=3||row.status!=0||row.status!=2||row.surplusDays<0'>编辑</Button>
-              <Button v-if="channelId==$store.state.user.userVo.channelId&&hasPerm('pos:dev:del')" type="error" size="small" class='marBtn' @click="modalDel=true;delID=row.id;delIndex=index" :disabled='$store.state.user.userVo.type!=2||row.ownership!=3||row.surplusDays<0'>删除</Button>
+              <Button v-if="channelId==$store.state.user.userVo.channelId&&hasPerm('pos:dev:edit')" type="error" size="small" class='marBtn' @click="modalDel=true;delID=row.id;delIndex=index" :disabled='$store.state.user.userVo.type!=2||row.ownership!=3||row.surplusDays<0'>删除</Button>
           </template>
           <template slot-scope="{ row, index }" slot="info">
               <a class='lookDetails' @click='showNewlyAdded("ck",index,row)' :disabled="row.surplusDays<0">查看详情</a>
@@ -32,14 +32,14 @@
           <template slot-scope="{ row, index }" slot="position">
               <a class='lookDetails'  v-if='row.positionId' :disabled='row.status!=3||row.surplusDays<0||channelId!=$store.state.user.userVo.channelId' @click='positionInfo(row,index,false)'>{{row.positionName}}</a>
               <a v-else-if='!row.positionId&&(row.status==1||row.status==7)' @click='positionInfo(row,index,true)' :disabled="row.surplusDays<0||channelId!=$store.state.user.userVo.channelId" class='green' >去设定</a>
-              <a v-else class='gray'>去设定</a>
+              <a v-else class='gray'>去设定{{row.status}}</a>
           </template>
           <template slot-scope="{ row, index }" slot="cargoWay">
               <a class='lookDetails' :disabled='!row.machineType||row.surplusDays<0||channelId!=$store.state.user.userVo.channelId' @click='toLink(row)'>查看详情</a>
           </template>
           <template slot-scope="{ row, index }" slot="interest">
-              <a class='lookDetails' v-if='row.num>0&&$store.state.user.userVo.type==2'  @click='toLinkInterest(row,false)' :disabled="row.surplusDays<0||channelId!=$store.state.user.userVo.channelId">去查看</a>
-              <a v-else-if='row.num<=0&&$store.state.user.userVo.type==2' @click='toLinkInterest(row,true)' class='green' :disabled="row.surplusDays<0||channelId!=$store.state.user.userVo.channelId">去设定</a>
+              <a class='lookDetails' v-if="row.num>0&&($store.state.user.userVo.type==2||hasPerm('pos:dev:bef'))"  @click='toLinkInterest(row,false)' :disabled="row.surplusDays<0||channelId!=$store.state.user.userVo.channelId">去查看</a>
+              <a v-else-if="row.num<=0&&($store.state.user.userVo.type==2||hasPerm('pos:dev:bef'))" @click='toLinkInterest(row,true)' class='green' :disabled="row.surplusDays<0||channelId!=$store.state.user.userVo.channelId">去设定</a>
               <a v-else class='gray'>去设定</a>
           </template>
           <template slot-scope="{ row, index }" slot="network">

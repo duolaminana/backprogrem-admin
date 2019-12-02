@@ -8,13 +8,13 @@
         <Option v-for="item in rangeList" :value="item.value" :key="item.value">{{ item.label }}</Option>
       </Select>
       <Input v-model="name" placeholder="分类名称" clearable class="marginRight" />
-      <Button v-if="hasPerm('pro:type:select')" @click="clickQuery" type="primary">查询</Button>
-      <Button v-if="hasPerm('pro:type:reset')" @click='reset' type="primary">重置</Button>
-      <Button type="primary" @click="showNewlyAdded('xz')" class="xzbtn" icon="md-add" v-if="channelId==$store.state.user.userVo.channelId&&hasPerm('pro:type:add')">新增</Button>
+      <Button  @click="clickQuery" type="primary">查询</Button>
+      <Button  @click='reset' type="primary">重置</Button>
+      <Button type="primary" @click="showNewlyAdded('xz')" class="xzbtn" icon="md-add" v-if="channelId==$store.state.user.userVo.channelId&&hasPerm('pro:type:edit')">新增</Button>
       <Table border ref="selection" :columns="columns" :data="datas">
         <template slot-scope="{ row, index }" slot="edit">
           <Button v-if="channelId==$store.state.user.userVo.channelId&&hasPerm('pro:type:edit')" type="primary" size="small" class="marBtn" @click="showNewlyAdded('bj',index)">编辑</Button>
-          <Button v-if="channelId==$store.state.user.userVo.channelId&&hasPerm('pro:type:del')" type="error" size="small" @click="modalDel=true;delID=row.id;delIndex=index">删除</Button>
+          <Button v-if="channelId==$store.state.user.userVo.channelId&&hasPerm('pro:type:edit')" type="error" size="small" @click="modalDel=true;delID=row.id;delIndex=index">删除</Button>
         </template>
       </Table>
       <Page 

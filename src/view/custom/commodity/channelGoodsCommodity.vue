@@ -8,18 +8,18 @@
         <Select v-model="status"  class='marginRight' placeholder="状态" >
           <Option v-for="item in statusList" :value="item.value" :key="item.value">{{ item.label }}</Option>
         </Select>
-        <Button v-if="hasPerm('pro:name:select')" @click='clickQuery' type="primary">查询</Button>
-        <Button v-if="hasPerm('pro:name:reset')" @click='reset' type="primary">重置</Button>
-        <Button v-if="channelId==$store.state.user.userVo.channelId && hasPerm('pro:name:add') "  type="primary" @click='showNewlyAdded("xz")' class='xzbtn' icon="md-add">新增</Button>
+        <Button  @click='clickQuery' type="primary">查询</Button>
+        <Button  @click='reset' type="primary">重置</Button>
+        <Button v-if="channelId==$store.state.user.userVo.channelId && hasPerm('pro:name:edit') "  type="primary" @click='showNewlyAdded("xz")' class='xzbtn' icon="md-add">新增</Button>
         <Table border ref="selection" :columns="columns" :data="datas">
           <template slot-scope="{ row }"  slot="history">
               <a class='underline' @click.default ='showHistory(row.id)'>查看</a>
           </template>
 					<template slot-scope="{ row, index }"  slot="edit">
-              <Button v-if="channelId==$store.state.user.userVo.channelId&&hasPerm('pro:name:up')&&(row.auditStatus==4&&row.status)" type="error" size="small"  class='marBtn' @click="enable(row.id,row.status,index)">下架</Button>
-							<Button v-if="channelId==$store.state.user.userVo.channelId&&hasPerm('pro:name:up')&&(row.auditStatus==4&&!row.status)" type="success" size="small"  class='marBtn' @click="enable(row.id,row.status,index)">上架</Button>
+              <Button v-if="channelId==$store.state.user.userVo.channelId&&hasPerm('pro:name:edit')&&(row.auditStatus==4&&row.status)" type="error" size="small"  class='marBtn' @click="enable(row.id,row.status,index)">下架</Button>
+							<Button v-if="channelId==$store.state.user.userVo.channelId&&hasPerm('pro:name:edit')&&(row.auditStatus==4&&!row.status)" type="success" size="small"  class='marBtn' @click="enable(row.id,row.status,index)">上架</Button>
               <Button v-if="channelId==$store.state.user.userVo.channelId&&hasPerm('pro:name:edit')&&row.auditStatus!=2" type="primary" size="small"  class='marBtn' @click='showNewlyAdded("bj",index)'>编辑</Button>
-              <Button v-if="channelId==$store.state.user.userVo.channelId&&hasPerm('pro:name:del')&&row.auditStatus!=2" type="error" size="small" @click="deleteGoods(row,index)">删除</Button>
+              <Button v-if="channelId==$store.state.user.userVo.channelId&&hasPerm('pro:name:edit')&&row.auditStatus!=2" type="error" size="small" @click="deleteGoods(row,index)">删除</Button>
           </template>
 					<template slot-scope="{ row}" slot="img">
             <viewer :images="[row.imageAddress]">

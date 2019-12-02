@@ -4,12 +4,12 @@
       <!-- <Input v-model="templateName"  placeholder="模板名称" clearable class='marginRight'/>
       <Button @click='getPageDatas' icon="ios-search">查询</Button> -->
       <Button @click='getPageDatas(true)' type="primary" >查询所有</Button>
-      <Button  type="primary" @click='showNewlyAdded("xz")' class='xzbtn' icon="md-add">新增</Button>
+      <Button v-if="hasPerm('pos:bet:edit')"  type="primary" @click='showNewlyAdded("xz")' class='xzbtn' icon="md-add">新增</Button>
     </div>
     <Table border ref="selection" :columns="columns" :data="datas">
       <template slot-scope="{ row, index }"  slot="edit">
-        <Button v-if='row.type!=1' type="primary" size="small" class='marBtn' @click='showNewlyAdded("bj",index,row)'>编辑</Button>
-        <Button v-if='row.type!=1' type="error" size="small" @click="modalDel=true;delID=row.id;delIndex=index">删除</Button>
+        <Button v-if="row.type!=1&&hasPerm('pos:bet:edit')" type="primary" size="small" class='marBtn' @click='showNewlyAdded("bj",index,row)'>编辑</Button>
+        <Button v-if="row.type!=1&&hasPerm('pos:bet:edit')" type="error" size="small" @click="modalDel=true;delID=row.id;delIndex=index">删除</Button>
       </template>
     </Table>
     <Page :total="total" show-elevator :current='pageNum' @on-change='pageChange' :page-size='pageSize' @on-page-size-change='sizeChange'  show-sizer/>

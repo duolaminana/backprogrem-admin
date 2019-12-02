@@ -1,18 +1,17 @@
 <template>
   <div class="role">
-    <div class="leftBox">
+    <!-- <div class="leftBox">
       <channel-tree @clickTreeRow="clickTreeRow"></channel-tree>
-    </div>
-    <div class="rightDiv">
+    </div> -->
+    <!-- <div class="rightDiv"> -->
       <Input v-model="roleName" style="margin-right:10px" placeholder="请输入角色名称" clearable />
       <Button type="primary" @click="searchSearchRole" v-if="hasPerm('sys:role:search')">查询</Button>
       <Button
         type="primary"
         @click="addModal"
         class="xzbtn"
-        v-if="channelId==$store.state.user.channelId&&hasPerm('sys:role:add')"
       >新增</Button>
-      <Button type="primary" @click="reset" v-if="hasPerm('sys:role:reset')">重置</Button>
+      <Button type="primary" @click="reset">重置</Button>
       <Table
         highlight-row
         :columns="columns"
@@ -28,22 +27,18 @@
             type="warning"
             size="small"
             @click="getRoleMenu(row)"
-            v-if="channelId==$store.state.user.channelId&&hasPerm('sys:role:assign')"
           >分配权限</Button>
           <!-- 编辑按钮 -->
           <Button
             type="primary"
             size="small"
-            
             @click="editModal(row)"
-            v-if="channelId==$store.state.user.channelId&&hasPerm('sys:role:edit')"
           >编辑</Button>
           <!-- 删除按钮 -->
           <Button
             type="error"
             size="small"
             @click="modalDel=true;delID=row.id;delIndex=index"
-            v-if="channelId==$store.state.user.channelId&&hasPerm('sys:role:del')"
           >删除</Button>
         </template>
       </Table>
@@ -56,7 +51,7 @@
         @on-page-size-change="sizeChange"
         show-sizer
       />
-    </div>
+    <!-- </div> -->
     <!-- 删除 -->
     <delete-component
       :modalDel="modalDel"
