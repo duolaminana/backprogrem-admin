@@ -1,5 +1,5 @@
 <template>
-  <div class="transactionsList">
+  <div class="settlementRecord">
     <div class="leftBox">
       <channel-tree @clickTreeRow="clickTreeRow"></channel-tree>
     </div>
@@ -85,7 +85,7 @@
       />
     </div>
     <!-- 结算详情弹框的模态框 -->
-    <Modal v-model="isShow" :mask-closable="false" :title="'结算详情('+deductAccount+')'" width="1300">
+    <Modal v-model="isShow" :mask-closable="false" :title="'结算详情('+deductAccount+')'" width="1400">
       <Table :columns="columnsMore" :data="dataTableMore" border ref="table" style="margin:20px 0">
         <template slot-scope="{row,index}" slot="Price">
           <span>{{(row.actualPrice-row.buyPrice)*row.productProduce*(row.commissionPercent/100)}}</span>
@@ -284,78 +284,77 @@ export default {
         {
           title: "序号",
           type: "index",
-          maxWidth: 60,
-          minWidth: 40,
+          minWidth: 50,
           align: "center"
         },
         {
           title: "订单编号",
           key: "cardNo",
           align: "center",
-          minWidth: 140,
+          minWidth: 80,
           tooltip: true
         },
         {
           title: "消费者",
           slot: "cardNo",
           align: "center",
-          minWidth: 40,
+          minWidth: 100,
           tooltip: true
         },
         {
           title: "设备编码",
           key: "memberCard",
           align: "center",
-          minWidth: 60,
+          minWidth: 70,
           tooltip: true
         },
         {
           title: "商品名称",
           key: "productName",
           align: "center",
-          minWidth: 60,
+          minWidth: 70,
           tooltip: true
         },
         {
           title: "商品进价",
           key: "buyPrice",
           align: "center",
-          minWidth: 60,
+          minWidth: 70,
           tooltip: true
         },
         {
           title: "实际售价",
           key: "actualPrice",
           align: "center",
-          minWidth: 60,
+          minWidth: 70,
           tooltip: true
         },
         {
           title: "活动售价",
           key: "activityPrice",
           align: "center",
-          minWidth: 60,
-          tooltip: true
-        },
-        {
-          title: "交易时间",
-          key: "dealDate",
-          align: "center",
-          minWidth: 60,
+          minWidth: 70,
           tooltip: true
         },
         {
           title: "购买数量",
           key: "productNumber",
           align: "center",
-          minWidth: 60,
+          minWidth: 70,
           tooltip: true
         },
         {
           title: "出货数量",
           key: "productProduce",
           align: "center",
-          minWidth: 60,
+          minWidth: 70,
+          tooltip: true
+        },
+        {
+          title: "交易时间",
+          key: "dealDate",
+          align: "center",
+          minWidth: 70,
           tooltip: true
         },
         {
@@ -383,7 +382,7 @@ export default {
           title: "利润百分比",
           key: "profitPercent",
           align: "center",
-          minWidth: 50,
+          minWidth: 60,
           tooltip: true,
           render: (h, param) => {
             return h("div", param.row.profitPercent + "%");
@@ -660,7 +659,7 @@ export default {
 </script>
 
 <style lang="less" scoped>
-.transactionsList {
+.settlementRecord {
   .ivu-input-wrapper {
     width: 300px;
     margin-right: 5px;

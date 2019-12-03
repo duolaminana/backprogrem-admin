@@ -25,6 +25,7 @@
     </div>
     <Divider />
     <Transfer
+      filterable
       :titles="titles"
       :data="data"
       :target-keys="targetKeys"

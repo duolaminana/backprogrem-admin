@@ -1,5 +1,5 @@
 <template>
-  <div class="transactionsList">
+  <div class="settlement">
     <div class="leftBox">
       <channel-tree @clickTreeRow="clickTreeRow"></channel-tree>
     </div>
@@ -25,8 +25,16 @@
         @on-change="handleChangeEnd"
         style="width: 160px"
       ></DatePicker>
-      <Button type="primary" @click="searchSettlement" v-if="hasPerm('set:sta:see')||hasPerm('set:sta:seeback')">查询</Button>
-      <Button type="primary" @click="reset" v-if="hasPerm('set:sta:see')||hasPerm('set:sta:seeback')">重置</Button>
+      <Button
+        type="primary"
+        @click="searchSettlement"
+        v-if="hasPerm('set:sta:see')||hasPerm('set:sta:seeback')"
+      >查询</Button>
+      <Button
+        type="primary"
+        @click="reset"
+        v-if="hasPerm('set:sta:see')||hasPerm('set:sta:seeback')"
+      >重置</Button>
       <Table
         highlight-row
         :columns="columns"
@@ -70,7 +78,14 @@
     </div>
     <!-- 结算详情弹框的模态框 -->
     <Modal v-model="isShow" :mask-closable="false" :title="'结算详情('+deductAccount+')'" width="1400">
-      <Table :columns="columnsMore" :data="dataTableMore" border ref="table" style="margin:20px 0">
+      <Table
+        class="setMore"
+        :columns="columnsMore"
+        :data="dataTableMore"
+        border
+        ref="table"
+        style="margin:20px 0"
+      >
         <template slot-scope="{row,index}" slot="Price">
           <span>{{(row.actualPrice-row.buyPrice)*row.productProduce*(row.commissionPercent/100)}}</span>
         </template>
@@ -332,7 +347,7 @@ export default {
           align: "center",
           minWidth: 60,
           tooltip: true,
-          className: "demo-table-info-column"
+          className: "more"
         },
         {
           title: "抽成金额(元)",
@@ -340,7 +355,7 @@ export default {
           align: "center",
           minWidth: 80,
           tooltip: true,
-          className: "demo-table-info-column"
+          className: "more"
         },
         {
           title: "利润(元)",
@@ -348,7 +363,7 @@ export default {
           align: "center",
           minWidth: 60,
           tooltip: true,
-          className: "demo-table-info-column"
+          className: "more"
         },
         {
           title: "利润百分比",
@@ -359,7 +374,7 @@ export default {
           render: (h, param) => {
             return h("div", param.row.profitPercent + "%");
           },
-          className: "demo-table-info-column"
+          className: "more"
         },
         {
           title: "待结算金额",
@@ -367,7 +382,7 @@ export default {
           align: "center",
           minWidth: 60,
           tooltip: true,
-          className: "demo-table-info-column"
+          className: "more"
         }
       ],
       dataTableMore: [], //结算详情数据
@@ -627,7 +642,7 @@ export default {
 </script>
 
 <style lang="less" scoped>
-.transactionsList {
+.settlement {
   .ivu-input-wrapper {
     width: 300px;
     margin-right: 5px;
@@ -655,7 +670,9 @@ export default {
   .lookDetails {
     text-decoration: underline;
   }
-  /deep/ .ivu-table td.demo-table-info-column {
+}
+.setMore {
+  /deep/ .ivu-table .more {
     color: #2d8cf0;
   }
 }

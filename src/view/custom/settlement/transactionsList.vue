@@ -62,7 +62,8 @@
         </template>
         <!-- 利益分配 -->
         <template slot-scope="{row,index}" slot="templateName">
-          <a class="lookDetails" @click="toLinkInterest(row)">查看详情</a>
+          <a v-show="row.benefitId" class="lookDetails" @click="toLinkInterest(row)">查看详情</a>
+          <span v-show="!row.benefitId">——</span>
         </template>
         <!-- 交易状态 -->
         <template slot-scope="{row,index}" slot="orderStatus">
@@ -498,6 +499,8 @@ export default {
     },
     // 利益分配查看详情
     toLinkInterest(row, value) {
+      console.log(row);
+      
       this.benefitId = row.benefitId;
       this.getBenefitMachine();
       this.interestNewlyAdded = true;

@@ -2,11 +2,7 @@
   <div class="userManagement">
     <div class="leftBox">
       <!-- 按钮 -->
-      <Button
-        type="primary"
-        icon="md-add-circle"
-        @click="addModalDep"
-      >添加部门</Button>
+      <Button type="primary" icon="md-add-circle" @click="addModalDep">添加部门</Button>
       <!-- 下拉菜单 -->
       <Dropdown style="margin-left: 10px" @on-click="getDropdownData">
         <Button>
@@ -270,7 +266,7 @@
     </Modal>
 
     <!-- 开门权限模态框 -->
-    <Modal v-model="isShowOpen" :mask-closable="false" title="开门权限" width="600">
+    <Modal v-model="isShowOpen" :mask-closable="false" title="开门权限" width="800">
       <div class="titleBox">
         开门权限：
         <RadioGroup v-model="openDoor" @on-change="radioChange">
@@ -285,10 +281,11 @@
       <Divider />
       <div class="contentBox">
         <Transfer
+          filterable
           :titles="titles"
           :data="transferData"
           :target-keys="targetKeys"
-          :list-style="{width:'250px',height:'400px'}"
+          :list-style="{width:'350px',height:'400px'}"
           :render-format="render"
           @on-change="handleChange"
         ></Transfer>
@@ -639,8 +636,10 @@ export default {
       this.form.businessScope = value.join(",");
     },
     render(item) {
-      if (item.disabled) return `${item.key} - ${item.label}`;
-      return `${item.key} - ${item.label}`;
+      if (item.disabled) return `${item.key} - ${item.value}`;
+      return `${item.key} - ${item.value}`;
+      // if (item.disabled) return `${item.value} - ${item.label}`;
+      // return `${item.value} - ${item.label}`;
     },
     handleChange(newTargetKeys) {
       this.targetKeys = newTargetKeys;
@@ -1155,6 +1154,11 @@ export default {
         if (res.data.code == 200) {
           this.transferData = res.data.result.data;
           this.targetKeys = res.data.result.targetKeys;
+          res.data.result.data.forEach((item, index) => {
+            console.log(item);
+            item.value = item.label;
+            item.label = item.key + item.value;
+          });
         }
       });
     },

@@ -32,7 +32,7 @@
           <template slot-scope="{ row, index }" slot="position">
               <a class='lookDetails'  v-if='row.positionId' :disabled='row.status!=3||row.surplusDays<0||channelId!=$store.state.user.userVo.channelId' @click='positionInfo(row,index,false)'>{{row.positionName}}</a>
               <a v-else-if='!row.positionId&&(row.status==1||row.status==7)' @click='positionInfo(row,index,true)' :disabled="row.surplusDays<0||channelId!=$store.state.user.userVo.channelId" class='green' >去设定</a>
-              <a v-else class='gray'>去设定{{row.status}}</a>
+              <a v-else class='gray'>去设定</a>
           </template>
           <template slot-scope="{ row, index }" slot="cargoWay">
               <a class='lookDetails' :disabled='!row.machineType||row.surplusDays<0||channelId!=$store.state.user.userVo.channelId' @click='toLink(row)'>查看详情</a>
@@ -51,7 +51,7 @@
               <span v-show='row.enable==0' class='gray'>未启用</span>
           </template>
           <template slot-scope="{ row, index }" slot="status">
-              <span v-show='row.status==0' class='gray'>待审核</span>
+              <span v-show='row.status==0' class='orange'>待审核</span>
               <span v-show='row.status==1'  :class='row.surplusDays<0?"gray":"orange"'>待使用</span>
               <span v-show='row.status==2'  :class='row.surplusDays<0?"gray":"green"'>审核不通过</span>
               <span v-show='row.status==3'  :class='row.surplusDays<0?"gray":"green"'>点位中</span>
@@ -1060,6 +1060,7 @@ export default {
       })
     },
     toBack(){
+      this.getPageDatas();
       this.isDetail = false;
       this.query = null;
     },

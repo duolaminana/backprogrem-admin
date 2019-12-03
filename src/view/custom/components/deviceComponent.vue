@@ -2,8 +2,10 @@
   <Card class='typeTemplateDetails'>
     <div class=headBox>
       <Button type="primary" size="large" class='keep' icon='md-albums' @click='keep'>保存</Button>
+      <Button size="large" class='keep' @click='keepModel '>保存为模板</Button>
       <Button type="primary"  size="large" @click='toBack' style="float:left;margin-right:30px;">返回</Button>
-      <strong style="margin-right:30px;">{{query.machineCode}}</strong>
+      <strong style="margin-right:30px;font-size:18px">{{query.machineCode}}</strong>
+      {{modal}}
       <Select v-model="modal" :disabled='isKong>0'  @on-change='deviceChange' class='marginRight' :clearable='true' placeholder="货道商品模板">
           <Option v-for="item in selectList" :value="item.value" :key="item.value">{{ item.label }}</Option>
       </Select>
@@ -81,6 +83,20 @@
         <Button size="large" @click='goodsDel=false'>取消</Button>
       </div>
     </Modal>
+    <Modal v-model="keepValidate" title="保存模板" :mask-closable='false'>
+      <Form ref="keepValidate" :model="keepData" :rules="keepRuleValidate" :label-width="120">
+        <FormItem label="模板名称" prop="templateName">
+          <Input v-model.trim="keepData.templateName" placeholder="请输入模板名称"/>
+        </FormItem>
+        <FormItem label="备注" prop="remark">
+          <Input v-model.trim="keepData.remark" placeholder="请输入备注"/>
+        </FormItem>
+      </Form>
+      <div slot="footer">
+        <Button size="large" @click='keepValidate=false'>取消</Button>
+        <Button type="primary"  size="large" @click="keepModelSure(keepData,'keepValidate')">确定</Button>
+      </div>
+    </Modal>
   </Card>
 </template>
 
@@ -95,6 +111,24 @@ export default {
   props:['selectList','query','priceTemplate','machineCode','channelId'],
   data(){
     return{
+      keepRuleValidate:{
+        templateName: [
+          {
+            required: true,
+            message: "输入不能为空",
+            trigger: "blur"
+          },
+          { max: 8, message: "最多8个字符", trigger: "blur" }
+        ],
+        remark: [
+          { max: 20, message: "最多20个字符", trigger: "blur" }
+        ],
+      },
+      keepData:{
+        templateName:null,
+        remark:null
+      },
+      keepValidate:false,
       setWidthAfterNum:this.query.setWidthAfterNum,
       isReset:false,
       nowStock:0,
@@ -148,7 +182,9 @@ export default {
       roadTypeList:[
         {value:'1',label:'履带'},
         {value:'2',label:'弹簧'}
-      ]
+      ],
+      operator:this.$store.state.user.userId,
+      operatorName:this.$store.state.user.userName,
     }
   },
   methods:{
@@ -353,6 +389,44 @@ export default {
       this.$set(this.listData[index1].AddMachineTypeRoadDto[index2],'oldStock',this.listData[index1].AddMachineTypeRoadDto[index2].stock);
       this.$set(this.listData[index1].AddMachineTypeRoadDto[index2],'stock',0);
       this.goodsDel = false;
+    },
+    async keepModel(){
+      await this.initialization('keepValidate');
+      this.keepValidate=true;
+    },
+    keepModelSure(value,name){
+      this.$refs[name].validate(valid => {
+        if (valid) {
+          this.$Spin.show()
+          let ary = [];
+          this.listData.forEach((v,i)=>{
+            v.AddMachineTypeRoadDto.forEach((value,index)=>{
+              const v = value;
+              if(v.rowData.isChange){
+                v.actualPrice = v.rowData.actualPrice;
+              }
+              v.machineCode = this.machineCode;
+              ary = [...ary,v];
+            })
+          })
+          let data = {
+            channelId:this.channelId,
+            list:ary,
+            machineType:this.query.machineType,
+            operator:this.operator,
+            operatorName:this.operatorName,
+            templateName:value.templateName,
+            remark:value.remark
+          }
+          netWorkDevice('/machineTemplate/addMachineTemplate', data).then(res => {
+            this.$Message.success("保存成功");
+            this.keepValidate=false;
+            this.$Spin.hide()
+          }).catch(()=>{
+            this.$Spin.hide()
+          })
+        }
+      })
     },
     async keep(){
       if(this.listData.length){

@@ -42,7 +42,7 @@
             size="small"
             style="margin-right: 5px"
             @click="checkModal(row)"
-            v-if="hasPerm('sys:merchantinfo:check')&&row.auditStatus==2"
+            v-if="hasPerm('sys:merchantinfoMang:check')&&row.auditStatus==2"
           >&nbsp&nbsp审核&nbsp&nbsp</Button>
 
           <Button
@@ -1113,8 +1113,8 @@ export default {
         auditChannel(this.formValidateEnt)
           .then(res => {
             if (res.data.code == 200) {
-              this.loading = false;
               this.isShow = false;
+              this.loading = false;
               this.$Message.info("审核通过");
               this.channelId = this.$store.state.user.channelId;
               this.getMerchant(); // 重新获取数据
@@ -1148,9 +1148,9 @@ export default {
         auditChannel(this.formValidatePre)
           .then(res => {
             if (res.data.code == 200) {
+              this.isShow = false;
               this.loadingNo = false;
               this.formValidatePre.remark = "";
-              this.isShow = false;
               this.channelId = this.$store.state.user.channelId;
               this.$Message.info("审核不通过");
               this.getMerchant(); // 重新获取数据
@@ -1175,9 +1175,9 @@ export default {
         auditChannel(this.formValidateEnt)
           .then(res => {
             if (res.data.code == 200) {
+              this.isShow = false;
               this.loadingNo = false;
               this.formValidateEnt.remark = "";
-              this.isShow = false;
               this.channelId = this.$store.state.user.channelId;
               this.$Message.info("审核不通过");
               this.getMerchant(); // 重新获取数据

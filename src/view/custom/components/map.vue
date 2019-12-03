@@ -8,6 +8,7 @@
 <script>
 import remoteLoad from '@/libs/remoteLoad.js'
 import config from '@/config'
+import axios from 'axios'
 export default {
   props: ['lat', 'lng','searchKey','positionRlue'],
   computed:{
@@ -52,23 +53,40 @@ export default {
           mapConfig.center = [this.lng, this.lat];
           console.log(mapConfig.center)
         }
-      let map = new AMap.Map('js-container', mapConfig);
+        let map = new AMap.Map('js-container', mapConfig);
         AMap.plugin('AMap.Autocomplete', function(){
-        var autoOptions = {
-          input: 'input_id'
-        }
-        var autoComplete= new AMap.Autocomplete(autoOptions);
-        AMap.event.addListener(autoComplete,'select',res=>{
-          let data = {
-            address:res.poi.name,
-            position:{
-              lng:res.poi.location.lng,
-              lat:res.poi.location.lat
-            }
+          var autoOptions = {
+            input: 'input_id'
           }
-          that.$emit('drag', data);
+          var autoComplete= new AMap.Autocomplete(autoOptions);
+          AMap.event.addListener(autoComplete,'select',res=>{
+            if(res.poi.location.lng){
+              let data = {
+                address:res.poi.name,
+                position:{
+                  lng:res.poi.location.lng,
+                  lat:res.poi.location.lat
+                }
+              }
+              that.$emit('drag', data);
+            }else{
+              let url = `https://restapi.amap.com/v3/geocode/geo?key=a63edeccaf444460aaeb254bb2a2de90&&address=${res.poi.name}&&output=JSON`;
+              axios.get(url).then(res=>{
+                if(res.data.status=='1'){
+                  let ary = res.data.geocodes[0].location.split(",");
+                  let data = {
+                    address:res.data.geocodes[0].formatted_address,
+                    position:{
+                      lng:ary[0],
+                      lat:ary[1]
+                    }
+                  }
+                  that.$emit('drag', data);
+                }
+              })
+            }
+          })
         })
-      })
         // 创建地图拖拽
         let positionPicker = new PositionPicker({
           mode: 'dragMarker', // 设定为拖拽地图模式，可选'dragMap'、'dragMarker'，默认为'dragMap'

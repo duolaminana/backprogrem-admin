@@ -16,7 +16,14 @@
         v-if="channelId==$store.state.user.channelId&&hasPerm('act:actList:edit')"
       >新增</Button>
 
-      <Table highlight-row :columns="columns" :data="dataTable" border ref="table" style="margin:20px 0">
+      <Table
+        highlight-row
+        :columns="columns"
+        :data="dataTable"
+        border
+        ref="table"
+        style="margin:20px 0"
+      >
         <!-- 活动详情 -->
         <template slot-scope="{row,index}" slot="activityMore">
           <a class="lookDetails" @click="seeMore(row)">查看详情</a>
@@ -28,7 +35,7 @@
         <!-- 关联设备 -->
         <template slot-scope="{row,index}" slot="num">
           <a
-          :disabled="channelId!=$store.state.user.channelId"
+            :disabled="channelId!=$store.state.user.channelId"
             class="lookDetails"
             v-show="row.activityMode==2"
             @click="showRelation(row)"
@@ -485,6 +492,9 @@ export default {
       return `${item.machineCode} - ${item.label}`;
     },
     relationSure(list) {
+      if (list.join(",") == this.relationKeys.join(",")) {
+        return (this.relationModal = false);
+      }
       const data = {
         activityId: this.rowData.id,
         list,
@@ -494,9 +504,9 @@ export default {
       };
       addOrModifyActivityMachine(data).then(res => {
         if (res.data.code == 200) {
-          this.getActivity();
-          this.$Message.success("操作成功");
           this.relationModal = false;
+          this.$Message.success("操作成功");
+          this.getActivity();
         }
       });
     },
@@ -516,6 +526,10 @@ export default {
           this.relationData = res.data.result.data;
           this.relationKeys = res.data.result.targetKeys;
           this.relationModal = true;
+          res.data.result.data.forEach(item => {
+            item.value = item.label;
+            item.label = item.machineCode + item.value;
+          });
         }
       });
     },
