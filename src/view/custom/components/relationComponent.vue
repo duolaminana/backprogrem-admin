@@ -134,6 +134,9 @@ export default {
   }
   .ivu-transfer {
     margin: 20px auto;
+    /deep/ .ivu-input-wrapper{
+      width: 332px;
+    }
   }
 }
 </style>

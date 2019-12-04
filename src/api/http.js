@@ -772,11 +772,12 @@ export const searchMemberMore = info => {
 };
 
 // 查询会员购买过的订单记录
-export const searchMemberOrder = cardNo => {
+export const searchMemberOrder = (cardNo,id) => {
   return axios.request({
     url: "/order/orderDetail/findMemberOrderDetail",
     params: {
-      cardNo
+      cardNo,
+      id
     },
     method: "get"
   });

@@ -1,13 +1,9 @@
 <template>
   <div class="role">
-    <!-- <div class="leftBox">
-      <channel-tree @clickTreeRow="clickTreeRow"></channel-tree>
-    </div>-->
-    <!-- <div class="rightDiv"> -->
     <Input v-model="roleName" style="margin-right:10px" placeholder="请输入角色名称" clearable />
-    <Button type="primary" @click="searchSearchRole" v-if="hasPerm('sys:role:search')">查询</Button>
-    <Button type="primary" @click="addModal" class="xzbtn">新增</Button>
-    <Button type="primary" @click="reset">重置</Button>
+    <Button type="primary" @click="searchSearchRole" v-if="hasPerm('sys:role:see')">查询</Button>
+    <Button type="primary" @click="addModal" class="xzbtn" v-if="hasPerm('sys:role:edit')">新增</Button>
+    <Button type="primary" @click="reset" v-if="hasPerm('sys:role:see')">重置</Button>
     <Table
       highlight-row
       :columns="columns"
@@ -19,11 +15,26 @@
       <!-- 操作 -->
       <template slot-scope="{ row, index }" slot="operation">
         <!-- 分配权限 -->
-        <Button type="warning" size="small" @click="getRoleMenu(row)">分配权限</Button>
+        <Button
+          type="warning"
+          size="small"
+          @click="getRoleMenu(row)"
+          v-if="hasPerm('sys:role:edit')"
+        >分配权限</Button>
         <!-- 编辑按钮 -->
-        <Button type="primary" size="small" @click="editModal(row)">编辑</Button>
+        <Button
+          type="primary"
+          size="small"
+          @click="editModal(row)"
+          v-if="hasPerm('sys:role:edit')"
+        >编辑</Button>
         <!-- 删除按钮 -->
-        <Button type="error" size="small" @click="modalDel=true;delID=row.id;delIndex=index">删除</Button>
+        <Button
+          type="error"
+          size="small"
+          v-if="hasPerm('sys:role:edit')"
+          @click="modalDel=true;delID=row.id;delIndex=index"
+        >删除</Button>
       </template>
     </Table>
     <Page

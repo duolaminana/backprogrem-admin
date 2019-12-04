@@ -35,12 +35,12 @@
         <!-- 关联设备 -->
         <template slot-scope="{row,index}" slot="num">
           <a
-            :disabled="channelId!=$store.state.user.channelId"
             class="lookDetails"
-            v-show="row.activityMode==2"
+            v-if="row.activityMode==2&&hasPerm('act:actList:edit')&&channelId==$store.state.user.channelId"
             @click="showRelation(row)"
           >{{row.num}}台</a>
-          <span v-show="row.activityMode==1">全部</span>
+          <span v-if="row.activityMode==1">全部</span>
+          <span v-if="(!hasPerm('act:actList:edit')||channelId!=$store.state.user.channelId)&&row.activityMode==2">{{row.num}}台</span>
         </template>
         <!-- 活动状态 -->
         <template slot-scope="{row,index}" slot="status">

@@ -7,13 +7,13 @@
           <Button
             type="primary"
             style="width:100px"
-            v-show="(QRcodeList[0]==null)"
+            v-if="(QRcodeList[0]==null)&&hasPerm('sys:merchantinfo:edit')"
             @click="toSet"
           >去配置</Button>
           <Button
             type="primary"
             style="width:100px"
-            v-show="!(QRcodeList[0]==null)"
+            v-if="!(QRcodeList[0]==null)"
             @click="toSee"
           >查看/编辑</Button>
         </div>
@@ -970,7 +970,7 @@ export default {
       if (!value) {
         return callback(new Error("输入不能为空"));
       } else if (!/^(?!^\d+$)(?!^[a-zA-Z]+$)[0-9a-zA-Z]+$/.test(value)) {
-        callback(new Error("不能为纯数字或包含汉字"));
+        callback(new Error("不能为纯数字或纯字母且不包含汉字"));
       } else {
         callback();
       }

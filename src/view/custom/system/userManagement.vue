@@ -2,17 +2,17 @@
   <div class="userManagement">
     <div class="leftBox">
       <!-- 按钮 -->
-      <Button type="primary" icon="md-add-circle" @click="addModalDep">添加部门</Button>
+      <Button type="primary" icon="md-add-circle" @click="addModalDep" style="margin-right: 20px" v-if="hasPerm('sys:user:edit')">添加部门</Button>
       <!-- 下拉菜单 -->
-      <Dropdown style="margin-left: 10px" @on-click="getDropdownData">
+      <Dropdown @on-click="getDropdownData">
         <Button>
           更多操作
           <Icon type="ios-arrow-down"></Icon>
         </Button>
         <DropdownMenu slot="list">
-          <DropdownItem :name="deptId">编辑部门</DropdownItem>
-          <DropdownItem @click.native="delOneDep">删除部门</DropdownItem>
-          <DropdownItem @click.native="refresh">刷新</DropdownItem>
+          <DropdownItem :name="deptId" v-if="hasPerm('sys:user:edit')">编辑部门</DropdownItem>
+          <DropdownItem @click.native="delOneDep" v-if="hasPerm('sys:user:edit')">删除部门</DropdownItem>
+          <DropdownItem @click.native="refresh" v-if="hasPerm('sys:user:see')">刷新</DropdownItem>
         </DropdownMenu>
       </Dropdown>
       <!-- 警告 -->
@@ -33,9 +33,9 @@
       <Select v-model="status" clearable placeholder="用户状态" style="margin-right:10px">
         <Option v-for="item in List" :value="item.value" :key="item.value">{{ item.label }}</Option>
       </Select>
-      <Button type="primary" @click="searchuserManagement">查询</Button>
-      <Button type="primary" @click="addModal" class="xzbtn">新增</Button>
-      <Button type="primary" @click="reset">重置</Button>
+      <Button type="primary" @click="searchuserManagement" v-if="hasPerm('sys:user:see')">查询</Button>
+      <Button type="primary" @click="addModal" class="xzbtn" v-if="hasPerm('sys:user:edit')">新增</Button>
+      <Button type="primary" @click="reset" v-if="hasPerm('sys:user:see')">重置</Button>
       <Table highlight-row :columns="columns11" :data="dataTable" border ref="table">
         <!-- 图像 -->
         <template slot-scope="{ row, index }" slot="img">
@@ -53,8 +53,8 @@
         </template>
         <!-- 开门权限 -->
         <template slot="isOpen" slot-scope="{ row, index }">
-          <a class="lookDetails" v-if="row.openDoor==2" @click="toOpenModal(row)">去开启</a>
-          <Button type="primary" v-if="row.openDoor==1" size="small" @click="toOpenModal(row)">编辑</Button>
+          <a class="lookDetails" v-if="row.openDoor==2&&hasPerm('sys:user:edit')" @click="toOpenModal(row)">去开启</a>
+          <Button type="primary" v-if="row.openDoor==1&&hasPerm('sys:user:edit')" size="small" @click="toOpenModal(row)">编辑</Button>
         </template>
         <!-- 操作 -->
         <template slot-scope="{ row, index }" slot="operation">
@@ -64,14 +64,14 @@
             size="small"
             style="margin-right: 5px"
             @click="editModal(row)"
-            v-if="row.type!=2"
+            v-if="row.type!=2&&hasPerm('sys:user:edit')"
           >编辑</Button>
           <!-- 删除按钮 -->
           <Button
             type="error"
             size="small"
             @click="modalDel=true;delID=row.id;delIndex=index;isDep=false"
-            v-if="row.type!=2"
+            v-if="row.type!=2&&hasPerm('sys:user:edit')"
           >删除</Button>
         </template>
       </Table>
@@ -335,7 +335,7 @@ export default {
       if (!value) {
         return callback(new Error("输入不能为空"));
       } else if (!/^(?!^\d+$)(?!^[a-zA-Z]+$)[0-9a-zA-Z]+$/.test(value)) {
-        callback(new Error("不能为纯数字或包含汉字"));
+        callback(new Error("不能为纯数字或纯字母且不包含汉字"));
       } else {
         callback();
       }
@@ -797,6 +797,7 @@ export default {
       this.loadingDep = false;
       this.isShowDep = false;
       this.$refs.formValidateDep.resetFields();
+      this.getRouteTree();
     },
 
     // 部门新增点击事件
@@ -927,7 +928,7 @@ export default {
       this.isAdd = true;
       this.isShow = true;
       this.ispassword = true;
-      this.routeList = [];
+      this.getRouteTree();
       this.formValidate = {
         birth: null, // 出生日期
         channelId: this.$store.state.user.channelId, // 渠道id
@@ -1155,7 +1156,6 @@ export default {
           this.transferData = res.data.result.data;
           this.targetKeys = res.data.result.targetKeys;
           res.data.result.data.forEach((item, index) => {
-            console.log(item);
             item.value = item.label;
             item.label = item.key + item.value;
           });
@@ -1167,6 +1167,29 @@ export default {
       searchRouteListByChannelId(this.channelId).then(res => {
         if (res.data.code == 200) {
           this.routeDatas = this.forData(res.data.result);
+          if (this.isAdd) {
+            let routeList = [];
+            function forRoute(items) {
+              for (let i = 0; i < items.length; i++) {
+                if (items[i].children) {
+                  forRoute(items[i].children);
+                  routeList.push({
+                    value: items[i].value,
+                    label: items[i].label
+                  });
+                } else {
+                  // 没有儿子
+                  routeList.push({
+                    value: items[i].value,
+                    label: items[i].label
+                  });
+                }
+              }
+            }
+            forRoute(res.data.result);
+            this.routeList = routeList;
+            console.log(this.routeList);
+          }
         }
       });
     },

@@ -232,6 +232,7 @@ export default {
       ],
       dataTableOrder: [], //交易记录数据
       cardNoOrder: null, //会员身份证（消费者）
+      idOrder: null,
       total: null, // 总页码数
       pageNum: 1, // 页码
       pageSize: 15, // 页容量
@@ -376,6 +377,7 @@ export default {
       console.log(row);
       this.isShow = true;
       this.cardNoOrder = row.cardNo;
+      this.idOrder = row.id;
       this.getOrder();
     },
     // 获取会员列表
@@ -406,7 +408,7 @@ export default {
 
     // 获取订单交易列表
     getOrder() {
-      searchMemberOrder(this.cardNoOrder).then(res => {
+      searchMemberOrder(this.cardNoOrder, this.idOrder).then(res => {
         if (res.data.code == 200) {
           console.log(res);
           this.dataTableOrder = res.data.result;

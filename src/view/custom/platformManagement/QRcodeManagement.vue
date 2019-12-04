@@ -12,8 +12,8 @@
       <Select v-model="payType" clearable placeholder="支付类型" style="margin-right:10px">
         <Option v-for="item in payTypeList" :value="item.value" :key="item.value">{{ item.label }}</Option>
       </Select>
-      <Button type="primary" @click="getQRcode" v-if="hasPerm('sys:merchantinfo:search')">查询</Button>
-      <Button type="primary" @click="reset" v-if="hasPerm('sys:merchantinfo:reset')">重置</Button>
+      <Button type="primary" @click="getQRcode">查询</Button>
+      <Button type="primary" @click="reset">重置</Button>
       <Table highlight-row :columns="columns" :data="dataTable" border>
         <template slot-scope="{ row, index }" slot="payType">{{row.payType | payTypeText}}</template>
         <template slot-scope="{ row, index }" slot="operation">
@@ -23,7 +23,7 @@
             size="small"
             style="margin-right: 5px"
             @click="checkModal(row)"
-            v-if="hasPerm('sys:merchantinfo:checked')&&row.auditType==1"
+            v-if="row.auditType==1"
           >&nbsp&nbsp审核&nbsp&nbsp</Button>
 
           <Button
