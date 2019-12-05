@@ -143,7 +143,7 @@
           <FormItem label="售价" prop="salePrice" class='modelInput'>
             <Input type='number' v-model.trim.number="formValidate.salePrice" placeholder="请输入售价"/>
           </FormItem>
-          <FormItem label="商品描述" prop="productDesc" class='modelInput'>
+          <FormItem v-show='formValidate.categoryId[0]!=drugsID' label="商品描述" class='modelInput'>
             <Input v-model.trim="formValidate.productDesc" placeholder="请输入商品描述"/>
           </FormItem>
           <template v-if='formValidate.categoryId[0]==drugsID'>
@@ -210,10 +210,10 @@
           <FormItem label="售价" prop="salePrice" class='modelInput'>
             <Input disabled type='number' v-model.trim="formValidate.salePrice" placeholder="请输入售价"/>
           </FormItem>
-          <FormItem label="商品描述" prop="productDesc" class='modelInput'>
+          <FormItem v-if='formValidate.categoryId[0]!=drugsID' label="商品描述" class='modelInput'>
             <Input disabled v-model.trim="formValidate.productDesc" placeholder="请输入商品描述"/>
           </FormItem>
-          <template v-if='formValidate.categoryId[0]==drugsID'>
+          <template v-else>
             <FormItem label="功能主治" prop="productFunction" class='modelInput'>
               <Input disabled v-model.trim="formValidate.productFunction" placeholder="请输入功能主治"/>
             </FormItem>

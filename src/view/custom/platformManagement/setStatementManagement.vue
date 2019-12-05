@@ -1,5 +1,5 @@
 <template>
-  <div class="settlement">
+  <div class="setStatementManagement">
     <div class="leftBox">
       <channel-tree @clickTreeRow="clickTreeRow"></channel-tree>
     </div>
@@ -28,12 +28,12 @@
       <Button
         type="primary"
         @click="searchSettlement"
-        v-if="hasPerm('set:sta:see')"
+        v-if="hasPerm('set:sta:seeback')"
       >查询</Button>
       <Button
         type="primary"
         @click="reset"
-        v-if="hasPerm('set:sta:see')"
+        v-if="hasPerm('set:sta:seeback')"
       >重置</Button>
       <Table
         highlight-row
@@ -62,7 +62,7 @@
             type="primary"
             size="small"
             @click="getSettlementClick(row)"
-            v-if="hasPerm('set:sta:set')"
+            v-if="hasPerm('set:sta:setback')"
           >结算</Button>
         </template>
       </Table>
@@ -91,9 +91,6 @@
         </template>
         <template slot-scope="{row,index}" slot="primayCapital">
           <span>{{row.primayCapital|primayCapital}}</span>
-        </template>
-        <template slot-scope="{row,index}" slot="cardNo">
-          <span>{{row.cardNo|cardNo}}</span>
         </template>
       </Table>
       <Page
@@ -154,7 +151,7 @@ export default {
     channelTree,
     account
   },
-  name: "settlement",
+  name: "setStatementManagement",
 
   data() {
     return {
@@ -280,7 +277,7 @@ export default {
         },
         {
           title: "消费者",
-          slot: "cardNo",
+          key: "cardNo",
           align: "center",
           minWidth: 100,
           tooltip: true
@@ -453,9 +450,6 @@ export default {
       }
       return realVal;
     },
-    cardNo(value) {
-      return `${value.substring(0, 3)}****${value.substring(value.length - 4)}`;
-    }
   },
   methods: {
     handleChangeStart(value) {
@@ -642,7 +636,7 @@ export default {
 </script>
 
 <style lang="less" scoped>
-.settlement {
+.setStatementManagement {
   .ivu-input-wrapper {
     width: 300px;
     margin-right: 5px;

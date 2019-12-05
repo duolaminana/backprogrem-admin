@@ -61,7 +61,7 @@
           <Input v-model="formValidate.roleName" placeholder="角色名称"></Input>
         </FormItem>
         <FormItem label="角色" prop="role">
-          <Input v-model="formValidate.role" placeholder="角色格式请以ROLE_开头"></Input>
+          <Input v-model="formValidate.role" placeholder="角色"></Input>
         </FormItem>
         <FormItem label="备注" prop="remark">
           <Input v-model="formValidate.remark" placeholder="备注"></Input>
@@ -122,16 +122,6 @@ export default {
   name: "role",
 
   data() {
-    const validateRole = (rule, value, callback) => {
-      if (!value) {
-        return callback(new Error("输入不能为空"));
-      } else if (!/^ROLE_/.test(value)) {
-        callback(new Error("您输入的" + value + "格式不对，请以ROLE_开头"));
-      } else {
-        callback();
-      }
-    };
-
     return {
       formValidateStr: "",
       modalDel: false,
@@ -150,7 +140,7 @@ export default {
         channelId: this.$store.state.user.channelId, // 渠道id
         operator: this.$store.state.user.userId, // 操作人
         remark: "", // 备注
-        role: "ROLE_", // 角色
+        role: "", // 角色
         roleName: "" // 角色名称
       },
 
@@ -163,7 +153,13 @@ export default {
             trigger: "blur"
           }
         ],
-        role: [{ required: true, validator: validateRole, trigger: "blur" }]
+        role: [
+          {
+            required: true,
+            message: "输入不能为空",
+            trigger: "blur"
+          }
+        ]
       },
       channelId: this.$store.state.user.channelId, // 渠道ID
       pageNum: 1, // 页码
@@ -331,16 +327,18 @@ export default {
         channelId: this.$store.state.user.channelId, // 渠道id
         operator: this.$store.state.user.userId, // 操作人
         remark: "", // 备注
-        role: "ROLE_", // 角色
+        role: "", // 角色
         roleName: "" // 角色名称
       };
     },
 
     // 编辑点击事件
     editModal(row) {
+      console.log(row);
       this.isAdd = false;
       this.isShow = true;
       this.formValidate = JSON.parse(JSON.stringify(row));
+      this.formValidate.role = row.role.slice(5);
       this.formValidateStr = JSON.stringify(this.formValidate);
     },
 
@@ -351,6 +349,7 @@ export default {
           // 对的
           this.loading = true;
           if (this.isAdd) {
+            this.formValidate.role = "ROLE_" + this.formValidate.role;
             addRole(this.formValidate)
               .then(res => {
                 if (res.data.code == 200) {
@@ -370,6 +369,7 @@ export default {
               this.isShow = false;
               this.loading = false;
             } else {
+              this.formValidate.role = "ROLE_" + this.formValidate.role;
               editRole(this.formValidate)
                 .then(res => {
                   if (res.data.code == 200) {

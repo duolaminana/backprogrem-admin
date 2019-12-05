@@ -197,7 +197,11 @@
               </Select>
             </div>
             <div>
-              <chart-pie style="height: 260px;margin-top: -20px;" :value="pieData" v-if="pieData.length"></chart-pie>
+              <chart-pie
+                style="height: 260px;margin-top: -20px;"
+                :value="pieData"
+                v-if="pieData.length"
+              ></chart-pie>
             </div>
             <div class="saleList">
               <div class="list" v-for="(v,i) in pieData" :key="v+i">
@@ -212,7 +216,10 @@
         </div>
       </Content>
     </Layout>
-    <div class="message" v-if="receiveTerminal==2&&QRcodeList.length==0">
+    <div
+      class="message"
+      v-if="$store.state.user.merchant.receiveTerminal==2&&QRcodeList.length==0&&hasPerm('sys:merchantinfo:edit')"
+    >
       <p>
         注册审核已通过，请尽快完善收款账户信息。
         <a @click="toInfo">点击完善</a>
@@ -237,11 +244,10 @@ export default {
   data() {
     return {
       QRcodeList: [],
-      receiveTerminal: this.$store.state.user.merchant.receiveTerminal, //收钱码是否开启
       pieDataList: [],
       xAxisData: [],
       series: [],
-      colorList:[],
+      colorList: [],
       duration: 2000, //持续时间
       decimals: 2, //显示的小数位数
       isZero: 0,
@@ -282,9 +288,9 @@ export default {
         this.xAxisData = res.result.dateList;
         this.series = res.result.lineGraphSeriesList;
         // this.series.map(v=>v.smooth=true) //曲线图
-        res.result.lineGraphSeriesList.forEach(item=>{
-          this.colorList.push(item.areaStyle.normal.color)
-        })
+        res.result.lineGraphSeriesList.forEach(item => {
+          this.colorList.push(item.areaStyle.normal.color);
+        });
       });
     },
     getPieReport() {

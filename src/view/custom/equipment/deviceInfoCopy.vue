@@ -21,7 +21,7 @@
             <template slot-scope="{ row, index }" slot="edit">
               <Button type="success" size="small" v-if='row.status==0' @click='showNewlyAdded("sh",index,row)'  class='marBtn' >审核</Button>
               <Button type="primary" size="small" @click='showNewlyAdded("bj",index,row)' class='marBtn' >编辑</Button>
-              <Button  type="error" size="small" class='marBtn' @click="modalDel=true;delID=row.id;delIndex=index" >删除</Button>
+              <Button  type="error" size="small" class='marBtn' @click="devDelete(row,index)" >删除</Button>
             </template>
             <template slot-scope="{ row, index }" slot="info">
               <a class='lookDetails' @click='showNewlyAdded("ck",index,row)'>查看详情</a>
@@ -737,6 +737,15 @@ export default {
     }
   },
   methods:{
+    devDelete(row,index){
+      if(row.status!=3){
+        this.modalDel=true;
+        this.delID=row.id;
+        this.delIndex=index
+      }else{
+        this.$Message.error("在点位中不能被删除！");
+      }
+    },
     categoryChange(value){
       this.$set(this.formValidate,'shMachineType',null)
       // this.formValidate.shMachineType = null;

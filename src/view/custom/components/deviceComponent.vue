@@ -12,8 +12,8 @@
     </div>
     <Divider />
     <!-- <Input v-model="stock"  placeholder="最大库存" style="width:100px" clearable class='marginRight'/> -->
-    行：<InputNumber :max="maxLayerNo"  :min="1" placeholder="行"  v-model="layerNo"  style="margin-right:10px"></InputNumber>
-    列：<InputNumber :max="maxColumnNo" :min="1"   placeholder="列"  v-model="columnNo"  style="margin-right:40px"></InputNumber>
+    行：<InputNumber :max="maxColumnNo" :min="1"   placeholder="行"  v-model="columnNo"  style="margin-right:10px"></InputNumber>
+    列：<InputNumber :max="maxLayerNo"  :min="1" placeholder="列"  v-model="layerNo"  style="margin-right:40px"></InputNumber>
     <Button type="primary" size="large" @click='generate' :disabled='isKong>0' >生成货道</Button>
     <Button type="primary" size="large" @click='reset'>复位货道</Button>
     <Button type="error" size="large" @click='deleteRow' style="float:right;" :disabled='listData.length==0' >删除行</Button>
@@ -28,7 +28,7 @@
         <Card class='item' :class='{"itemAction":value.roadStatus==2}'  v-for='(value,index) in v.AddMachineTypeRoadDto' :key='value+index' :id='"box"+i+""+index' :ref='"box"+i+""+index' v-show='value.roadStatus!=3'  style='width:160px;'>
           <div class='item_bigbox' @mouseenter='imgBoxOver(i,index,value.goodsShow,$event)' @mouseleave='imgBoxOut(i,index,value.goodsShow,$event)'>
             <p class='topBox'>
-            {{value.layerNo}}-{{value.columnNo}}
+            <strong>{{value.roadNo|prefixValue}}</strong>&nbsp({{value.layerNo}}-{{value.columnNo}})
             <img v-show='value.goodsShow' :src="require('../../../assets/images/huodao_close.png')" title='取消商品' @click='imgClick(i,index,value.roadStatus,value.goodsShow)'>
             <img :src="require('../../../assets/images/huodao_qiyong.png')" v-show='value.roadStatus==2' @click='value.roadStatus=1' title='启用'>
             <img :src="require('../../../assets/images/huodao_tingyong.png')" v-show='value.roadStatus==1' @click='value.roadStatus=2' title='停用'>
@@ -109,6 +109,12 @@ export default {
   },
   name:'typeTemplateDetails',
   props:['selectList','query','priceTemplate','machineCode','channelId'],
+  filters:{
+    prefixValue(value){
+      if(value<=9) return '0'+value
+      return value
+    }
+  },
   data(){
     return{
       keepRuleValidate:{
@@ -451,6 +457,8 @@ export default {
             channelId:this.channelId,
             machineCode:this.query.machineCode
           }
+          console.log(data)
+          console.log(this.listData)
           netWorkDevice('/machineRoad/resetAndSave', data).then(res => {
             this.$Message.success("操作成功");
             this.$emit('toBack')

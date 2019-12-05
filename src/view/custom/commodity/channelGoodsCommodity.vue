@@ -67,10 +67,10 @@
               <Input v-else placeholder="请选择商品" disabled/>
             </FormItem>
             <FormItem label="商品进价" class='modelInput must'>
-              <Input v-model.trim="formValidate.buyPrice" placeholder="请输入商品进价"/>
+              <Input type="number" v-model.trim="formValidate.buyPrice" placeholder="请输入商品进价"/>
             </FormItem>
             <FormItem label="参考售价" prop="salePrice" class='modelInput'>
-              <Input v-model.trim="formValidate.salePrice" placeholder="参考售价" :disabled='true'/>
+              <Input type="number" v-model.trim="formValidate.salePrice" placeholder="参考售价" :disabled='true'/>
             </FormItem>
             <FormItem label="实际售价" prop="actualPrice" class='modelInput'>
               <Input v-model.number="formValidate.actualPrice" placeholder="请输入实际售价"/>
@@ -134,12 +134,12 @@
                 </Select>
               </FormItem>
               <FormItem label="进价" prop="buyPrice" class='modelInput'>
-                <Input v-model.trim="customFormValidate.buyPrice" placeholder="请输入进价" />
+                <Input type="number" v-model.trim="customFormValidate.buyPrice" placeholder="请输入进价" />
               </FormItem>
               <FormItem label="售价" prop="salePrice" class='modelInput'>
-                <Input v-model.trim="customFormValidate.salePrice" placeholder="请输入售价"/>
+                <Input type="number" v-model.trim="customFormValidate.salePrice" placeholder="请输入售价"/>
               </FormItem>
-              <FormItem label="商品描述" class='modelInput'>
+              <FormItem v-show='customFormValidate.categoryId!=drugsID' label="商品描述" class='modelInput'>
                 <Input v-model.trim="customFormValidate.productDesc" placeholder="请输入商品描述"/>
               </FormItem>
               <template v-if='customFormValidate.categoryId==drugsID'>

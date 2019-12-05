@@ -44,7 +44,7 @@
         </template>
         <!-- 状态 -->
         <template slot-scope="{ row, index }" slot="auditType">
-          <span v-show="row.auditType==1" style="color:#2d8cf0">待审核</span>
+          <span v-show="row.auditType==1" style="color:#ff9900">待审核</span>
           <span v-show="row.auditType==2" style="color:#19be6b">审核成功</span>
           <span v-show="row.auditType==3" style="color:#ed4014">审核失败</span>
         </template>

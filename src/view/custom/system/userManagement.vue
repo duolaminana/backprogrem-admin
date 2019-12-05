@@ -928,7 +928,8 @@ export default {
       this.isAdd = true;
       this.isShow = true;
       this.ispassword = true;
-      this.getRouteTree();
+      this.routeList=[]
+      // this.getRouteTree();
       this.formValidate = {
         birth: null, // 出生日期
         channelId: this.$store.state.user.channelId, // 渠道id
@@ -1167,29 +1168,29 @@ export default {
       searchRouteListByChannelId(this.channelId).then(res => {
         if (res.data.code == 200) {
           this.routeDatas = this.forData(res.data.result);
-          if (this.isAdd) {
-            let routeList = [];
-            function forRoute(items) {
-              for (let i = 0; i < items.length; i++) {
-                if (items[i].children) {
-                  forRoute(items[i].children);
-                  routeList.push({
-                    value: items[i].value,
-                    label: items[i].label
-                  });
-                } else {
-                  // 没有儿子
-                  routeList.push({
-                    value: items[i].value,
-                    label: items[i].label
-                  });
-                }
-              }
-            }
-            forRoute(res.data.result);
-            this.routeList = routeList;
-            console.log(this.routeList);
-          }
+          // if (this.isAdd) {
+          //   let routeList = [];
+          //   function forRoute(items) {
+          //     for (let i = 0; i < items.length; i++) {
+          //       if (items[i].children) {
+          //         forRoute(items[i].children);
+          //         routeList.push({
+          //           value: items[i].value,
+          //           label: items[i].label
+          //         });
+          //       } else {
+          //         // 没有儿子
+          //         routeList.push({
+          //           value: items[i].value,
+          //           label: items[i].label
+          //         });
+          //       }
+          //     }
+          //   }
+          //   forRoute(res.data.result);
+          //   this.routeList = routeList;
+          //   console.log(this.routeList);
+          // }
         }
       });
     },

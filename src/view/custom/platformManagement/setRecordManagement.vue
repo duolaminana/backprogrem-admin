@@ -1,5 +1,5 @@
 <template>
-  <div class="settlement">
+  <div class="setRecordManagement">
     <div class="leftBox">
       <channel-tree @clickTreeRow="clickTreeRow"></channel-tree>
     </div>
@@ -25,16 +25,8 @@
         @on-change="handleChangeEnd"
         style="width: 160px"
       ></DatePicker>
-      <Button
-        type="primary"
-        @click="searchSettlement"
-        v-if="hasPerm('set:sta:see')"
-      >查询</Button>
-      <Button
-        type="primary"
-        @click="reset"
-        v-if="hasPerm('set:sta:see')"
-      >重置</Button>
+      <Button type="primary" @click="searchSettlementOver" v-if="hasPerm('set:rec:seeback')">查询</Button>
+      <Button type="primary" @click="reset" v-if="hasPerm('set:rec:seeback')">重置</Button>
       <Table
         highlight-row
         :columns="columns"
@@ -47,23 +39,39 @@
         <template slot-scope="{row,index}" slot="facilityNumber">
           <a class="lookDetails" @click="contactEquipment(row)">查看详情</a>
         </template>
-        <!-- 收款人信息 -->
+        <!-- 收款人详情 -->
         <template slot-scope="{row,index}" slot="userInfo">
           <a class="lookDetails" @click="seeAccount(row)">查看详情</a>
         </template>
+
+        <!-- 结算时间段 -->
+        <template
+          slot-scope="{row,index}"
+          slot="betweenTime"
+        >{{row.createDate+'~'+row.clearingDate}}</template>
+
         <!-- 结算详情 -->
         <template slot-scope="{row,index}" slot="SettlementList">
           <a class="lookDetails" @click="seeSettlementMore(row)">查看详情</a>
         </template>
+        <!-- 结算状态 -->
+        <template slot-scope="{row,index}" slot="clearingStatus">
+          <span v-show="row.clearingStatus==1">结算成功</span>
+          <span v-show="row.clearingStatus==2">结算中</span>
+          <Tooltip max-width="120">
+            <div slot="content">{{row.remark}}</div>
+            <span v-show="row.clearingStatus==3" style="color:red">结算失败</span>
+          </Tooltip>
+        </template>
         <!-- 操作 -->
         <template slot-scope="{row,index}" slot="operation">
-          <!-- 结算 -->
+          <!-- 再次结算 -->
           <Button
+            v-if="hasPerm('set:rec:setmoreback')&&row.clearingStatus==3"
             type="primary"
             size="small"
-            @click="getSettlementClick(row)"
-            v-if="hasPerm('set:sta:set')"
-          >结算</Button>
+            @click="setMore(row)"
+          >再次结算</Button>
         </template>
       </Table>
       <Page
@@ -78,22 +86,12 @@
     </div>
     <!-- 结算详情弹框的模态框 -->
     <Modal v-model="isShow" :mask-closable="false" :title="'结算详情('+deductAccount+')'" width="1400">
-      <Table
-        class="setMore"
-        :columns="columnsMore"
-        :data="dataTableMore"
-        border
-        ref="table"
-        style="margin:20px 0"
-      >
+      <Table :columns="columnsMore" :data="dataTableMore" border ref="table" style="margin:20px 0">
         <template slot-scope="{row,index}" slot="Price">
           <span>{{(row.actualPrice-row.buyPrice)*row.productProduce*(row.commissionPercent/100)}}</span>
         </template>
         <template slot-scope="{row,index}" slot="primayCapital">
           <span>{{row.primayCapital|primayCapital}}</span>
-        </template>
-        <template slot-scope="{row,index}" slot="cardNo">
-          <span>{{row.cardNo|cardNo}}</span>
         </template>
       </Table>
       <Page
@@ -142,7 +140,7 @@ import channelTree from "@/view/custom/components/channelTree";
 import account from "@/view/custom/components/account";
 import format from "@/plugin/format.js"; //格式化时间YYYY-MM-DD
 import {
-  searchSettlement,
+  searchSettlementOver,
   searchSettlementMore,
   searchAccountByAccountId,
   searchMachineByAccountId,
@@ -154,13 +152,14 @@ export default {
     channelTree,
     account
   },
-  name: "settlement",
+  name: "setRecordManagement",
 
   data() {
     return {
       accountList: [],
       deductAccount: null,
       createDate: "",
+      clearingDate: "",
       // 收款人弹框表单数据
       formValidate: {
         merchantId: null
@@ -177,7 +176,7 @@ export default {
       channelId: this.$store.state.user.channelId, // 渠道ID
       clearingEndDate: "", //结算结束时间
       clearingStartDate: "", //结算开始时间
-      clearingStatus: 0, //结算状态0 未结算 1 已结算
+      clearingStatus: 1, //结算状态0 未结算 1 已结算
       deductAccountId: null, //扣款账号Id
       deductAccountName: null, //扣款账号名称
       gatheringPrice: null, //收款总金额
@@ -200,7 +199,7 @@ export default {
         },
         {
           title: "收款方",
-          key: "beneficiary",
+          key: "deductAccountName",
           align: "center",
           minWidth: 50,
           tooltip: true
@@ -234,14 +233,21 @@ export default {
           tooltip: true
         },
         {
-          title: "上次结算时间",
-          key: "lastClearingTime",
+          title: "结算时间段",
+          slot: "betweenTime",
           align: "center",
           minWidth: 80,
           tooltip: true
         },
         {
-          title: "累计金额(元)",
+          title: "结算时间",
+          key: "clearingDate",
+          align: "center",
+          minWidth: 60,
+          tooltip: true
+        },
+        {
+          title: "结算金额(元)",
           key: "gatheringPrice",
           align: "center",
           minWidth: 70,
@@ -255,10 +261,17 @@ export default {
           tooltip: true
         },
         {
+          title: "结算状态",
+          align: "center",
+          slot: "clearingStatus",
+          minWidth: 60,
+          tooltip: true
+        },
+        {
           title: "操作",
           align: "center",
           slot: "operation",
-          minWidth: 60,
+          minWidth: 50,
           tooltip: true
         }
       ],
@@ -268,7 +281,7 @@ export default {
         {
           title: "序号",
           type: "index",
-          minWidth: 50,
+          minWidth: 60,
           align: "center"
         },
         {
@@ -280,7 +293,7 @@ export default {
         },
         {
           title: "消费者",
-          slot: "cardNo",
+          key: "cardNo",
           align: "center",
           minWidth: 100,
           tooltip: true
@@ -289,56 +302,56 @@ export default {
           title: "设备编码",
           key: "memberCard",
           align: "center",
-          minWidth: 70,
+          minWidth: 80,
           tooltip: true
         },
         {
           title: "商品名称",
           key: "productName",
           align: "center",
-          minWidth: 70,
+          minWidth: 80,
           tooltip: true
         },
         {
           title: "商品进价",
           key: "buyPrice",
           align: "center",
-          minWidth: 70,
+          minWidth: 80,
           tooltip: true
         },
         {
           title: "实际售价",
           key: "actualPrice",
           align: "center",
-          minWidth: 70,
+          minWidth: 80,
           tooltip: true
         },
         {
           title: "活动售价",
           key: "activityPrice",
           align: "center",
-          minWidth: 70,
+          minWidth: 80,
           tooltip: true
         },
         {
           title: "购买数量",
           key: "productNumber",
           align: "center",
-          minWidth: 70,
+          minWidth: 80,
           tooltip: true
         },
         {
           title: "出货数量",
           key: "productProduce",
           align: "center",
-          minWidth: 70,
+          minWidth: 80,
           tooltip: true
         },
         {
           title: "交易时间",
           key: "dealDate",
           align: "center",
-          minWidth: 70,
+          minWidth: 80,
           tooltip: true
         },
         {
@@ -346,24 +359,21 @@ export default {
           slot: "primayCapital",
           align: "center",
           minWidth: 60,
-          tooltip: true,
-          className: "more"
+          tooltip: true
         },
         {
           title: "抽成金额(元)",
           slot: "Price",
           align: "center",
           minWidth: 80,
-          tooltip: true,
-          className: "more"
+          tooltip: true
         },
         {
           title: "利润(元)",
           key: "profitPrice",
           align: "center",
           minWidth: 60,
-          tooltip: true,
-          className: "more"
+          tooltip: true
         },
         {
           title: "利润百分比",
@@ -373,16 +383,21 @@ export default {
           tooltip: true,
           render: (h, param) => {
             return h("div", param.row.profitPercent + "%");
-          },
-          className: "more"
+          }
         },
         {
-          title: "待结算金额(元)",
+          title: "结算金额(元)",
           key: "benefitPrice",
           align: "center",
           minWidth: 60,
-          tooltip: true,
-          className: "more"
+          tooltip: true
+        },
+        {
+          title: "结算时间",
+          key: "updateDate",
+          align: "center",
+          minWidth: 60,
+          tooltip: true
         }
       ],
       dataTableMore: [], //结算详情数据
@@ -453,11 +468,9 @@ export default {
       }
       return realVal;
     },
-    cardNo(value) {
-      return `${value.substring(0, 3)}****${value.substring(value.length - 4)}`;
-    }
   },
   methods: {
+    setMore(row) {},
     handleChangeStart(value) {
       this.clearingStartDate = value;
     },
@@ -467,7 +480,7 @@ export default {
     clickTreeRow(value) {
       if (value) {
         this.channelId = value.id;
-        this.getSettlement();
+        this.getSettlementOver();
         this.getBenefitAccount();
       }
     },
@@ -478,31 +491,30 @@ export default {
       this.clearingStartDate = "";
       this.clearingEndDate = "";
       this.pageNum = 1;
-      this.getSettlement();
+      this.getSettlementOver();
     },
     // 页码改变时触发
     pageChange(value) {
       this.pageNum = value;
-      this.getSettlement();
+      this.getSettlementOver();
     },
     // 页容量改变时触发
     sizeChange(value) {
       this.pageSize = value;
-      this.getSettlement();
+      this.getSettlementOver();
     },
-    // 结算详情页码改变时触发
+    //  结算详情页码改变时触发
     pageChangeMore(value) {
       this.pageNumMore = value;
-      this.getSettlementMore();
+      this.getSettlementOverMore();
     },
-    // 结算详情页容量改变时触发
+    //  结算详情页容量改变时触发
     sizeChangeMore(value) {
       this.pageSizeMore = value;
-      this.getSettlementMore();
+      this.getSettlementOverMore();
     },
     // 关联设备
     contactEquipment(row) {
-      console.log(row);
       this.isShowEquipment = true;
       this.accountId = row.accountId;
       this.getMachine();
@@ -523,15 +535,17 @@ export default {
       this.clearingId = null;
       this.accountName = null;
       this.createDate = "";
+      this.clearingDate = "";
     },
     //查看结算详情
     seeSettlementMore(row) {
       console.log(row);
       this.clearingId = row.id;
       this.createDate = row.createDate;
+      this.clearingDate = row.clearingDate;
       this.deductAccount = row.beneficiary;
       this.isShow = true;
-      this.getSettlementMore();
+      this.getSettlementOverMore();
     },
     // 导出表格
     exportTable() {
@@ -543,7 +557,7 @@ export default {
           this.deductAccount +
           format(this.createDate, "YYYY-MM-DD") +
           "至" +
-          format(new Date(), "YYYY-MM-DD");
+          format(this.clearingDate, "YYYY-MM-DD");
         const blob = new Blob([res.data]);
         const fileName = fileNames + ".xlsx";
         const elink = document.createElement("a");
@@ -556,15 +570,12 @@ export default {
         document.body.removeChild(elink);
       });
     },
-
-    // 结算点击事件
-    getSettlementClick(row) {},
-    searchSettlement() {
+    searchSettlementOver() {
       this.pageNum = 1;
-      this.getSettlement();
+      this.getSettlementOver();
     },
-    // 获取未结算列表
-    getSettlement() {
+    // 获取已结算列表
+    getSettlementOver() {
       let data = {
         channelId: this.channelId, // 渠道ID
         accountId: this.accountId, //收款账号Id,
@@ -583,7 +594,7 @@ export default {
         userId: this.userId,
         userType: this.userType
       };
-      searchSettlement(data).then(res => {
+      searchSettlementOver(data).then(res => {
         if (res.data.code == 200) {
           this.dataTable = res.data.result.list;
           this.total = res.data.result.total;
@@ -591,14 +602,14 @@ export default {
         }
       });
     },
-    // 获取未结算列表详情
-    getSettlementMore() {
+    // 获取已结算列表详情
+    getSettlementOverMore() {
       let data = {
         clearingId: this.clearingId, // 结算主表id
         id: this.id, //主键id
         orderNo: this.orderNo, //订单编号
-        pageNum: this.pageNumMore, // 页码
-        pageSize: this.pageSizeMore // 页容量
+        pageNum: this.pageNum, // 页码
+        pageSize: this.pageSize // 页容量
       };
       searchSettlementMore(data).then(res => {
         if (res.data.code == 200) {
@@ -635,14 +646,14 @@ export default {
   },
 
   mounted() {
-    this.getSettlement();
+    this.getSettlementOver();
     this.getBenefitAccount();
   }
 };
 </script>
 
 <style lang="less" scoped>
-.settlement {
+.setRecordManagement {
   .ivu-input-wrapper {
     width: 300px;
     margin-right: 5px;
@@ -669,11 +680,6 @@ export default {
   }
   .lookDetails {
     text-decoration: underline;
-  }
-}
-.setMore {
-  /deep/ .ivu-table .more {
-    color: #2d8cf0;
   }
 }
 </style>

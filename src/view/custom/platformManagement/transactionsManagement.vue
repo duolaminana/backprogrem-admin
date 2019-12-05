@@ -1,5 +1,5 @@
 <template>
-  <div class="transactionsList">
+  <div class="transactionsManagement">
     <div class="leftBox">
       <channel-tree @clickTreeRow="clickTreeRow"></channel-tree>
     </div>
@@ -23,9 +23,9 @@
         @on-change="handleChangeEnd"
         style="width: 160px"
       ></DatePicker>
-      <Button type="primary" @click="searchOrder" v-if="hasPerm('set:tranlist:see')">查询</Button>
-      <Button type="primary" @click="reset" v-if="hasPerm('set:tranlist:see')">重置</Button>
-      <Button type="primary" @click="exportTable" v-if="hasPerm('set:tranlist:see')">导出</Button>
+      <Button type="primary" @click="searchOrder" v-if="hasPerm('set:tranlist:seeback')">查询</Button>
+      <Button type="primary" @click="reset" v-if="hasPerm('set:tranlist:seeback')">重置</Button>
+      <Button type="primary" @click="exportTable" v-if="hasPerm('set:tranlist:seeback')">导出</Button>
       <Table
         highlight-row
         :columns="columns"
@@ -38,10 +38,6 @@
         @on-select-all="selectAll"
         @on-select-all-cancel="selectAllCancel"
       >
-        <!-- 身份证号 -->
-        <template slot-scope="{row,index}" slot="cardNo">
-          <span>{{row.cardNo|cardNo}}</span>
-        </template>
         <!-- 点位名称 -->
         <template slot-scope="{row,index}" slot="positionName">
           <a class="lookDetails" @click="showPositin(row)">{{row.positionName}}</a>
@@ -85,7 +81,7 @@
             type="primary"
             size="small"
             @click="refund(row)"
-            v-if="hasPerm('set:tranlist:refund')"
+            v-if="hasPerm('set:tranlist:refundback')"
           >退款</Button>
         </template>
       </Table>
@@ -158,7 +154,7 @@ export default {
     interestComponent,
     positionInfo
   },
-  name: "transactionsList",
+  name: "transactionsManagement",
 
   data() {
     return {
@@ -220,7 +216,7 @@ export default {
         },
         {
           title: "消费者",
-          slot: "cardNo",
+          key: "cardNo",
           align: "center",
           minWidth: 80,
           tooltip: true,
@@ -471,9 +467,6 @@ export default {
       }
       return realVal;
     },
-    cardNo(value) {
-      return `${value.substring(0,3)}****${value.substring(value.length-4)}`
-    }
   },
   methods: {
     select(selection, row) {
@@ -682,7 +675,7 @@ export default {
 </script>
 
 <style lang="less" scoped>
-.transactionsList {
+.transactionsManagement {
   .ivu-input-wrapper {
     width: 300px;
     margin-right: 5px;

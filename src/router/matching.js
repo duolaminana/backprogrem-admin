@@ -117,6 +117,18 @@ export const matchingRoute = name => {
     case 'QRCODEMANAGEMENT':
       return () => import('@/view/custom/platformManagement/QRcodeManagement')
       break
+    case 'SETRECORDMANAGEMENT':
+      return () =>
+        import("@/view/custom/platformManagement/setRecordManagement");
+      break
+    case 'SETSTATEMENTMANAGEMENT':
+      return () =>
+        import("@/view/custom/platformManagement/setStatementManagement");
+      break
+    case 'TRANSACTIONSMANAGEMENT':
+      return () =>
+        import("@/view/custom/platformManagement/transactionsManagement");
+      break
     case 'PROMOTIONLIST':
       return () => import('@/view/custom/promotion/promotionList')
       break

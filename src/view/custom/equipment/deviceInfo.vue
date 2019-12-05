@@ -24,18 +24,18 @@
               <Button v-if="channelId==$store.state.user.userVo.channelId&&hasPerm('pos:dev:edit')&&row.enable==0" type="success" size="small" class='marBtn' @click='enable(row,index,true)'  :disabled='row.surplusDays<0'>启用</Button>
               <Button v-if="channelId==$store.state.user.userVo.channelId&&hasPerm('pos:dev:edit')&&row.enable==1" type="error" size="small" class='marBtn' @click='enable(row,index,false)' :disabled='row.surplusDays<0'>停用</Button>
               <Button v-if="channelId==$store.state.user.userVo.channelId&&hasPerm('pos:dev:edit')" type="primary" size="small" class='marBtn' @click='showNewlyAdded("bj",index,row)' :disabled='$store.state.user.userVo.type!=2||row.ownership!=3||row.status!=0||row.status!=2||row.surplusDays<0'>编辑</Button>
-              <Button v-if="channelId==$store.state.user.userVo.channelId&&hasPerm('pos:dev:edit')" type="error" size="small" class='marBtn' @click="modalDel=true;delID=row.id;delIndex=index" :disabled='$store.state.user.userVo.type!=2||row.ownership!=3||row.surplusDays<0'>删除</Button>
+              <Button v-if="channelId==$store.state.user.userVo.channelId&&hasPerm('pos:dev:edit')" type="error" size="small" class='marBtn' @click="devDelete(row,index)" :disabled='$store.state.user.userVo.type!=2||row.ownership!=3||row.surplusDays<0'>删除</Button>
           </template>
           <template slot-scope="{ row, index }" slot="info">
               <a class='lookDetails' @click='showNewlyAdded("ck",index,row)' :disabled="row.surplusDays<0">查看详情</a>
           </template>
           <template slot-scope="{ row, index }" slot="position">
-              <a class='lookDetails'  v-if='row.positionId' :disabled='row.status!=3||row.surplusDays<0||channelId!=$store.state.user.userVo.channelId' @click='positionInfo(row,index,false)'>{{row.positionName}}</a>
+              <a class='lookDetails'  v-if='row.positionId' :disabled="row.status!=3||row.surplusDays<0||channelId!=$store.state.user.userVo.channelId" @click='positionInfo(row,index,false)'>{{row.positionName}}</a>
               <a v-else-if='!row.positionId&&(row.status==1||row.status==7)' @click='positionInfo(row,index,true)' :disabled="row.surplusDays<0||channelId!=$store.state.user.userVo.channelId" class='green' >去设定</a>
               <a v-else class='gray'>去设定</a>
           </template>
           <template slot-scope="{ row, index }" slot="cargoWay">
-              <a class='lookDetails' :disabled='!row.machineType||row.surplusDays<0||channelId!=$store.state.user.userVo.channelId' @click='toLink(row)'>查看详情</a>
+              <a class='lookDetails' :disabled="!row.machineType||row.surplusDays<0||channelId!=$store.state.user.userVo.channelId||!hasPerm('pos:dev:dgp')" @click='toLink(row)'>查看详情</a>
           </template>
           <template slot-scope="{ row, index }" slot="interest">
               <a class='lookDetails' v-if="row.num>0&&($store.state.user.userVo.type==2||hasPerm('pos:dev:bef'))"  @click='toLinkInterest(row,false)' :disabled="row.surplusDays<0||channelId!=$store.state.user.userVo.channelId">去查看</a>
@@ -65,7 +65,7 @@
               <span v-show='!row.activateDate' class='gray'>未激活</span>
           </template>
           <template slot-scope="{ row, index }" slot="stock">
-              <input @click='' @keydown.enter='stockChange(row)' @blur="stockChange(row)" class='stockInput' type="number" v-model='row.stockWarning' :disabled="row.surplusDays<0||channelId!=$store.state.user.userVo.channelId">
+              <input @click='' @keydown.enter='stockChange(row)' @change="stockChange(row)" class='stockInput' type="number" v-model='row.stockWarning' :disabled="row.surplusDays<0||channelId!=$store.state.user.userVo.channelId">
           </template>
           <template slot-scope="{ row, index }" slot="erweima">
             <img @click='erweimaClick(row)' :src="require('../../../assets/images/erweima.png')">
@@ -76,6 +76,13 @@
           <template slot-scope="{ row, index }" slot="expireDate">
             <span v-if='row.surplusDays<0' class='red'>已到期</span>
             <span v-else>{{row.expireDate}}</span>
+          </template>
+          <template slot-scope="{ row, index }" slot="setHumidity">
+            <a v-if='row.machineHumidness&&row.machineTemperature' class='lookDetails' :disabled="row.surplusDays<0"  @click='setHun(row,index,false)'>{{row.machineHumidness}}℃/{{row.machineTemperature}}%</a>
+            <a v-else class='green lookDetails' :disabled="row.surplusDays<0" @click='setHun(row,index,true)'>去设定</a>
+          </template>
+          <template slot-scope="{ row, index }" slot="newHumidity">
+            <span :class='humidnessStatus?"green":"red"'>{{row.currentTtemperature}}℃/</span><span :class='temperatureStatus?"green":"red"'>{{row.currentHumidness}}%</span>
           </template>
           </Table>
         </Table>
@@ -323,6 +330,56 @@
         @sure = 'openDoorCancel'
         @cancel = 'openDoorCancel'
       ></table-modal>
+      <Modal
+        v-model="humidityNewlyAdded"
+        title="温度/湿度设置"
+        :mask-closable="false"
+      >
+        <Form ref="humidityFormValidate" :model="importFormValidate" :rules="importRuleValidate" :label-width="60">
+          <FormItem label="温度" prop="channelId">
+            <InputNumber
+              :max="100"
+              :min="1"
+              v-model="importFormValidate.channelName"
+              :formatter="value => `${value}℃`"
+              :parser="value => value.replace('℃', '')"
+              @on-blur=""
+            ></InputNumber>
+            <span style='margin:0px 20px'>温度范围：-5~60℃，正常波动：+</span>
+            <InputNumber
+              :max="100"
+              :min="1"
+              v-model="importFormValidate.channelName"
+              :formatter="value => `${value}%`"
+              :parser="value => value.replace('%', '')"
+              @on-blur=""
+            ></InputNumber>
+          </FormItem>
+          <FormItem label="湿度" prop="machineType">
+            <InputNumber
+              :max="100"
+              :min="1"
+              v-model="importFormValidate.channelName"
+              :formatter="value => `${value}%`"
+              :parser="value => value.replace('%', '')"
+              @on-blur=""
+            ></InputNumber>
+            <span style='margin:0px 20px'>湿度范围： 0~50% ，正常波动：+</span>
+            <InputNumber
+              :max="100"
+              :min="1"
+              v-model="importFormValidate.channelName"
+              :formatter="value => `${value}%`"
+              :parser="value => value.replace('%', '')"
+              @on-blur=""
+            ></InputNumber>
+          </FormItem>
+        </Form>
+        <div slot="footer">
+          <Button size="large" @click="humidityNewlyAdded=false">取消</Button>
+          <Button type="primary" size="large"  @click="">确定</Button>
+        </div>
+      </Modal>
   </div>
   <div v-else>
     <device-component
@@ -363,6 +420,7 @@ export default {
   },
   data(){
     return{
+      humidityNewlyAdded:false,
       initInterst:null,
       openDoorNewlyAdded:false,
       openDoorData:[],
@@ -377,30 +435,23 @@ export default {
           title: '开门时间',
           key: 'openDate',
           align: 'center',
-          width: 127,
+          width: 170,
           tooltip:true
         },
         {
           title: '用户',
           key: 'operatorName',
           align: 'center',
-          width: 127,
+          width: 170,
           tooltip:true
         },
         {
           title: '开门方式',
-          key: 'operatorName',
+          key: 'openTypeName',
           align: 'center',
-          width: 127,
+          width: 170,
           tooltip:true
-        },
-        {
-          title: '手机号',
-          key: 'operatorName',
-          align: 'center',
-          width: 127,
-          tooltip:true
-        },
+        }
       ],
       routeName:null,
       erweimaMachineCode:null,
@@ -643,6 +694,18 @@ export default {
           tooltip:true
         },
         {
+          title: '设定温度/湿度',
+          slot: 'setHumidity',
+          align: 'center',
+          tooltip:true
+        },
+        {
+          title: '当前温度/湿度',
+          slot: 'newHumidity',
+          align: 'center',
+          tooltip:true
+        },
+        {
           title: '下载二维码',
           slot: 'erweima',
           align: 'center',
@@ -655,6 +718,7 @@ export default {
           width:60,
           tooltip:true
         },
+        
         {
           title: '操作',
           slot: 'edit',
@@ -671,6 +735,18 @@ export default {
     }
   },
   methods:{
+    setHun(row,index,isSet){
+      this.humidityNewlyAdded = true;
+    },
+    devDelete(row,index){
+      if(row.status!=3){
+        this.modalDel=true;
+        this.delID=row.id;
+        this.delIndex=index
+      }else{
+        this.$Message.error("在点位中不能被删除！");
+      }
+    },
     trBgColor(row,index){
       if(row.surplusDays<0){
         return 'trBgColor';

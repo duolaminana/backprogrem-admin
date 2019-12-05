@@ -25,8 +25,8 @@
         @on-change="handleChangeEnd"
         style="width: 160px"
       ></DatePicker>
-      <Button type="primary" @click="searchSettlementOver" v-if="hasPerm('set:rec:see')||hasPerm('set:rec:seeback')">查询</Button>
-      <Button type="primary" @click="reset" v-if="hasPerm('set:rec:see')||hasPerm('set:rec:seeback')">重置</Button>
+      <Button type="primary" @click="searchSettlementOver" v-if="hasPerm('set:rec:see')">查询</Button>
+      <Button type="primary" @click="reset" v-if="hasPerm('set:rec:see')">重置</Button>
       <Table
         highlight-row
         :columns="columns"
@@ -67,7 +67,7 @@
         <template slot-scope="{row,index}" slot="operation">
           <!-- 再次结算 -->
           <Button
-            v-if="(hasPerm('set:rec:setmore')||hasPerm('set:rec:setmoreback'))&&row.clearingStatus==3"
+            v-if="hasPerm('set:rec:setmore')&&row.clearingStatus==3"
             type="primary"
             size="small"
             @click="setMore(row)"
@@ -284,7 +284,7 @@ export default {
         {
           title: "序号",
           type: "index",
-          minWidth: 50,
+          minWidth: 60,
           align: "center"
         },
         {
@@ -305,63 +305,63 @@ export default {
           title: "设备编码",
           key: "memberCard",
           align: "center",
-          minWidth: 70,
+          minWidth: 80,
           tooltip: true
         },
         {
           title: "商品名称",
           key: "productName",
           align: "center",
-          minWidth: 70,
+          minWidth: 80,
           tooltip: true
         },
         {
           title: "商品进价",
           key: "buyPrice",
           align: "center",
-          minWidth: 70,
+          minWidth: 80,
           tooltip: true
         },
         {
           title: "实际售价",
           key: "actualPrice",
           align: "center",
-          minWidth: 70,
+          minWidth: 80,
           tooltip: true
         },
         {
           title: "活动售价",
           key: "activityPrice",
           align: "center",
-          minWidth: 70,
+          minWidth: 80,
           tooltip: true
         },
         {
           title: "购买数量",
           key: "productNumber",
           align: "center",
-          minWidth: 70,
+          minWidth: 80,
           tooltip: true
         },
         {
           title: "出货数量",
           key: "productProduce",
           align: "center",
-          minWidth: 70,
+          minWidth: 80,
           tooltip: true
         },
         {
           title: "交易时间",
           key: "dealDate",
           align: "center",
-          minWidth: 70,
+          minWidth: 80,
           tooltip: true
         },
         {
           title: "本金(元)",
           slot: "primayCapital",
           align: "center",
-          minWidth: 80,
+          minWidth: 60,
           tooltip: true
         },
         {
@@ -382,15 +382,15 @@ export default {
           title: "利润百分比",
           key: "profitPercent",
           align: "center",
-          minWidth: 60,
+          minWidth: 70,
           tooltip: true,
           render: (h, param) => {
             return h("div", param.row.profitPercent + "%");
           }
         },
         {
-          title: "结算金额",
-          slot: "price",
+          title: "结算金额(元)",
+          key: "benefitPrice",
           align: "center",
           minWidth: 60,
           tooltip: true
