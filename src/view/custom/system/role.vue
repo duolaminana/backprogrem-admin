@@ -30,6 +30,7 @@
         >编辑</Button>
         <!-- 删除按钮 -->
         <Button
+          style="margin-right: 0px"
           type="error"
           size="small"
           v-if="hasPerm('sys:role:edit')"
@@ -359,10 +360,12 @@ export default {
                   this.getRole();
                 } else {
                   this.loading = false;
+                  this.$Message.error(res.data.message);
                 }
               })
               .catch(err => {
                 this.loading = false;
+                this.$Message.error(res.data.message);
               });
           } else if (!this.isAdd) {
             if (this.formValidateStr == JSON.stringify(this.formValidate)) {
@@ -379,10 +382,12 @@ export default {
                     this.getRole();
                   } else {
                     this.loading = false;
+                    this.$Message.error(res.data.message);
                   }
                 })
                 .catch(err => {
                   this.loading = false;
+                  this.$Message.error(res.data.message);
                 });
             }
           }

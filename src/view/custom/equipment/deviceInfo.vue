@@ -82,7 +82,10 @@
             <a v-else class='green lookDetails' :disabled="row.surplusDays<0" @click='setHun(row,index,true)'>去设定</a>
           </template>
           <template slot-scope="{ row, index }" slot="newHumidity">
-            <span :class='humidnessStatus?"green":"red"'>{{row.currentTtemperature}}℃/</span><span :class='temperatureStatus?"green":"red"'>{{row.currentHumidness}}%</span>
+            <template v-if='row.currentTtemperature&&row.currentHumidness'>
+              <span :class='row.humidnessStatus?"green":"red"'>{{row.currentTtemperature}}℃/</span><span :class='row.temperatureStatus?"green":"red"'>{{row.currentHumidness}}%</span>
+            </template>
+            <span v-else>--</span>
           </template>
           </Table>
         </Table>
@@ -335,40 +338,40 @@
         title="温度/湿度设置"
         :mask-closable="false"
       >
-        <Form ref="humidityFormValidate" :model="importFormValidate" :rules="importRuleValidate" :label-width="60">
-          <FormItem label="温度" prop="channelId">
+        <Form ref="humidityFormValidate" :model="humidityFormValidate" :rules="humidityRuleValidate" :label-width="60">
+          <FormItem label="温度" prop="machineTemperature">
             <InputNumber
               :max="100"
               :min="1"
-              v-model="importFormValidate.channelName"
+              v-model="humidityFormValidate.machineTemperature"
               :formatter="value => `${value}℃`"
               :parser="value => value.replace('℃', '')"
               @on-blur=""
             ></InputNumber>
-            <span style='margin:0px 20px'>温度范围：-5~60℃，正常波动：+</span>
+            <span style='margin:0px 20px'>温度范围：{{temperatureRange}}℃，正常波动：+</span>
             <InputNumber
               :max="100"
               :min="1"
-              v-model="importFormValidate.channelName"
-              :formatter="value => `${value}%`"
-              :parser="value => value.replace('%', '')"
+              v-model="humidityFormValidate.rangeTemperature"
+              :formatter="value => `${value}℃`"
+              :parser="value => value.replace('℃', '')"
               @on-blur=""
             ></InputNumber>
           </FormItem>
-          <FormItem label="湿度" prop="machineType">
+          <FormItem label="湿度" prop="machineHumidness">
             <InputNumber
               :max="100"
-              :min="1"
-              v-model="importFormValidate.channelName"
+              :min="-100"
+              v-model="humidityFormValidate.machineHumidness"
               :formatter="value => `${value}%`"
               :parser="value => value.replace('%', '')"
               @on-blur=""
             ></InputNumber>
-            <span style='margin:0px 20px'>湿度范围： 0~50% ，正常波动：+</span>
+            <span style='margin:0px 20px'>湿度范围：{{humidnessRange}} %，正常波动：+</span>
             <InputNumber
               :max="100"
-              :min="1"
-              v-model="importFormValidate.channelName"
+              :min="-100"
+              v-model="humidityFormValidate.rangeHumidness"
               :formatter="value => `${value}%`"
               :parser="value => value.replace('%', '')"
               @on-blur=""
@@ -377,7 +380,7 @@
         </Form>
         <div slot="footer">
           <Button size="large" @click="humidityNewlyAdded=false">取消</Button>
-          <Button type="primary" size="large"  @click="">确定</Button>
+          <Button type="primary" size="large"  @click="humiditySrue(humidityFormValidate,'humidityFormValidate')">确定</Button>
         </div>
       </Modal>
   </div>
@@ -418,8 +421,40 @@ export default {
     deleteComponent,
     tableModal
   },
+  computed:{
+    temperatureRange(){
+      return `${this.humidityFormValidate.machineTemperature-this.humidityFormValidate.rangeTemperature}~${this.humidityFormValidate.machineTemperature+this.humidityFormValidate.rangeTemperature}`
+    },
+    humidnessRange(){
+      return `${this.humidityFormValidate.machineHumidness-this.humidityFormValidate.rangeHumidness}~${this.humidityFormValidate.machineHumidness+this.humidityFormValidate.rangeHumidness}`
+    }
+  },
   data(){
     return{
+      humidityRuleValidate: {
+        machineTemperature: [
+          {
+            required: true,
+            message: "不能为空",
+            trigger: "blur",
+            type:'number'
+          }
+        ],
+        machineHumidness: [
+          {
+            required: true,
+            message: "不能为空",
+            trigger: "blur",
+            type:'number'
+          }
+        ],
+      },
+      humidityFormValidate:{
+        machineHumidness:null,
+        machineTemperature:null,
+        rangeHumidness:5,
+        rangeTemperature:5
+      },
       humidityNewlyAdded:false,
       initInterst:null,
       openDoorNewlyAdded:false,
@@ -735,8 +770,45 @@ export default {
     }
   },
   methods:{
-    setHun(row,index,isSet){
+    humiditySrue({machineHumidness,machineTemperature,rangeHumidness,rangeTemperature},name){
+      this.$refs[name].validate(valid => {
+        if (valid) {
+          let {networkStatus,machineCode,currentTemperature,currentHumidness,id,machineTemperature:oldMachineTemperature,machineHumidness:oldMachineHumidness} = this.rowData
+          const data ={
+            networkStatus,
+            machineCode,
+            currentTemperature,
+            currentHumidness,
+            machineHumidness,
+            machineTemperature,
+            rangeHumidness,
+            rangeTemperature,
+            id
+          }
+          if(oldMachineTemperature&&oldMachineHumidness){//修改
+            netWorkDevice('/machineApply/modifyMachineApply',data).then(res => {
+              this.getPageDatas();
+              this.humidityNewlyAdded = false;
+              this.$Message.success('操作成功');
+            })
+          }else{
+            netWorkDevice('/machineApply/addMachineApply',data).then(res => {
+              this.getPageDatas();
+              this.humidityNewlyAdded = false;
+              this.$Message.success('操作成功');
+            })
+          }
+        }
+      })
+    },
+    async setHun(row,index,isSet){
+      await this.initialization('humidityFormValidate');
+      if(!isSet){
+        this.$set(this.humidityFormValidate,'machineHumidness',row.machineHumidness)
+        this.$set(this.humidityFormValidate,'machineTemperature',row.machineTemperature)
+      }
       this.humidityNewlyAdded = true;
+      this.rowData = row;
     },
     devDelete(row,index){
       if(row.status!=3){

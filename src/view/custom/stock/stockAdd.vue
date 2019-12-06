@@ -7,8 +7,8 @@
       <Option v-for="item in routeNameList" :value="item.value" :key="item.value">{{ item.label }}</Option>
     </Select>
 
-    <Button type="primary" @click="searchPageDatas" v-if="hasPerm('stk:stkadd:search')">查询</Button>
-    <Button type="primary" @click="reset" v-if="hasPerm('stk:stkadd:reset')">重置</Button>
+    <Button type="primary" @click="searchPageDatas">查询</Button>
+    <Button type="primary" @click="reset">重置</Button>
     <Table highlight-row border ref="selection" :columns="columns" :data="datas">
       <template slot-scope="{ row, index }" slot="operateType">
         <span v-show="row.operateType==1">补货</span>

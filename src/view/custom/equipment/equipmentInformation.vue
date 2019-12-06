@@ -84,6 +84,26 @@
               </Radio>
             </RadioGroup>
           </FormItem> -->
+          <FormItem label="是否有人证核验" >
+            <RadioGroup v-model="formValidate.isCardModule">
+              <Radio label="1">
+                  <span>有</span>
+              </Radio>
+              <Radio label="0">
+                  <span>无</span>
+              </Radio>
+            </RadioGroup>
+          </FormItem>
+          <FormItem label="是否有人温湿度" >
+            <RadioGroup v-model="formValidate.temperatureHumidityStatus">
+              <Radio label="1">
+                  <span>有</span>
+              </Radio>
+              <Radio label="0">
+                  <span>无</span>
+              </Radio>
+            </RadioGroup>
+          </FormItem>
           <FormItem label="货道模板" v-if="showNewlyType=='xz'" >
             <RadioGroup v-model="formValidate.isAutomatic">
               <Radio label="1">
@@ -176,7 +196,9 @@ export default {
         image: null,
         // roadExist:'1',
         isAutomatic:'1',
-        categoryId:null
+        categoryId:null,
+        isCardModule:'0',
+        temperatureHumidityStatus:'0',
       },
       ruleValidate: {
         machineName: [
@@ -362,11 +384,15 @@ export default {
         image: null,
         // roadExist:'1',
         isAutomatic:'1',
-        categoryId:null
+        categoryId:null,
+        isCardModule:'0',
+        temperatureHumidityStatus:'0'
       };
       if (type == "bj") {
         this.formValidate = JSON.parse(JSON.stringify(row));
         this.formValidate.isAutomatic = this.formValidate.roadExist+'';
+        this.formValidate.isCardModule = this.formValidate.isCardModule+'';
+        this.formValidate.temperatureHumidityStatus = this.formValidate.temperatureHumidityStatus+'';
         console.log(this.formValidate)
       }
       this.newlyAdded = true;
@@ -384,6 +410,8 @@ export default {
             // roadExist,
             isAutomatic,
             categoryId,
+            isCardModule,
+            temperatureHumidityStatus
           } = value;
           if (this.showNewlyType == "xz") {
             if(isAutomatic!=1){
@@ -404,6 +432,8 @@ export default {
                 imageAddress,
                 image,
                 isAutomatic,
+                isCardModule,
+                temperatureHumidityStatus,
                 // roadExist,
                 categoryId,
                 operator:this.operator,
@@ -426,6 +456,8 @@ export default {
               image,
               // roadExist,
               isAutomatic,
+              isCardModule,
+              temperatureHumidityStatus,
               id: value.id,
               categoryId,
               operator:this.operator,
@@ -484,7 +516,8 @@ export default {
     },
     getRootCategory(){
       netWorkGoods('/category/findChannelRootCategory',null,'get').then(res => {
-        this.rootCategory = res.result
+        this.rootCategory = res.result;
+        this.rootCategory.push({value:-1,label: "混合"})
       })
     },
     getPageDatas() {

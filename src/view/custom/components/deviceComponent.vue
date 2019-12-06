@@ -292,7 +292,7 @@ export default {
       let previous = this.listData[i].AddMachineTypeRoadDto[this.listData[i].AddMachineTypeRoadDto.length-1]||{};
       let data = {};
       data.id = null;
-      data.roadNo = previous.roadNo+1||(i+1-1)*this.columnNo+1;
+      data.roadNo = parseInt(previous.roadNo)+1||(i+1-1)*this.columnNo+1;
       data.columnNo = previous.columnNo+1||1;
       data.layerNo = previous.layerNo||i+1;
       data.roadType = "1";

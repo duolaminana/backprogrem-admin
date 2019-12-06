@@ -410,10 +410,12 @@ export default {
                   this.$Message.info("微信支付配置成功,请等待审核");
                 } else {
                   this.$emit("update:loadingWX", false);
+                  this.$Message.error(res.data.message)
                 }
               })
               .catch(err => {
                 this.$emit("update:loadingWX", false);
+                this.$Message.error(res.data.message)
               });
           } else if (this.formValidateWX.id != null) {
             // 编辑
@@ -433,10 +435,12 @@ export default {
                     this.$Message.info("微信支付编辑成功,请等待审核");
                   } else {
                     this.$emit("update:loadingWX", false);
+                    this.$Message.error(res.data.message)
                   }
                 })
                 .catch(err => {
                   this.$emit("update:loadingWX", false);
+                  this.$Message.error(res.data.message)
                 });
             }
           }
@@ -462,10 +466,12 @@ export default {
                   this.$Message.info("支付宝配置成功,请等待审核");
                 } else {
                   this.$emit("update:loadingZFB", false);
+                  this.$Message.error(res.data.message)
                 }
               })
               .catch(err => {
                 this.$emit("update:loadingZFB", false);
+                this.$Message.error(res.data.message)
               });
           } else if (this.formValidateZFB.id != null) {
             // 编辑
@@ -485,10 +491,12 @@ export default {
                     this.$Message.info("支付宝编辑成功,请等待审核");
                   } else {
                     this.$emit("update:loadingZFB", false);
+                    this.$Message.error(res.data.message)
                   }
                 })
                 .catch(err => {
                   this.$emit("update:loadingZFB", false);
+                  this.$Message.error(res.data.message)
                 });
             }
           }

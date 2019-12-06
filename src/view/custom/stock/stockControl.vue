@@ -21,9 +21,8 @@
             <Button
               type="primary"
               @click="searchSearchStockControl"
-              v-if="hasPerm('stk:stkcon:search')"
             >查询</Button>
-            <Button type="primary" @click="reset" v-if="hasPerm('stk:stkcon:reset')">重置</Button>
+            <Button type="primary" @click="reset">重置</Button>
             <Table highlight-row border ref="selection" :columns="columns" :data="datas">
               <!-- 点位信息 -->
               <template slot-scope="{row}" slot="positionName">
@@ -112,13 +111,13 @@ export default {
           align: "center"
         },
         {
-          title: "机器类型",
+          title: "设备类型",
           key: "machineName",
           align: "center",
           tooltip: true
         },
         {
-          title: "机器编码",
+          title: "机型编码",
           key: "machineCode",
           align: "center",
           tooltip: true

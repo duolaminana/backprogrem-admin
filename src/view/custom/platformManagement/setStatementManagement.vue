@@ -59,6 +59,7 @@
         <template slot-scope="{row,index}" slot="operation">
           <!-- 结算 -->
           <Button
+          style="margin-right:0px"
             type="primary"
             size="small"
             @click="getSettlementClick(row)"
@@ -221,13 +222,6 @@ export default {
           slot: "userInfo",
           align: "center",
           minWidth: 80,
-          tooltip: true
-        },
-        {
-          title: "联系电话",
-          key: "phone",
-          align: "center",
-          minWidth: 60,
           tooltip: true
         },
         {

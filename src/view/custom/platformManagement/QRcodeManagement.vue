@@ -21,18 +21,12 @@
           <Button
             type="primary"
             size="small"
-            style="margin-right: 5px"
             @click="checkModal(row)"
             v-if="row.auditType==1"
           >&nbsp&nbsp审核&nbsp&nbsp</Button>
 
-          <Button
-            size="small"
-            style="margin-right: 5px"
-            v-if="row.auditType==2||row.auditType==3"
-            disabled
-          >已审核</Button>
-          <Button type="primary" size="small" style="margin-right: 5px" @click="seeResult(row)">查看</Button>
+          <Button size="small" v-if="row.auditType==2||row.auditType==3" disabled>已审核</Button>
+          <Button type="primary" size="small" style="margin-right: 0px" @click="seeResult(row)">查看</Button>
 
           <!-- 删除按钮 -->
           <Button
@@ -467,10 +461,12 @@ export default {
               this.getQRcode(); // 重新获取数据
             } else {
               this.loading = false;
+              this.$Message.error(res.data.message);
             }
           })
           .catch(err => {
             this.loading = false;
+            this.$Message.error(res.data.message);
           });
       } else if (this.tabIndex == 2) {
         this.formValidateZFB.auditType = 2;
@@ -488,10 +484,12 @@ export default {
               this.getQRcode(); // 重新获取数据
             } else {
               this.loading = false;
+              this.$Message.error(res.data.message);
             }
           })
           .catch(err => {
             this.loading = false;
+            this.$Message.error(res.data.message);
           });
       }
     },
@@ -515,10 +513,12 @@ export default {
               this.getQRcode(); // 重新获取数据
             } else {
               this.loadingNo = false;
+              this.$Message.error(res.data.message);
             }
           })
           .catch(err => {
             this.loadingNo = false;
+            this.$Message.error(res.data.message);
           });
       } else if (this.tabIndex == 2) {
         this.formValidateZFB.auditType = 3;
@@ -537,10 +537,12 @@ export default {
               this.getQRcode(); // 重新获取数据
             } else {
               this.loadingNo = false;
+              this.$Message.error(res.data.message);
             }
           })
           .catch9(err => {
             this.loading = false;
+            this.$Message.error(res.data.message);
           });
       }
     },

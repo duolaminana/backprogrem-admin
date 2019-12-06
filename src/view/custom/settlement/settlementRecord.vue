@@ -67,6 +67,7 @@
         <template slot-scope="{row,index}" slot="operation">
           <!-- 再次结算 -->
           <Button
+            style="margin-right:0px"
             v-if="hasPerm('set:rec:setmore')&&row.clearingStatus==3"
             type="primary"
             size="small"
@@ -472,7 +473,7 @@ export default {
       return realVal;
     },
     cardNo(value) {
-      return `${value.substring(0,3)}****${value.substring(value.length-4)}`
+      return `${value.substring(0, 3)}****${value.substring(value.length - 4)}`;
     }
   },
   methods: {

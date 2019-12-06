@@ -79,7 +79,6 @@
           <Button
             type="success"
             size="small"
-            style="margin-right: 5px"
             @click="changeAuditStatus(row)"
             v-if="(channelId==$store.state.user.channelId&&hasPerm('sys:merchantinfo:edit')&&row.auditStatus==1)||(row.channelId!=$store.state.user.channelId&&row.auditStatus==1)"
           >提交</Button>
@@ -87,22 +86,22 @@
           <Button
             type="success"
             size="small"
-            style="margin-right: 5px"
             @click="seeReason(row)"
             v-if="hasPerm('sys:merchantinfo:see')&&((channelId==$store.state.user.channelId&&(row.auditStatus==4||row.auditStatus==2))||(row.channelId!=$store.state.user.channelId&&(row.auditStatus==4||row.auditStatus==2)))"
           >查看</Button>
 
           <!-- 编辑按钮 -->
           <Button
+          style="margin-right:0px"
             type="primary"
             size="small"
-            style="margin-right: 5px"
             @click="editModal(row)"
             v-if="(channelId==$store.state.user.channelId&&hasPerm('sys:merchantinfo:edit')&&row.auditStatus!=2&&row.channelId==$store.state.user.channelId)||(hasPerm('sys:merchantinfo:edit')&&row.auditStatus==3)"
           >编辑</Button>
 
           <!-- 删除按钮 -->
           <Button
+            style="margin-right:0px;margin-left:10px"
             type="error"
             size="small"
             @click="modalDel=true;delID=row.id;delIndex=index"
@@ -1408,7 +1407,7 @@ export default {
           title: "操作",
           align: "center",
           slot: "operation",
-          width: 100,
+          width: 120,
           tooltip: true
         }
       ],
@@ -1893,10 +1892,12 @@ export default {
                     this.getMerchant(); // 重新获取数据
                   } else {
                     this.loading = false;
+                    this.$Message.error(res.data.message);
                   }
                 })
                 .catch(err => {
                   this.loading = false;
+                  this.$Message.error(res.data.message);
                 });
             } else if (this.tabIndex == 2) {
               // this.isReceiveType == "1"
@@ -1917,10 +1918,12 @@ export default {
                     this.getMerchant(); // 重新获取数据
                   } else {
                     this.loading = false;
+                    this.$Message.error(res.data.message);
                   }
                 })
                 .catch(err => {
                   this.loading = false;
+                  this.$Message.error(res.data.message);
                 });
             }
           } else if (this.modalTitle == "编辑【商户】") {
@@ -1947,10 +1950,12 @@ export default {
                       this.getMerchant();
                     } else {
                       this.loading = false;
+                      this.$Message.error(res.data.message);
                     }
                   })
                   .catch(err => {
                     this.loading = false;
+                    this.$Message.error(res.data.message);
                   });
               }
             } else if (this.tabIndex == 2) {
@@ -1975,10 +1980,12 @@ export default {
                       this.getMerchant();
                     } else {
                       this.loading = false;
+                      this.$Message.error(res.data.message);
                     }
                   })
                   .catch(err => {
                     this.loading = false;
+                    this.$Message.error(res.data.message);
                   });
               }
             }

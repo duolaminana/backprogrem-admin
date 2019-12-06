@@ -13,12 +13,12 @@
           <Button
             type="primary"
             size="small"
-            style="margin-right: 5px"
             @click="editModal(row)"
             v-if="hasPerm('sys:appManage:edit')"
           >编辑</Button>
           <!-- 删除按钮 -->
           <Button
+            style="margin-right: 0px"
             type="error"
             size="small"
             @click="modalDel=true;delID=row.id;delIndex=index"
@@ -272,10 +272,12 @@ export default {
                   this.getAppManage();
                 } else {
                   this.loading = false;
+                  this.$Message.error(res.data.message);
                 }
               })
               .catch(err => {
                 this.loading = false;
+                this.$Message.error(res.data.message);
               });
           } else if (!this.isAdd) {
             if (this.formValidateStr == JSON.stringify(this.formValidate)) {
@@ -291,10 +293,12 @@ export default {
                     this.getAppManage();
                   } else {
                     this.loading = false;
+                    this.$Message.error(res.data.message);
                   }
                 })
                 .catch(err => {
                   this.loading = false;
+                  this.$Message.error(res.data.message);
                 });
             }
           }

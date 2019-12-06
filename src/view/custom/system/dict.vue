@@ -54,7 +54,7 @@
           <Button
             type="primary"
             size="small"
-            style="margin-right: 5px"
+            style="margin-right: 10px"
             @click="editModalData(row)"
           >编辑</Button>
 
@@ -450,10 +450,12 @@ export default {
                   this.getDictData();
                 } else {
                   this.loadingData = false;
+                  this.$Message.error(res.data.message)
                 }
               })
               .catch(err => {
                 this.loadingData = false;
+                this.$Message.error(res.data.message)
               });
           } else if (!this.isAddData) {
             if (
@@ -471,10 +473,12 @@ export default {
                     this.getDictData();
                   } else {
                     this.loadingData = false;
+                    this.$Message.error(res.data.message)
                   }
                 })
                 .catch(err => {
                   this.loadingData = false;
+                  this.$Message.error(res.data.message)
                 });
             }
           }
@@ -556,9 +560,11 @@ export default {
                 this.getDictType(); // 重新获取字典类型
               }else{
                   this.loadingType = false;
+                  this.$Message.error(res.data.message)
                 }
             }).catch(err => {
                 this.loadingType = false;
+                this.$Message.error(res.data.message)
               });
           } else if (!this.isAdd) {
             if (this.formValidateStr == JSON.stringify(this.formValidate)) {
@@ -574,9 +580,11 @@ export default {
                   this.getsearchDictTypeByID();
                 }else{
                   this.loadingType = false;
+                  this.$Message.error(res.data.message)
                 }
               }).catch(err => {
                 this.loadingType = false;
+                this.$Message.error(res.data.message)
               });
             }
           }

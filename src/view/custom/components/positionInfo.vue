@@ -77,7 +77,6 @@
       </FormItem>
     </Form>
     <div slot="footer">
-      <Button size="large" @click="cancel">取消</Button>
       <Button type="primary" size="large" @click="cancel">确定</Button>
     </div>
   </Modal>

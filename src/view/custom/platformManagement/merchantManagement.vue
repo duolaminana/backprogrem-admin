@@ -31,7 +31,6 @@
           <Button
             type="primary"
             size="small"
-            style="margin-right: 5px"
             v-if="hasPerm('sys:merchantinfoMang:check')&&(row.auditStatus==4||row.auditStatus==3||row.auditStatus==2)"
             @click="checkModal(row)"
             :disabled="row.auditStatus==2"
@@ -40,14 +39,14 @@
           <Button
             type="success"
             size="small"
-            style="margin-right: 5px"
+            style="margin-right: 0px"
             @click="checkModal(row)"
             v-if="hasPerm('sys:merchantinfoMang:check')&&row.auditStatus==2"
           >&nbsp&nbsp审核&nbsp&nbsp</Button>
 
           <Button
             size="small"
-            style="margin-right: 5px"
+            style="margin-right: 0px"
             v-if="hasPerm('sys:merchantinfoMang:check')&&(row.auditStatus==4||row.auditStatus==3)"
             disabled
           >已审核</Button>
@@ -1094,10 +1093,12 @@ export default {
               this.getMerchant(); // 重新获取数据
             } else {
               this.loading = false;
+              this.$Message.error(res.data.message)
             }
           })
           .catch(err => {
             this.loading = false;
+            this.$Message.error(res.data.message)
           });
       } else if (this.tabIndex == 2) {
         this.loading = true;
@@ -1120,10 +1121,12 @@ export default {
               this.getMerchant(); // 重新获取数据
             } else {
               this.loading = false;
+              this.$Message.error(res.data.message)
             }
           })
           .catch(err => {
             this.loading = false;
+            this.$Message.error(res.data.message)
           });
       }
     },
@@ -1156,10 +1159,12 @@ export default {
               this.getMerchant(); // 重新获取数据
             } else {
               this.loadingNo = false;
+              this.$Message.error(res.data.message)
             }
           })
           .catch(err => {
             this.loadingNo = false;
+            this.$Message.error(res.data.message)
           });
       } else if (this.tabIndex == 2) {
         this.loadingNo = true;
@@ -1183,10 +1188,12 @@ export default {
               this.getMerchant(); // 重新获取数据
             } else {
               this.loadingNo = false;
+              this.$Message.error(res.data.message)
             }
           })
           .catch(err => {
             this.loadingNo = false;
+            this.$Message.error(res.data.message)
           });
       }
     },

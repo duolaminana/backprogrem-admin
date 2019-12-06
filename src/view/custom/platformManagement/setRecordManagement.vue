@@ -67,6 +67,7 @@
         <template slot-scope="{row,index}" slot="operation">
           <!-- 再次结算 -->
           <Button
+            style="margin-right:0px"
             v-if="hasPerm('set:rec:setmoreback')&&row.clearingStatus==3"
             type="primary"
             size="small"
@@ -467,7 +468,7 @@ export default {
         realVal = "——";
       }
       return realVal;
-    },
+    }
   },
   methods: {
     setMore(row) {},

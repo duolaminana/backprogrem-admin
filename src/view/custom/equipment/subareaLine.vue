@@ -46,7 +46,7 @@
       </div>
       <!-- 新增弹框的模态框 -->
       <Modal v-model="newlyAdded" width="600" :title="showNewlyType=='xz'?'新增路线':'编辑路线'"  :mask-closable='false'>
-        <h4 style='padding:0 0 10px 60px' v-if='pickTreeData&&pickTreeData.name'>已选分区：{{pickTreeData.name}}（分区）</h4>
+        <h4 style='padding:0 0 10px 60px' v-if='pickTreeData&&pickTreeData.name'>已选分区：{{pickTreeData.name}}（{{pickTreeData.routeType==1?'分区':'线路'}}）</h4>
         <Form ref="formValidate" :model="formValidate" :rules="ruleValidate" :label-width="120">
           <FormItem label="线路名称" prop="routeName" class='modelInput'>
             <Input v-model.trim="formValidate.routeName" placeholder="线路名称"/>

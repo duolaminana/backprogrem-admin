@@ -82,11 +82,19 @@
         <template slot-scope="{row,index}" slot="operation">
           <!-- 退款按钮 -->
           <Button
+            style="margin-right:0px"
             type="primary"
             size="small"
             @click="refund(row)"
             v-if="hasPerm('set:tranlist:refund')"
-          >退款</Button>
+          >&nbsp退款&nbsp</Button>
+          <Button
+            style="margin-right:0px"
+            disabled
+            type="primary"
+            size="small"
+            v-if="hasPerm('set:tranlist:refund')&&false"
+          >已退款</Button>
         </template>
       </Table>
       <Page
@@ -223,7 +231,7 @@ export default {
           slot: "cardNo",
           align: "center",
           minWidth: 80,
-          tooltip: true,
+          tooltip: true
         },
         {
           title: "设备编码",
@@ -248,29 +256,29 @@ export default {
         },
 
         {
-          title: "交易金额",
+          title: "交易金额(元)",
           key: "orderAmount",
           align: "center",
           minWidth: 60,
           tooltip: true
         },
         {
-          title: "使用返利金额",
+          title: "使用返利金额(元)",
           key: "couponAcquire",
           align: "center",
           minWidth: 50,
           tooltip: true
         },
-        {
-          title: "利润抽成比例(%)",
-          key: "commissionPercent",
-          align: "center",
-          minWidth: 50,
-          tooltip: true,
-          render: (h, param) => {
-            return h("div", param.row.commissionPercent + "%");
-          }
-        },
+        // {
+        //   title: "利润抽成比例(%)",
+        //   key: "commissionPercent",
+        //   align: "center",
+        //   minWidth: 50,
+        //   tooltip: true,
+        //   render: (h, param) => {
+        //     return h("div", param.row.commissionPercent + "%");
+        //   }
+        // },
         {
           title: "利润抽成金额(元)",
           slot: "commissionAmount",
@@ -339,6 +347,13 @@ export default {
           align: "center"
         },
         {
+          title: "货道编号",
+          key: "productName",
+          align: "center",
+          // minWidth: 60,
+          tooltip: true
+        },
+        {
           title: "商品名称",
           key: "productName",
           align: "center",
@@ -378,6 +393,26 @@ export default {
           key: "activityPrice",
           align: "center",
           // minWidth: 60,
+          tooltip: true
+        },
+        {
+          title: "利润抽成比例(%)",
+          key: "commissionPercent",
+          align: "center",
+          minWidth: 50,
+          tooltip: true,
+          render: (h, param) => {
+            if (param.row.commissionPercent == null) {
+              return h("div", "0%");
+            }
+            return h("div", param.row.commissionPercent + "%");
+          }
+        },
+        {
+          title: "利润抽成金额(元)",
+          key: "activityPrice",
+          align: "center",
+          minWidth: 50,
           tooltip: true
         }
       ],
@@ -472,7 +507,7 @@ export default {
       return realVal;
     },
     cardNo(value) {
-      return `${value.substring(0,3)}****${value.substring(value.length-4)}`
+      return `${value.substring(0, 3)}****${value.substring(value.length - 4)}`;
     }
   },
   methods: {
@@ -499,7 +534,6 @@ export default {
     // 利益分配查看详情
     toLinkInterest(row, value) {
       console.log(row);
-      
       this.benefitId = row.benefitId;
       this.getBenefitMachine();
       this.interestNewlyAdded = true;

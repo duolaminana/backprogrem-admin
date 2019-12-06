@@ -62,12 +62,12 @@
           <Button
             type="primary"
             size="small"
-            style="margin-right: 5px"
             @click="editModal(row)"
             v-if="row.type!=2&&hasPerm('sys:user:edit')"
           >编辑</Button>
           <!-- 删除按钮 -->
           <Button
+          style="margin-right: 0px"
             type="error"
             size="small"
             @click="modalDel=true;delID=row.id;delIndex=index;isDep=false"
@@ -890,10 +890,12 @@ export default {
                   this.getDepData(); // 重新获取数据
                 } else {
                   this.loadingDep = false;
+                  this.$Message.error(res.data.message)
                 }
               })
               .catch(err => {
                 this.loadingDep = false;
+                this.$Message.error(res.data.message)
               });
           } else if (!this.isAddDep) {
             if (
@@ -911,10 +913,12 @@ export default {
                     this.getDepData();
                   } else {
                     this.loadingDep = false;
+                    this.$Message.error(res.data.message)
                   }
                 })
                 .catch(err => {
                   this.loadingDep = false;
+                  this.$Message.error(res.data.message)
                 });
             }
           }
@@ -1054,10 +1058,12 @@ export default {
                   this.getuserManagement(); // 重新获取数据
                 } else {
                   this.loading = false;
+                  this.$Message.error(res.data.message)
                 }
               })
               .catch(err => {
                 this.loading = false;
+                this.$Message.error(res.data.message)
               });
           } else if (!this.isAdd) {
             if (this.formValidateStr == JSON.stringify(this.formValidate)) {
@@ -1074,10 +1080,12 @@ export default {
                     this.getuserManagement();
                   } else {
                     this.loading = false;
+                    this.$Message.error(res.data.message)
                   }
                 })
                 .catch(err => {
                   this.loading = false;
+                  this.$Message.error(res.data.message)
                 });
             }
           }

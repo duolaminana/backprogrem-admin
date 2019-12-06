@@ -40,7 +40,9 @@
             @click="showRelation(row)"
           >{{row.num}}台</a>
           <span v-if="row.activityMode==1">全部</span>
-          <span v-if="(!hasPerm('act:actList:edit')||channelId!=$store.state.user.channelId)&&row.activityMode==2">{{row.num}}台</span>
+          <span
+            v-if="(!hasPerm('act:actList:edit')||channelId!=$store.state.user.channelId)&&row.activityMode==2"
+          >{{row.num}}台</span>
         </template>
         <!-- 活动状态 -->
         <template slot-scope="{row,index}" slot="status">
@@ -84,6 +86,7 @@
           >编辑</Button>
           <!-- 删除按钮 -->
           <Button
+          style="margin-right:0px"
             type="error"
             size="small"
             :disabled="row.status==1&&row.publish"
@@ -397,7 +400,7 @@ export default {
           title: "活动时间",
           slot: "activityTime",
           align: "center",
-          minWidth: 60,
+          minWidth: 180,
           tooltip: true
         },
         {
@@ -815,10 +818,12 @@ export default {
                   this.getActivity();
                 } else {
                   this.loading = false;
+                  this.$Message.error(res.data.message);
                 }
               })
               .catch(err => {
                 this.loading = false;
+                this.$Message.error(res.data.message);
               });
           } else if (this.modalTitle == "编辑【活动】") {
             this.formValidate.list = [
@@ -835,10 +840,12 @@ export default {
                   this.getActivity();
                 } else {
                   this.loading = false;
+                  this.$Message.error(res.data.message);
                 }
               })
               .catch(err => {
                 this.loading = false;
+                this.$Message.error(res.data.message);
               });
           }
         }
