@@ -51,13 +51,13 @@
           <a class="lookDetails" @click="seeSettlementMore(row)">查看详情</a>
         </template>
         <!-- 抽成金额 -->
-        <template slot-scope="{row,index}" slot="commissionAmount">
-          <span>{{(row.orderAmount-row.buyPrice)*(row.commissionPercent/100)|amountText}}</span>
+        <template slot-scope="{row,index}" slot="commissionPrice">
+          <span>{{row.commissionPrice|amountText}}</span>
         </template>
         <!-- 收款金额 -->
         <template slot-scope="{row,index}" slot="payAmount">
           <span v-show="row.orderStatus!=1">{{row.payAmount}}</span>
-          <span v-show="row.orderStatus==1">——</span>
+          <span v-show="row.orderStatus==1">0</span>
         </template>
         <!-- 利益分配 -->
         <template slot-scope="{row,index}" slot="templateName">
@@ -264,7 +264,7 @@ export default {
         },
         {
           title: "使用返利金额(元)",
-          key: "couponAcquire",
+          key: "couponAmount",
           align: "center",
           minWidth: 50,
           tooltip: true
@@ -281,7 +281,7 @@ export default {
         // },
         {
           title: "利润抽成金额(元)",
-          slot: "commissionAmount",
+          slot: "commissionPrice",
           align: "center",
           minWidth: 50,
           tooltip: true
@@ -502,7 +502,7 @@ export default {
         // 截取当前数据到小数点后两位
         realVal = parseFloat(value).toFixed(2);
       } else {
-        realVal = "——";
+        realVal = 0;
       }
       return realVal;
     },

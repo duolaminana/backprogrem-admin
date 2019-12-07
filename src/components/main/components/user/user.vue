@@ -263,6 +263,8 @@ export default {
     },
     setLogo(){
       this.showLogo = true;
+      this.bigImgUrl=require('../../../../assets/images/add_img.png')
+      this.smallImgUrl=require('../../../../assets/images/add_img.png')
     },
     logout () {
       this.handleLogOut().then(() => {

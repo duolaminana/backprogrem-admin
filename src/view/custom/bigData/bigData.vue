@@ -183,7 +183,9 @@
       </div>
     </div>
     <div class='content'>
-      <big-data-map></big-data-map>
+      <big-data-map 
+        :dataList = 'mapList'
+      ></big-data-map>
       <div>
         <cylindrical-data
           v-if = 'cylindricalData.length'
@@ -222,6 +224,7 @@ export default {
   name:'bigData',
   data(){
     return{
+      mapList:[],
       cylindricalData:[],
       duration:2000,//持续时间
       decimals:2, //显示的小数位数
@@ -364,6 +367,12 @@ export default {
         })
       })
     },
+    getMapData(){
+      const url = `/machinePosition/queryPlat`
+      return netWorkDevice(url,null,'get').then(res=>{
+        this.mapList = res.result.list;
+      })
+    },
   },
   mounted(){
     this.getFindAllCount();
@@ -372,6 +381,7 @@ export default {
     this.getFindCompanySales();
     this.getFindProductSales();
     this.getRange();
+    this.getMapData();
   }
 }
 </script>

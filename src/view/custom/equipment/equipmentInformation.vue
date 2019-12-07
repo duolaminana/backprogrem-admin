@@ -84,23 +84,33 @@
               </Radio>
             </RadioGroup>
           </FormItem> -->
-          <FormItem label="是否有人证核验" >
+          <FormItem label="人证识别" >
             <RadioGroup v-model="formValidate.isCardModule">
               <Radio label="1">
-                  <span>有</span>
+                  <span>支持</span>
               </Radio>
               <Radio label="0">
-                  <span>无</span>
+                  <span>不支持</span>
               </Radio>
             </RadioGroup>
           </FormItem>
-          <FormItem label="是否有人温湿度" >
+          <FormItem label="恒温控湿" >
             <RadioGroup v-model="formValidate.temperatureHumidityStatus">
               <Radio label="1">
-                  <span>有</span>
+                  <span>支持</span>
               </Radio>
               <Radio label="0">
-                  <span>无</span>
+                  <span>不支持</span>
+              </Radio>
+            </RadioGroup>
+          </FormItem>
+          <FormItem label="出货方式" >
+            <RadioGroup v-model="formValidate.shippingWay">
+              <Radio label="1">
+                  <span>直接出货</span>
+              </Radio>
+              <Radio label="0">
+                  <span>二维码扫码出货</span>
               </Radio>
             </RadioGroup>
           </FormItem>
@@ -197,8 +207,9 @@ export default {
         // roadExist:'1',
         isAutomatic:'1',
         categoryId:null,
-        isCardModule:'0',
-        temperatureHumidityStatus:'0',
+        isCardModule:'1',
+        temperatureHumidityStatus:'1',
+        shippingWay:'1',
       },
       ruleValidate: {
         machineName: [
@@ -385,14 +396,16 @@ export default {
         // roadExist:'1',
         isAutomatic:'1',
         categoryId:null,
-        isCardModule:'0',
-        temperatureHumidityStatus:'0'
+        isCardModule:'1',
+        temperatureHumidityStatus:'1',
+        shippingWay:'1'
       };
       if (type == "bj") {
         this.formValidate = JSON.parse(JSON.stringify(row));
         this.formValidate.isAutomatic = this.formValidate.roadExist+'';
         this.formValidate.isCardModule = this.formValidate.isCardModule+'';
         this.formValidate.temperatureHumidityStatus = this.formValidate.temperatureHumidityStatus+'';
+        this.formValidate.shippingWay = this.formValidate.shippingWay+'';
         console.log(this.formValidate)
       }
       this.newlyAdded = true;
@@ -411,7 +424,8 @@ export default {
             isAutomatic,
             categoryId,
             isCardModule,
-            temperatureHumidityStatus
+            temperatureHumidityStatus,
+            shippingWay
           } = value;
           if (this.showNewlyType == "xz") {
             if(isAutomatic!=1){
@@ -434,6 +448,7 @@ export default {
                 isAutomatic,
                 isCardModule,
                 temperatureHumidityStatus,
+                shippingWay,
                 // roadExist,
                 categoryId,
                 operator:this.operator,
@@ -458,6 +473,7 @@ export default {
               isAutomatic,
               isCardModule,
               temperatureHumidityStatus,
+              shippingWay,
               id: value.id,
               categoryId,
               operator:this.operator,

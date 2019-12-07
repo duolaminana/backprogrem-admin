@@ -3,7 +3,7 @@
     <div class="clientManagementContent">
       <Input class="input" v-model="memberName" clearable placeholder="会员姓名" />
       <Input class="input" v-model="cardNo" placeholder="身份证号" clearable />
-      <Button type="primary" @click="getMember">查询</Button>
+      <Button type="primary" @click="searchGetMember">查询</Button>
       <Button type="primary" @click="reset">重置</Button>
 
       <!-- 表格 -->
@@ -380,6 +380,10 @@ export default {
       this.idOrder = row.id;
       this.getOrder();
     },
+    searchGetMember() {
+      this.pageNum = 1;
+      this.getMember();
+    },
     // 获取会员列表
     getMember() {
       let data = {
@@ -398,7 +402,6 @@ export default {
       };
       searchMember(data).then(res => {
         if (res.data.code == 200) {
-          console.log(res);
           this.pageNumOrder = res.data.result.pageNum;
           this.totalOrder = res.data.result.total;
           this.dataTable = res.data.result.list;
@@ -410,7 +413,6 @@ export default {
     getOrder() {
       searchMemberOrder(this.cardNoOrder, this.idOrder).then(res => {
         if (res.data.code == 200) {
-          console.log(res);
           this.dataTableOrder = res.data.result;
         }
       });

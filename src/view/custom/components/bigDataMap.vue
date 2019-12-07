@@ -19,11 +19,11 @@ export default {
     dataList:{
       default:()=>{
         return [
-          {enable:1,longitude:113.864691,laytitude:22.942327,machineCode:'1234'},
-          {enable:2,longitude:120.412618,laytitude:36.382612,machineCode:'1234'},
-          {enable:3,longitude:113.370643,laytitude:22.938827,machineCode:'1234'},
-          {enable:4,longitude:113.001181,laytitude:23.120518,machineCode:'1234'},
-          {enable:5,longitude:113.890205,laytitude:22.798043,machineCode:'1234'},
+          // {enable:1,longitude:113.864691,laytitude:22.942327,machineCode:'1234'},
+          // {enable:2,longitude:120.412618,laytitude:36.382612,machineCode:'1234'},
+          // {enable:3,longitude:113.370643,laytitude:22.938827,machineCode:'1234'},
+          // {enable:4,longitude:113.001181,laytitude:23.120518,machineCode:'1234'},
+          // {enable:5,longitude:113.890205,laytitude:22.798043,machineCode:'1234'},
         ];
       }
     }
@@ -45,14 +45,14 @@ export default {
       let list = [];
       this.dataList.map((v,i)=>{
         let imgUrl;
-        switch(v.enable){
-          case 1:
+        switch(v.categoryId){
+          case 174:
             imgUrl = require('../../../assets/images/p_red.png');
             break;
-          case 2:
+          case 157:
             imgUrl = require('../../../assets/images/p_orange.png');
             break;
-          case 3:
+          case 175:
             imgUrl = require('../../../assets/images/p_green.png');
             break;
           default:

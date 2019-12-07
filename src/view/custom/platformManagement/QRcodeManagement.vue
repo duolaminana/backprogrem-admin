@@ -12,7 +12,7 @@
       <Select v-model="payType" clearable placeholder="支付类型" style="margin-right:10px">
         <Option v-for="item in payTypeList" :value="item.value" :key="item.value">{{ item.label }}</Option>
       </Select>
-      <Button type="primary" @click="getQRcode">查询</Button>
+      <Button type="primary" @click="searchGetQRcode">查询</Button>
       <Button type="primary" @click="reset">重置</Button>
       <Table highlight-row :columns="columns" :data="dataTable" border>
         <template slot-scope="{ row, index }" slot="payType">{{row.payType | payTypeText}}</template>
@@ -43,6 +43,15 @@
           <span v-show="row.auditType==3" style="color:#ed4014">审核失败</span>
         </template>
       </Table>
+      <Page
+        :page-size="pageSize"
+        :total="total"
+        show-elevator
+        :current="pageNum"
+        @on-change="pageChange"
+        @on-page-size-change="sizeChange"
+        show-sizer
+      />
 
       <!-- 删除 -->
       <delete-component
@@ -251,7 +260,7 @@ export default {
       delID: null, //删除的ID
       tabIndex: null,
       Upload, // 上传文件地址
-      // total: null, // 页码数
+      total: null, // 页码数
       isShowWX: false, // 微信弹框显示状态
       isShowZFB: false, //支付宝弹框显示状态
       accountType: null, //注册类型
@@ -262,6 +271,13 @@ export default {
       pageSize: 15, // 页面大小
       payType: null, // 支付类型
       columns: [
+        {
+          title: "序号",
+          type: "index",
+          maxWidth: 60,
+          minWidth: 30,
+          align: "center"
+        },
         {
           title: "商户名称",
           key: "merchantName",
@@ -408,6 +424,17 @@ export default {
         this.getQRcode(); // 重新获取数据
       }
     },
+    // 页码改变时触发
+    pageChange(value) {
+      this.pageNum = value;
+      this.getQRcode(); // 重新获取数据
+    },
+
+    // 页容量改变时触发
+    sizeChange(value) {
+      this.pageSize = value;
+      this.getQRcode(); // 重新获取数据
+    },
 
     // 用户重置按钮
     reset() {
@@ -452,6 +479,8 @@ export default {
           new Date(),
           "YYYY-MM-DD hh:mm:ss"
         );
+        console.log(this.formValidateWX.auditData);
+
         editQRcode(this.formValidateWX)
           .then(res => {
             if (res.data.code == 200) {
@@ -546,6 +575,10 @@ export default {
           });
       }
     },
+    searchGetQRcode() {
+      this.pageNum = 1;
+      this.getQRcode();
+    },
 
     // 获取收款码信息
     getQRcode() {
@@ -561,6 +594,8 @@ export default {
       searchQRcode(data).then(res => {
         if (res.data.code == 200) {
           this.dataTable = res.data.result.list;
+          this.total = res.data.result.total;
+          this.pageNum = res.data.result.pageNum;
         }
       });
     }

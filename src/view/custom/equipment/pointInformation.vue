@@ -158,7 +158,17 @@
         title="绑定设备"
         :mask-closable="false"
       >
-        设备类型：<Cascader :data="machineTypeList" v-model="machineTypeValue" placeholder="机器类型" class='marginRight'></Cascader>
+        <!-- 设备类型：<Cascader :data="machineTypeList"  placeholder="机器类型" class='marginRight'></Cascader> -->
+        <div>
+          设备类型：<Select filterable  placeholder="设备类型" :clearable='true' @on-change='machineTypeChange'>
+              <Option v-for="item in machineTypeList" :value="item.value" :key="item.value">{{ item.label }}</Option>
+          </Select>
+        </div>
+        <div style='margin-top:20px'>
+          设备编码：<Select filterable v-model="machineTypeValue" placeholder="设备编码" :clearable='true'>
+              <Option v-for="item in machineList" :value="item.value" :key="item.value">{{ item.label }}</Option>
+          </Select>
+        </div>
         <div slot="footer">
           <Button type="text" size="large" @click="binding=false">取消</Button>
           <Button type="primary" size="large" @click="bindedSure">确定</Button>
@@ -210,6 +220,7 @@ export default {
       }
     };
     return{
+      machineList:[],
       priceTotal:null,
       pricePageNum:1,
       pricePageSize:10,
@@ -250,7 +261,7 @@ export default {
       tableRowData:null,
       bindPositionId:null,
       machineTypeList:[],
-      machineTypeValue:[],
+      machineTypeValue:null,
       binding:false,
       examine:false,
       routeNameList:[],
@@ -477,6 +488,12 @@ export default {
     }
   },
   methods:{
+    machineTypeChange(value){
+      const item = 
+      this.machineList = this.machineTypeList.find(v=>{
+        return v.value==value;
+      }).children
+    },
     itemDelete(row,index){
       if(!row.machineCode){
         this.modalDel=true;
@@ -547,11 +564,11 @@ export default {
       this.tableRowData = row;
     },
     bindedSure(){
-      if(this.machineTypeValue.length){
+      if(this.machineTypeValue){
         if(this.isReplace){ //更换设备
           let data = {
             id:this.tableRowData.id,
-            machineCode:this.machineTypeValue[this.machineTypeValue.length-1],
+            machineCode:this.machineTypeValue,
             operator:this.operator,
             operatorName:this.operatorName,
             channelId:this.channelId
@@ -565,7 +582,7 @@ export default {
         }else{
           let data = {
             id:this.bindPositionId,
-            machineCode:this.machineTypeValue[this.machineTypeValue.length-1],
+            machineCode:this.machineTypeValue,
             operator:this.operator,
             operatorName:this.operatorName,
             channelId:this.channelId
@@ -582,7 +599,7 @@ export default {
     },
     binded(row){
       this.bindPositionId = row.id;
-      this.machineTypeValue = [];//初始化
+      this.machineTypeValue = null;//初始化
       let url =`/machineInfo/queryByChannelId?channelId=${row.channelId}`; 
       netWorkDevice(url, null,'get').then(res => {
         this.machineTypeList = res.result;

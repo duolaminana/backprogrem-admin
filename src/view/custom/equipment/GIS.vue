@@ -48,7 +48,6 @@ export default {
       let url = `/machineInfo/queryAllGISByChannelId?channelId=${this.channelId}`;
       return netWorkDevice(url,null,'get').then(res=>{
         this.dataList = res.result;
-        console.log(this.dataList)
       })
     }
   },

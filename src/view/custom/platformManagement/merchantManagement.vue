@@ -20,7 +20,7 @@
           :key="item.value"
         >{{ item.label }}</Option>
       </Select>
-      <Button type="primary" @click="getMerchant" v-if="hasPerm('sys:merchantinfoMang:see')">查询</Button>
+      <Button type="primary" @click="searchMerchant" v-if="hasPerm('sys:merchantinfoMang:see')">查询</Button>
       <Button type="primary" @click="reset" v-if="hasPerm('sys:merchantinfoMang:see')">重置</Button>
       <Table highlight-row :columns="columns" :data="dataTable" border>
         <template slot-scope="{ row, index }" slot="businessScope">
@@ -1093,12 +1093,12 @@ export default {
               this.getMerchant(); // 重新获取数据
             } else {
               this.loading = false;
-              this.$Message.error(res.data.message)
+              this.$Message.error(res.data.message);
             }
           })
           .catch(err => {
             this.loading = false;
-            this.$Message.error(res.data.message)
+            this.$Message.error(res.data.message);
           });
       } else if (this.tabIndex == 2) {
         this.loading = true;
@@ -1121,12 +1121,12 @@ export default {
               this.getMerchant(); // 重新获取数据
             } else {
               this.loading = false;
-              this.$Message.error(res.data.message)
+              this.$Message.error(res.data.message);
             }
           })
           .catch(err => {
             this.loading = false;
-            this.$Message.error(res.data.message)
+            this.$Message.error(res.data.message);
           });
       }
     },
@@ -1159,12 +1159,12 @@ export default {
               this.getMerchant(); // 重新获取数据
             } else {
               this.loadingNo = false;
-              this.$Message.error(res.data.message)
+              this.$Message.error(res.data.message);
             }
           })
           .catch(err => {
             this.loadingNo = false;
-            this.$Message.error(res.data.message)
+            this.$Message.error(res.data.message);
           });
       } else if (this.tabIndex == 2) {
         this.loadingNo = true;
@@ -1188,15 +1188,20 @@ export default {
               this.getMerchant(); // 重新获取数据
             } else {
               this.loadingNo = false;
-              this.$Message.error(res.data.message)
+              this.$Message.error(res.data.message);
             }
           })
           .catch(err => {
             this.loadingNo = false;
-            this.$Message.error(res.data.message)
+            this.$Message.error(res.data.message);
           });
       }
     },
+    searchMerchant() {
+      this.pageNum = 1;
+      this.getMerchant();
+    },
+
     // 获取商户信息
     getMerchant() {
       let data = {
