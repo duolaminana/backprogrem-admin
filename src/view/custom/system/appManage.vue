@@ -4,25 +4,19 @@
     <div>
       <Input style="margin-right:10px" v-model="appId" placeholder="请输入应用id" clearable />
       <Input style="margin-right: 10px" v-model="appName" placeholder="请输入应用名称" clearable />
-      <Button type="primary" @click="searchAppManage" v-if="hasPerm('sys:appManage:search')">查询</Button>
-      <Button type="primary" @click="addModal" class="xzbtn" v-if="hasPerm('sys:appManage:add')">新增</Button>
-      <Button type="primary" @click="reset" v-if="hasPerm('sys:appManage:reset')">重置</Button>
+      <Button type="primary" @click="searchAppManage">查询</Button>
+      <Button type="primary" @click="addModal" class="xzbtn">新增</Button>
+      <Button type="primary" @click="reset">重置</Button>
       <Table highlight-row :columns="columns" :data="dataTable" border>
         <template slot-scope="{ row, index }" slot="operation">
           <!-- 编辑按钮 -->
-          <Button
-            type="primary"
-            size="small"
-            @click="editModal(row)"
-            v-if="hasPerm('sys:appManage:edit')"
-          >编辑</Button>
+          <Button type="primary" size="small" @click="editModal(row)">编辑</Button>
           <!-- 删除按钮 -->
           <Button
             style="margin-right: 0px"
             type="error"
             size="small"
             @click="modalDel=true;delID=row.id;delIndex=index"
-            v-if="hasPerm('sys:appManage:del')"
           >删除</Button>
         </template>
       </Table>

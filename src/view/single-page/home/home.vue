@@ -218,7 +218,7 @@
     </Layout>
     <div
       class="message"
-      v-if="$store.state.user.merchant.receiveTerminal==2&&QRcodeList.length==0&&hasPerm('sys:merchantinfo:edit')"
+      v-if="$store.state.user.merchant.receiveTerminal==2&&QRcodeList.length==0&&$store.state.user.userVo.type==2"
     >
       <p>
         注册审核已通过，请尽快完善收款账户信息。

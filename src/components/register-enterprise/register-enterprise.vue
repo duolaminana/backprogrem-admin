@@ -360,8 +360,8 @@ export default {
     const validateUserName = (rule, value, callback) => {
       if (!value) {
         return callback(new Error("输入不能为空"));
-      } else if (!/^(?!^\d+$)(?!^[a-zA-Z]+$)[0-9a-zA-Z]+$/.test(value)) {
-        callback(new Error("不能为纯数字或纯字母且不包含汉字"));
+      } else if (!/^(?!^\d+$)[0-9a-zA-Z]+$/.test(value)) {
+        callback(new Error("不能为纯数字且不包含汉字"));
       } else {
         callback();
       }

@@ -51,22 +51,12 @@
       <!-- 交易订单明细弹出框 -->
       <Modal v-model="isShow" width="1000" title="交易明细">
         <Table
-          height="500"
           :columns="columnsOrder"
           :data="dataTableOrder"
           border
           ref="table"
           style="margin:20px 0"
         >
-          <!-- 积分 -->
-          <!-- <template slot-scope="{row,index}" slot="couponAquire">
-          {{row.couponAquire|text}}
-          </template>-->
-          <!-- 返现 -->
-          <!-- <template slot-scope="{row,index}" slot="integralAquire">
-          {{row.integralAquire|text}}
-          </template>-->
-          <!-- 交易状态 -->
           <template slot-scope="{row,index}" slot="orderStatus">
             <span v-show="row.shipingStatus==2||row.shipingStatus==4">交易正常</span>
             <span v-show="row.shipingStatus==1||row.shipingStatus==3" style="color:red">交易失败</span>
@@ -123,8 +113,7 @@ export default {
   name: "clientManagement",
   data() {
     return {
-      isShowIntegral: false, //返利弹框显示方式
-      // 积分数据结构
+      isShowIntegral: false, 
       columnsIntegral: [
         { title: "序号", type: "index", width: 60, align: "center" },
         {
@@ -137,12 +126,10 @@ export default {
           title: "积分(分)",
           key: "integral",
           align: "center",
-          // minWidth: 60,
           tooltip: true
         }
       ],
-      isShowRebatePrice: false, //返利弹框显示方式
-      // 返利数据结构
+      isShowRebatePrice: false, 
       columnsRebatePrice: [
         { title: "序号", type: "index", width: 60, align: "center" },
         {
@@ -376,7 +363,7 @@ export default {
     seeOrder(row) {
       console.log(row);
       this.isShow = true;
-      this.cardNoOrder = row.cardNo;
+      // this.cardNoOrder = row.cardNo;
       this.idOrder = row.id;
       this.getOrder();
     },
@@ -411,7 +398,7 @@ export default {
 
     // 获取订单交易列表
     getOrder() {
-      searchMemberOrder(this.cardNoOrder, this.idOrder).then(res => {
+      searchMemberOrder(this.idOrder).then(res => {
         if (res.data.code == 200) {
           this.dataTableOrder = res.data.result;
         }

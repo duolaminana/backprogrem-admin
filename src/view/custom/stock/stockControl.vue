@@ -71,6 +71,7 @@ export default {
       total: null,
       productCode: null,
       machineCode: null, //机器编码
+      managerRoute:this.$store.state.user.userVo.managerRoute,
       positionName: null, //点位名称
       type: this.$store.state.user.userVo.type, //用户类型
       userId: this.$store.state.user.userVo.id, //用户id
@@ -187,11 +188,14 @@ export default {
     getSearchStockControl() {
       let data = {
         channelId: this.channelId,
+        machineCode: this.machineCode,
+        managerRoute:this.managerRoute,
         pageNum: this.pageNum,
         pageSize: this.pageSize,
-        machineCode: this.machineCode,
         positionName: this.positionName,
-        productCode: this.productCode
+        productCode: this.productCode,
+        type: this.type,
+        userId: this.userId
       };
       searchStockControl(data).then(res => {
         if (res.data.code == 200) {
@@ -205,6 +209,7 @@ export default {
       let data = {
         channelId: this.channelId,
         machineCode: this.machineCode,
+        managerRoute:this.managerRoute,
         pageNum: this.pageNumAll,
         pageSize: this.pageSizeAll,
         type: this.type,

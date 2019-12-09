@@ -2,7 +2,13 @@
   <div class="userManagement">
     <div class="leftBox">
       <!-- 按钮 -->
-      <Button type="primary" icon="md-add-circle" @click="addModalDep" style="margin-right: 20px" v-if="hasPerm('sys:user:edit')">添加部门</Button>
+      <Button
+        type="primary"
+        icon="md-add-circle"
+        @click="addModalDep"
+        style="margin-right: 20px"
+        v-if="hasPerm('sys:user:edit')"
+      >添加部门</Button>
       <!-- 下拉菜单 -->
       <Dropdown @on-click="getDropdownData">
         <Button>
@@ -48,13 +54,22 @@
         </template>
         <!-- 管理分区 -->
         <template slot="userRoutes" slot-scope="{ row, index }">
-          <span v-if="row.type==2">全部</span>
-          <span v-if="row.type!=2">{{row.userRouteVos|userRouteVosText}}</span>
+          <span v-if="row.type==2||row.managerRoute==1">全部</span>
+          <span v-if="row.type!=2&&row.managerRoute!=1">{{row.userRouteVos|userRouteVosText}}</span>
         </template>
         <!-- 开门权限 -->
         <template slot="isOpen" slot-scope="{ row, index }">
-          <a class="lookDetails" v-if="row.openDoor==2&&hasPerm('sys:user:edit')" @click="toOpenModal(row)">去开启</a>
-          <Button type="primary" v-if="row.openDoor==1&&hasPerm('sys:user:edit')" size="small" @click="toOpenModal(row)">编辑</Button>
+          <a
+            class="lookDetails"
+            v-if="row.openDoor==2&&hasPerm('sys:user:edit')"
+            @click="toOpenModal(row)"
+          >去开启</a>
+          <Button
+            type="primary"
+            v-if="row.openDoor==1&&hasPerm('sys:user:edit')"
+            size="small"
+            @click="toOpenModal(row)"
+          >编辑</Button>
         </template>
         <!-- 操作 -->
         <template slot-scope="{ row, index }" slot="operation">
@@ -67,7 +82,7 @@
           >编辑</Button>
           <!-- 删除按钮 -->
           <Button
-          style="margin-right: 0px"
+            style="margin-right: 0px"
             type="error"
             size="small"
             @click="modalDel=true;delID=row.id;delIndex=index;isDep=false"
@@ -94,10 +109,13 @@
     </div>
     <!-- 新增用户弹框的模态框 -->
     <Modal v-model="isShow" :mask-closable="false" :title="isAdd==true?'新增【用户】':'编辑【用户】'">
-      <Form ref="formValidate" :model="formValidate" :rules="ruleValidate" :label-width="100">
-        <FormItem label="登录名称" prop="userName">
-          <Input v-model="formValidate.userName" placeholder="请输入登录名称" style="width:180px"></Input>
-        </FormItem>
+      <Form
+        ref="formValidate"
+        :model="formValidate"
+        :rules="ruleValidate"
+        :label-width="100"
+        style="max-height:700px;overflow:auto"
+      >
         <FormItem label prop="imageAddress" id="header_image">
           <template>
             <Upload
@@ -114,7 +132,7 @@
             >
               <img
                 :src="formValidate.imageAddress"
-                style="width:120px;height:120px"
+                style="width:120px;height:150px"
                 class="uploadImg"
                 v-show="uploadResult"
               />
@@ -127,13 +145,16 @@
             </Upload>
           </template>
         </FormItem>
-        <FormItem label="真实姓名" prop="name">
+        <FormItem label="登录名称" prop="userName" style="display:inline-block">
+          <Input v-model="formValidate.userName" placeholder="请输入登录名称" style="width:180px"></Input>
+        </FormItem>
+        <FormItem label="真实姓名" prop="name" style="display:inline-block">
           <Input v-model="formValidate.name" placeholder="请输入真实姓名" style="width:180px"></Input>
         </FormItem>
-        <FormItem label="身份证号" prop="card">
+        <FormItem label="身份证号" prop="card" style="display:inline-block">
           <Input v-model="formValidate.card" placeholder="请输入身份证号" style="width:180px"></Input>
         </FormItem>
-        <FormItem label="密码" prop="password" v-if="ispassword">
+        <FormItem label="密码" prop="password" v-if="ispassword" style="display:inline-block">
           <Input
             v-model="formValidate.password"
             type="password"
@@ -148,7 +169,7 @@
           <Input v-model="formValidate.email" placeholder="请输入邮箱" style="width: 220px"></Input>
         </FormItem>
 
-        <FormItem label="所属部门" prop="newDeptId">
+        <FormItem label="所属部门" prop="newDeptId" style="margin-bottom:10px">
           <Cascader
             style="width: 220px"
             :data="depData"
@@ -159,40 +180,39 @@
             change-on-select
           ></Cascader>
         </FormItem>
-        <FormItem label="性别" prop="sex">
+        <FormItem label="性别" prop="sex" style="margin-bottom:10px">
           <RadioGroup v-model="formValidate.sex">
             <Radio label="1">男</Radio>
             <Radio label="2">女</Radio>
           </RadioGroup>
         </FormItem>
-        <FormItem label="状态" prop="status">
+        <FormItem label="状态" prop="status" style="margin-bottom:10px">
           <RadioGroup v-model="isStatus">
             <Radio label="1">正常</Radio>
             <Radio label="2">锁定</Radio>
           </RadioGroup>
         </FormItem>
-        <FormItem label="角色 " prop="roleId">
+        <FormItem label="角色 " prop="roleId" style="margin-bottom:10px">
           <RadioGroup v-model="formValidate.roleId">
             <Radio v-for="item in allRoleList" :label="item.id" :key="item.id">{{item.roleName}}</Radio>
           </RadioGroup>
         </FormItem>
-        <FormItem prop="route" label="管理分区" style="margin-bottom:20px;display:inline-block">
-          <Cascader
-            v-model="valueData"
-            class="routeDatas"
-            :data="routeDatas"
-            @on-change="routeSelectChange"
-            @on-visible-change="routeVisibleChange($event,isDefault)"
-            :render-format="formatRoute"
-            placeholder="请选择分区"
-            change-on-select
-          ></Cascader>
+        <FormItem label="管理分区">
+          <RadioGroup v-model="formValidate.managerRoute" @on-change="changeRoute">
+            <Radio label="1">全部</Radio>
+            <Radio label="2">部分</Radio>
+          </RadioGroup>
         </FormItem>
-        <div class="routes">
-          <span class="items" v-for="(v,i) in routeList" :key="i">
-            {{v.label}}
-            <Icon @click="itemsDel(i)" type="md-close" />
-          </span>
+        <div class="routesTree" v-show="isShowRouteTree">
+          <Tree
+            style="max-height:280px;overflow:auto"
+            ref="treeData"
+            :data="routeTreeList"
+            show-checkbox
+            multiple
+            check-strictly
+            check-directly
+          ></Tree>
         </div>
       </Form>
 
@@ -334,8 +354,8 @@ export default {
     const validateUserName = (rule, value, callback) => {
       if (!value) {
         return callback(new Error("输入不能为空"));
-      } else if (!/^(?!^\d+$)(?!^[a-zA-Z]+$)[0-9a-zA-Z]+$/.test(value)) {
-        callback(new Error("不能为纯数字或纯字母且不包含汉字"));
+      } else if (!/^(?!^\d+$)[0-9a-zA-Z]+$/.test(value)) {
+        callback(new Error("不能为纯数字且不包含汉字"));
       } else {
         callback();
       }
@@ -385,11 +405,11 @@ export default {
       }
     };
     return {
-      valueData: [],
+      isShowRouteTree: false,
+      routeTreeList: [],
       formValidateStr: "",
       formValidateDepStr: "",
       isDefault: true,
-      routeList: [],
       cacheValue: null, //缓存级联change的值
       userId: null, //用户id
       openDoor: 2, //开门权限 1有 2无
@@ -427,7 +447,6 @@ export default {
       isAdd: false, // 判断当前用户弹框是否新增
       loading: false, //用户模态框确定按钮的延时
       uploadResult: false,
-      routeDatas: [], //线路的级联数据
       // 新增用户模态框表单数据
       formValidate: {
         birth: null, // 出生日期
@@ -444,9 +463,10 @@ export default {
         phone: "", // 手机
         remark: "", // 备注
         roleId: "", // 角色id
-        sex: 1, // 性别
+        sex: "1", // 性别
         status: "1", // 状态
         type: "1", // 用户类型
+        managerRoute: "1",
         userName: "", // 用户名
         routes: [], //线路集合
         openDoor: 2 //开门权限，1有 2无，默认无
@@ -522,7 +542,7 @@ export default {
           title: "头像",
           slot: "img",
           align: "center",
-          minWidth: 52,
+          minWidth: 80,
           tooltip: true
         },
         {
@@ -610,36 +630,19 @@ export default {
   },
 
   methods: {
-    itemsDel(i) {
-      this.routeList.splice(i, 1);
-    },
-    routeVisibleChange(value, isMR) {
-      if (!value && isMR) {
-        if (this.cacheValue)
-          this.routeList = [...this.routeList, this.cacheValue];
+    changeRoute(value) {
+      console.log(value);
+      if (value == "2") {
+        this.isShowRouteTree = true;
+        this.getRouteTreeList();
+      } else {
+        this.isShowRouteTree = false;
+        this.routeTreeList = [];
       }
-      this.valueData = [];
-    },
-    routeSelectChange(val, data) {
-      let { label, value } = data[data.length - 1];
-      this.cacheValue = {
-        label,
-        value
-      };
-    },
-    formatRoute(labels) {
-      const index = labels.length;
-      return labels[index];
-    },
-    // 经营范围改变
-    saleChange(value) {
-      this.form.businessScope = value.join(",");
     },
     render(item) {
       if (item.disabled) return `${item.key} - ${item.value}`;
       return `${item.key} - ${item.value}`;
-      // if (item.disabled) return `${item.value} - ${item.label}`;
-      // return `${item.value} - ${item.label}`;
     },
     handleChange(newTargetKeys) {
       this.targetKeys = newTargetKeys;
@@ -797,7 +800,6 @@ export default {
       this.loadingDep = false;
       this.isShowDep = false;
       this.$refs.formValidateDep.resetFields();
-      this.getRouteTree();
     },
 
     // 部门新增点击事件
@@ -890,12 +892,12 @@ export default {
                   this.getDepData(); // 重新获取数据
                 } else {
                   this.loadingDep = false;
-                  this.$Message.error(res.data.message)
+                  this.$Message.error(res.data.message);
                 }
               })
               .catch(err => {
                 this.loadingDep = false;
-                this.$Message.error(res.data.message)
+                this.$Message.error(res.data.message);
               });
           } else if (!this.isAddDep) {
             if (
@@ -913,12 +915,12 @@ export default {
                     this.getDepData();
                   } else {
                     this.loadingDep = false;
-                    this.$Message.error(res.data.message)
+                    this.$Message.error(res.data.message);
                   }
                 })
                 .catch(err => {
                   this.loadingDep = false;
-                  this.$Message.error(res.data.message)
+                  this.$Message.error(res.data.message);
                 });
             }
           }
@@ -928,12 +930,13 @@ export default {
 
     // 新增用户点击事件
     addModal() {
+      this.isShowRouteTree = false;
       this.uploadResult = false;
       this.isAdd = true;
       this.isShow = true;
       this.ispassword = true;
-      this.routeList=[]
-      // this.getRouteTree();
+      this.userId = null;
+      this.getRouteTreeList();
       this.formValidate = {
         birth: null, // 出生日期
         channelId: this.$store.state.user.channelId, // 渠道id
@@ -951,67 +954,32 @@ export default {
         sex: "1", // 性别
         status: "1", // 状态
         type: "1", // 类型
+        managerRoute: "1",
         userName: "", // 用户
         routes: [], //线路集合
         openDoor: 2 //开门权限，1有 0无，默认无
       };
-      if (!document.querySelector(".span_sure")) {
-        const nodeList = document.querySelector(
-          ".routeDatas div.ivu-select-dropdown"
-        );
-        const node = this.createNode();
-        nodeList.appendChild(node);
-      }
     },
-    // 新增确定按钮
-    createNode() {
-      let div = document.createElement("DIV");
-      let span = document.createElement("span");
-      let textnode = document.createTextNode("确认");
-      span.setAttribute("class", "span_sure");
-      span.appendChild(textnode);
-      span.addEventListener("click", e => {
-        let nodeList = document.querySelector(".routeDatas");
-        e.stopPropagation();
-        this.isDefault = false;
-        if (this.cacheValue)
-          this.routeList = [...this.routeList, this.cacheValue];
-        this.cacheValue = null;
-        this.isDefault = true;
-        console.dir(nodeList);
-        nodeList.__vue__.handleClose();
-        document.querySelector(
-          ".routeDatas div.ivu-select-dropdown"
-        ).style.display = "none";
-      });
-      div.appendChild(span);
-      return div;
-    },
-
     // 用户编辑点击事件
     async editModal(row) {
-      if (!document.querySelector(".span_sure")) {
-        const nodeList = document.querySelector(
-          ".routeDatas div.ivu-select-dropdown"
-        );
-        const node = this.createNode();
-        nodeList.appendChild(node);
-      }
-      row.userRouteVos == null
-        ? (this.routeList = [])
-        : (this.routeList = JSON.parse(JSON.stringify(row.userRouteVos)));
+      console.log(row);
       this.uploadResult = true;
       this.isAdd = false;
       this.isShow = true;
       this.ispassword = false;
+      this.userId = row.id;
       this.formValidate = JSON.parse(JSON.stringify(row));
       this.formValidate.password = null;
-      this.formValidate.routes = Array.from(
-        new Set(this.routeList.map(v => v.value))
-      );
       row.status == "1" ? (this.isStatus = "1") : (this.isStatus = "2");
       this.formValidate.status = row.status + "";
       this.formValidate.sex = row.sex + "";
+      this.formValidate.managerRoute = row.managerRoute + "";
+      if (this.formValidate.managerRoute == "1") {
+        this.isShowRouteTree = false;
+      } else {
+        this.isShowRouteTree = true;
+        this.getRouteTreeList();
+      }
       // 根据用户id查询角色
       await searchRoleByUserId(row.id).then(res => {
         if (res.data.code == 200) {
@@ -1039,8 +1007,12 @@ export default {
 
     // 用户弹框确认的点击事件
     getUserManagementModal(name) {
-      let newList = Array.from(new Set(this.routeList.map(v => v.value)));
-      this.formValidate.routes = newList;
+      if (this.formValidate.managerRoute == "1") {
+        this.formValidate.routes = [];
+      } else {
+        let ary = this.$refs.treeData.getCheckedNodes();
+        this.formValidate.routes = ary.map(i => i.id);
+      }
       this.isStatus == "1"
         ? (this.formValidate.status = "1")
         : (this.formValidate.status = "2");
@@ -1058,12 +1030,12 @@ export default {
                   this.getuserManagement(); // 重新获取数据
                 } else {
                   this.loading = false;
-                  this.$Message.error(res.data.message)
+                  this.$Message.error(res.data.message);
                 }
               })
               .catch(err => {
                 this.loading = false;
-                this.$Message.error(res.data.message)
+                this.$Message.error(res.data.message);
               });
           } else if (!this.isAdd) {
             if (this.formValidateStr == JSON.stringify(this.formValidate)) {
@@ -1080,12 +1052,12 @@ export default {
                     this.getuserManagement();
                   } else {
                     this.loading = false;
-                    this.$Message.error(res.data.message)
+                    this.$Message.error(res.data.message);
                   }
                 })
                 .catch(err => {
                   this.loading = false;
-                  this.$Message.error(res.data.message)
+                  this.$Message.error(res.data.message);
                 });
             }
           }
@@ -1171,34 +1143,11 @@ export default {
         }
       });
     },
-    // 根据渠道id查询线路级联列表
-    getRouteTree() {
-      searchRouteListByChannelId(this.channelId).then(res => {
+    // 根据渠道id查询线路树形列表
+    getRouteTreeList() {
+      searchRouteTreeByChannelId(this.channelId, this.userId).then(res => {
         if (res.data.code == 200) {
-          this.routeDatas = this.forData(res.data.result);
-          // if (this.isAdd) {
-          //   let routeList = [];
-          //   function forRoute(items) {
-          //     for (let i = 0; i < items.length; i++) {
-          //       if (items[i].children) {
-          //         forRoute(items[i].children);
-          //         routeList.push({
-          //           value: items[i].value,
-          //           label: items[i].label
-          //         });
-          //       } else {
-          //         // 没有儿子
-          //         routeList.push({
-          //           value: items[i].value,
-          //           label: items[i].label
-          //         });
-          //       }
-          //     }
-          //   }
-          //   forRoute(res.data.result);
-          //   this.routeList = routeList;
-          //   console.log(this.routeList);
-          // }
+          this.routeTreeList = res.data.result;
         }
       });
     },
@@ -1229,7 +1178,6 @@ export default {
     this.getuserManagement();
     this.getDepData();
     this.getAllRoleByChannelId();
-    this.getRouteTree();
   }
 };
 </script>
@@ -1275,41 +1223,24 @@ export default {
 .imgstyle {
   width: 50px;
   height: 50px;
-  margin-right: 8px;
-  margin-top: 5px;
+  margin: 5px 5px 0px 5px;
   box-sizing: border-box;
 }
-// .ivu-cascader {
-//   width: 100px;
-//   .ivu-input-wrapper {
-//     width: 100%;
-//   }
-// }
 
 #header_image {
-  text-align: center;
-  position: absolute;
-  left: 250px;
-  top: 70px;
+  margin-left: -100px;
+  margin-right: 20px;
+  float: right;
 }
 .lookDetails {
   text-decoration: underline;
 }
-.routes {
-  width: 270px;
-  height: 100px;
-  display: inline-block;
-  margin-left: 5px;
-  border: 1px solid #c6c9ce;
-  border-radius: 5px;
-  overflow-y: auto;
-  /deep/.ivu-select-selection {
-    border: 0;
-    .ivu-select-placeholder,
-    .ivu-icon {
-      display: none;
-    }
-  }
+.routesTree {
+  border: 1px solid #c1c1c1;
+  width: 300px;
+  padding-left: 20px;
+  margin-left: 100px;
+  margin-top: -20px;
 }
 .items {
   padding: 2px 10px;
@@ -1323,25 +1254,6 @@ export default {
     vertical-align: -3px;
     margin-left: 5px;
     cursor: pointer;
-  }
-}
-.routeDatas {
-  width: 100px;
-  /deep/.ivu-select-dropdown {
-    max-height: 220px;
-  }
-  /deep/.span_sure {
-    padding: 3px 15px;
-    color: #fff;
-    background-color: #2d8cf0;
-    border-color: #2d8cf0;
-    float: right;
-    margin: 0px 20px 5px 0px;
-    border-radius: 3px;
-    cursor: pointer;
-  }
-  /deep/.ivu-input-wrapper {
-    width: 100px;
   }
 }
 </style>

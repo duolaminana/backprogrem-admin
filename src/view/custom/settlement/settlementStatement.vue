@@ -88,7 +88,7 @@
         style="margin:20px 0"
       >
         <template slot-scope="{row,index}" slot="Price">
-          <span>{{(row.actualPrice-row.buyPrice)*row.productProduce*(row.commissionPercent/100)}}</span>
+          <span>{{parseFloat((row.actualPrice-row.buyPrice)*row.productProduce*(row.commissionPercent/100)).toFixed(2)}}</span>
         </template>
         <template slot-scope="{row,index}" slot="primayCapital">
           <span>{{row.primayCapital|primayCapital}}</span>
@@ -344,7 +344,7 @@ export default {
           className: "more"
         },
         {
-          title: "抽成金额(元)",
+          title: "被抽成金额(元)",
           slot: "Price",
           align: "center",
           minWidth: 80,

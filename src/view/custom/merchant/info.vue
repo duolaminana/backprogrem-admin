@@ -1,19 +1,19 @@
 <template>
   <div class="channelMerchants">
     <div class="leftBox">
-      <div class="QRcode" v-show="receiveTerminal==2">
+      <div class="QRcode" v-if="$store.state.user.merchant.receiveTerminal==2&&$store.state.user.userVo.type==2">
         <p>设备收钱码配置</p>
         <div class="btn">
           <Button
             type="primary"
             style="width:100px"
-            v-if="(QRcodeList[0]==null)&&hasPerm('sys:merchantinfo:edit')"
+            v-if="(QRcodeList[0]==null)&&$store.state.user.userVo.type==2"
             @click="toSet"
           >去配置</Button>
           <Button
             type="primary"
             style="width:100px"
-            v-if="!(QRcodeList[0]==null)"
+            v-if="!(QRcodeList[0]==null)&&$store.state.user.userVo.type==2"
             @click="toSee"
           >查看/编辑</Button>
         </div>
@@ -66,7 +66,7 @@
       <Button
         type="primary"
         @click="addModal"
-        v-if="channelId==$store.state.user.channelId&&hasPerm('sys:merchantinfo:edit')"
+        v-if="channelId==$store.state.user.channelId&&($store.state.user.channelId==1&&$store.state.user.userVo.type==2)"
         class="xzbtn"
       >新增子商户</Button>
       <Button type="primary" @click="reset" v-if="hasPerm('sys:merchantinfo:see')">重置</Button>
@@ -80,14 +80,14 @@
             type="success"
             size="small"
             @click="changeAuditStatus(row)"
-            v-if="(channelId==$store.state.user.channelId&&hasPerm('sys:merchantinfo:edit')&&row.auditStatus==1)||(row.channelId!=$store.state.user.channelId&&row.auditStatus==1)"
+            v-if="(channelId==$store.state.user.channelId&&($store.state.user.channelId==1&&$store.state.user.userVo.type==2)&&row.auditStatus==1)"
           >提交</Button>
 
           <Button
             type="success"
             size="small"
             @click="seeReason(row)"
-            v-if="hasPerm('sys:merchantinfo:see')&&((channelId==$store.state.user.channelId&&(row.auditStatus==4||row.auditStatus==2))||(row.channelId!=$store.state.user.channelId&&(row.auditStatus==4||row.auditStatus==2)))"
+            v-if="($store.state.user.channelId==1&&$store.state.user.userVo.type==2)&&((channelId==$store.state.user.channelId&&(row.auditStatus==4||row.auditStatus==2))||(row.channelId!=$store.state.user.channelId&&(row.auditStatus==4||row.auditStatus==2)))"
           >查看</Button>
 
           <!-- 编辑按钮 -->
@@ -96,7 +96,7 @@
             type="primary"
             size="small"
             @click="editModal(row)"
-            v-if="(channelId==$store.state.user.channelId&&hasPerm('sys:merchantinfo:edit')&&row.auditStatus!=2&&row.channelId==$store.state.user.channelId)||(hasPerm('sys:merchantinfo:edit')&&row.auditStatus==3)"
+            v-if="($store.state.user.channelId==1&&$store.state.user.userVo.type==2)&&((channelId==$store.state.user.channelId&&row.auditStatus!=2&&row.channelId==$store.state.user.channelId)||row.auditStatus==3)"
           >编辑</Button>
 
           <!-- 删除按钮 -->
@@ -105,7 +105,7 @@
             type="error"
             size="small"
             @click="modalDel=true;delID=row.id;delIndex=index"
-            v-if="hasPerm('sys:merchantinfo:edit')&&row.auditStatus==3"
+            v-if="($store.state.user.channelId==1&&$store.state.user.userVo.type==2)&&row.auditStatus==3"
           >删除</Button>
         </template>
         <!-- 状态 -->
@@ -968,8 +968,8 @@ export default {
     const validateUserName = (rule, value, callback) => {
       if (!value) {
         return callback(new Error("输入不能为空"));
-      } else if (!/^(?!^\d+$)(?!^[a-zA-Z]+$)[0-9a-zA-Z]+$/.test(value)) {
-        callback(new Error("不能为纯数字或纯字母且不包含汉字"));
+      } else if (!/^(?!^\d+$)[0-9a-zA-Z]+$/.test(value)) {
+        callback(new Error("不能为纯数字且不包含汉字"));
       } else {
         callback();
       }
@@ -1062,7 +1062,6 @@ export default {
       WXRemarkText: null, //微信备注
       ZFBRemark: null, //支付宝备注
       ZFBRemarkText: null, //支付宝备注
-      receiveTerminal: this.$store.state.user.merchant.receiveTerminal, //收钱码是否开启
       QRcodeList: [], //收钱码数组
       auditType: null, //收钱码审核状态
       loadingWX: false,

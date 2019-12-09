@@ -14,9 +14,9 @@
       >
         <Option v-for="item in enableList" :value="item.value" :key="item.value">{{ item.label }}</Option>
       </Select>
-      <Button type="primary" @click="searchAppSecret" v-if="hasPerm('sys:appSecret:search')">查询</Button>
-      <Button type="primary" @click="addModal" class="xzbtn" v-if="hasPerm('sys:appSecret:add')">新增</Button>
-      <Button type="primary" @click="reset" v-if="hasPerm('sys:appSecret:reset')">重置</Button>
+      <Button type="primary" @click="searchAppSecret">查询</Button>
+      <Button type="primary" @click="addModal" class="xzbtn">新增</Button>
+      <Button type="primary" @click="reset">重置</Button>
       <Table highlight-row :columns="columns" :data="dataTable" border>
         <!-- 状态按钮 -->
         <template slot="enable" slot-scope="{ row, index }">
@@ -29,7 +29,6 @@
             type="primary"
             size="small"
             @click="editModal(row)"
-            v-if="hasPerm('sys:appSecret:edit')"
           >编辑</Button>
 
           <!-- 删除按钮 -->
@@ -38,7 +37,6 @@
             type="error"
             size="small"
             @click="modalDel=true;delID=row.id;delIndex=index"
-            v-if="hasPerm('sys:appSecret:del')"
           >删除</Button>
         </template>
       </Table>

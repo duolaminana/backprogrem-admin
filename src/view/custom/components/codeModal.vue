@@ -13,14 +13,14 @@
             <img src="../../../assets/images/weixin.jpg" alt />
             <span>微信支付配置</span>
             <Button
-              v-if="((!idWX&&formValidateWX.auditType!=1)||formValidateWX.configStat==2)&&hasPerm('sys:merchantinfo:edit')"
+              v-if="((!idWX&&formValidateWX.auditType!=1)||formValidateWX.configStat==2)"
               type="primary"
               size="small"
               style="margin-left:128px"
               @click="toStartWX"
             >去启用</Button>
             <Button
-              v-if="idWX&&formValidateWX.auditType!=1&&formValidateWX.configStat==1&&hasPerm('sys:merchantinfo:edit')"
+              v-if="idWX&&formValidateWX.auditType!=1&&formValidateWX.configStat==1"
               type="error"
               size="small"
               style="margin-left:135px"
@@ -86,14 +86,14 @@
             <img src="../../../assets/images/zhifubao.jpg" alt />
             <span>支付宝配置</span>
             <Button
-              v-if="((!idZFB&&formValidateZFB.auditType!=1)||formValidateZFB.configStat==2)&&hasPerm('sys:merchantinfo:edit')"
+              v-if="((!idZFB&&formValidateZFB.auditType!=1)||formValidateZFB.configStat==2)"
               type="primary"
               size="small"
               style="margin-left:143px"
               @click="toStartZFB"
             >去启用</Button>
             <Button
-              v-if="idZFB&&formValidateZFB.auditType!=1&&formValidateZFB.configStat==1&&hasPerm('sys:merchantinfo:edit')"
+              v-if="idZFB&&formValidateZFB.auditType!=1&&formValidateZFB.configStat==1"
               type="error"
               size="small"
               style="margin-left:150px"
@@ -153,14 +153,14 @@
       <div slot="footer" class="foot">
         <div class="footerWX" style="width:50%;display:inline-block;padding-right:30px">
           <Button
-            v-if="isSaveWX&&this.formValidateWX.auditType!=1&&hasPerm('sys:merchantinfo:edit')"
+            v-if="isSaveWX&&this.formValidateWX.auditType!=1"
             type="primary"
             :disabled="isdisabledWX"
             :loading="loadingWX"
             @click="WXQRModal('formValidateWX')"
           >保存</Button>
           <Button
-            v-if="!isSaveWX&&formValidateWX.auditType!=1&&hasPerm('sys:merchantinfo:edit')"
+            v-if="!isSaveWX&&formValidateWX.auditType!=1"
             type="primary"
             @click="editModalWX"
           >编辑</Button>
@@ -168,14 +168,14 @@
         </div>
         <div class="footerZFB" style="width:50%;display:inline-block;padding-right:30px">
           <Button
-            v-if="isSaveZFB&&formValidateZFB.auditType!=1&&hasPerm('sys:merchantinfo:edit')"
+            v-if="isSaveZFB&&formValidateZFB.auditType!=1"
             type="primary"
             :disabled="isdisabledZFB"
             :loading="loadingZFB"
             @click="ZFBQRModal('formValidateZFB')"
           >保存</Button>
           <Button
-            v-if="!isSaveZFB&&formValidateZFB.auditType!=1&&hasPerm('sys:merchantinfo:edit')"
+            v-if="!isSaveZFB&&formValidateZFB.auditType!=1"
             type="primary"
             @click="editModalZFB"
           >编辑</Button>

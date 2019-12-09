@@ -25,16 +25,8 @@
         @on-change="handleChangeEnd"
         style="width: 160px"
       ></DatePicker>
-      <Button
-        type="primary"
-        @click="searchSettlement"
-        v-if="hasPerm('set:sta:seeback')"
-      >查询</Button>
-      <Button
-        type="primary"
-        @click="reset"
-        v-if="hasPerm('set:sta:seeback')"
-      >重置</Button>
+      <Button type="primary" @click="searchSettlement" v-if="hasPerm('set:sta:seeback')">查询</Button>
+      <Button type="primary" @click="reset" v-if="hasPerm('set:sta:seeback')">重置</Button>
       <Table
         highlight-row
         :columns="columns"
@@ -59,7 +51,7 @@
         <template slot-scope="{row,index}" slot="operation">
           <!-- 结算 -->
           <Button
-          style="margin-right:0px"
+            style="margin-right:0px"
             type="primary"
             size="small"
             @click="getSettlementClick(row)"
@@ -88,7 +80,7 @@
         style="margin:20px 0"
       >
         <template slot-scope="{row,index}" slot="Price">
-          <span>{{(row.actualPrice-row.buyPrice)*row.productProduce*(row.commissionPercent/100)}}</span>
+          <span>{{parseFloat((row.actualPrice-row.buyPrice)*row.productProduce*(row.commissionPercent/100)).toFixed(2)}}</span>
         </template>
         <template slot-scope="{row,index}" slot="primayCapital">
           <span>{{row.primayCapital|primayCapital}}</span>
@@ -341,7 +333,7 @@ export default {
           className: "more"
         },
         {
-          title: "抽成金额(元)",
+          title: "被抽成金额(元)",
           slot: "Price",
           align: "center",
           minWidth: 80,
@@ -443,7 +435,7 @@ export default {
         realVal = "——";
       }
       return realVal;
-    },
+    }
   },
   methods: {
     handleChangeStart(value) {

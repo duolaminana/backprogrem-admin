@@ -144,6 +144,9 @@ export default {
       operator: this.$store.state.user.userId,
       operatorName: this.$store.state.user.userName,
       channelId: this.$store.state.user.channelId,
+      managerRoute:this.$store.state.user.userVo.managerRoute,
+      type: this.$store.state.user.userVo.type, //用户类型
+      userId: this.$store.state.user.userVo.id, //用户id
       machineCode: null, //设备编码
       operateType: null, //补货类型 1 补货 2 商品下架
       positionId: null, //点位id
@@ -199,13 +202,16 @@ export default {
       let data = {
         channelId: this.channelId,
         machineCode: this.machineCode,
+        managerRoute:this.managerRoute,
         operateType: this.operateType,
         positionId: this.positionId,
         positionName: this.positionName,
         productName: this.productName,
         routeId: this.routeId,
         pageNum: this.pageNum,
-        pageSize: this.pageSize
+        pageSize: this.pageSize,
+        type: this.type,
+        userId: this.userId
       };
       searchStock(data).then(res => {
         if (res.data.code == 200) {

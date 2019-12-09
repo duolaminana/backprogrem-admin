@@ -335,11 +335,12 @@ export const searchRouteListByChannelId = channelId => {
   });
 };
 // 根据渠道id查询线路树
-export const searchRouteTreeByChannelId = channelId => {
+export const searchRouteTreeByChannelId = (channelId,userId) => {
   return axios.request({
-    url: "/position/route/queryRouteTreeByChannelId",
+    url: "/position/route/queryUserRouteTree",
     params: {
-      channelId
+      channelId,
+      userId
     },
     method: "get"
   });
@@ -739,6 +740,29 @@ export const getOrderExcle = info => {
   });
 };
 
+// 删除订单
+export const deleteOrder = id => {
+  return axios.request({
+    url: "/order/order/deleteOrder",
+    params: {
+      id
+    },
+    method: "delete"
+  });
+};
+
+// 查看是否有收款权限
+export const seeReceiveTerminal = (chooseChannelId, loginChannelId) => {
+  return axios.request({
+    url: "/system/channelApply/getLoginChannelApplyIsTrue",
+    params: {
+      chooseChannelId,
+      loginChannelId
+    },
+    method: "get"
+  });
+};
+
 //-------------------------------------------------会员模块--------------------------------------------------------------
 //新增会员
 
@@ -772,11 +796,10 @@ export const searchMemberMore = info => {
 };
 
 // 查询会员购买过的订单记录
-export const searchMemberOrder = (cardNo,id) => {
+export const searchMemberOrder = id => {
   return axios.request({
     url: "/order/orderDetail/findMemberOrderDetail",
     params: {
-      cardNo,
       id
     },
     method: "get"
