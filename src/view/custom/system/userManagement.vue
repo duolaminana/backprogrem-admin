@@ -197,7 +197,7 @@
             <Radio v-for="item in allRoleList" :label="item.id" :key="item.id">{{item.roleName}}</Radio>
           </RadioGroup>
         </FormItem>
-        <FormItem label="管理分区">
+        <FormItem label="管理分区" style="margin-bottom:0px">
           <RadioGroup v-model="formValidate.managerRoute" @on-change="changeRoute">
             <Radio label="1">全部</Radio>
             <Radio label="2">部分</Radio>
@@ -1240,7 +1240,6 @@ export default {
   width: 300px;
   padding-left: 20px;
   margin-left: 100px;
-  margin-top: -20px;
 }
 .items {
   padding: 2px 10px;
