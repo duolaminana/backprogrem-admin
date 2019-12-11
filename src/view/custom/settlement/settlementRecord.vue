@@ -68,7 +68,7 @@
           <!-- 再次结算 -->
           <Button
             style="margin-right:0px"
-            v-if="hasPerm('set:rec:setmore')&&row.clearingStatus==3"
+            v-if="hasPerm('set:rec:setmore')&&row.clearingStatus==3&&isShowOperation"
             type="primary"
             size="small"
             @click="setMore(row)"
@@ -89,7 +89,7 @@
     <Modal v-model="isShow" :mask-closable="false" :title="'结算详情('+deductAccount+')'" width="1500">
       <Table :columns="columnsMore" :data="dataTableMore" border ref="table" style="margin:20px 0">
         <template slot-scope="{row,index}" slot="Price">
-           <span>{{parseFloat((row.actualPrice-row.buyPrice)*row.productProduce*(row.commissionPercent/100)).toFixed(2)}}</span>
+          <span>{{parseFloat((row.actualPrice-row.buyPrice)*row.productProduce*(row.commissionPercent/100)).toFixed(2)}}</span>
         </template>
         <template slot-scope="{row,index}" slot="primayCapital">
           <span>{{row.primayCapital|primayCapital}}</span>
@@ -149,7 +149,8 @@ import {
   searchAccountByAccountId,
   searchMachineByAccountId,
   getSettlementExcle,
-  searchBenefitAccount
+  searchBenefitAccount,
+  seeReceiveTerminal
 } from "@/api/http";
 export default {
   components: {
@@ -160,6 +161,7 @@ export default {
 
   data() {
     return {
+      isShowOperation: false,
       accountList: [],
       deductAccount: null,
       createDate: "",
@@ -489,6 +491,7 @@ export default {
         this.channelId = value.id;
         this.getSettlementOver();
         this.getBenefitAccount();
+        this.getReceiveTerminal();
       }
     },
     // 用户重置按钮
@@ -649,12 +652,22 @@ export default {
           this.accountList = res.data.result.boxVoList;
         }
       });
+    },
+    getReceiveTerminal() {
+      seeReceiveTerminal(this.channelId, this.$store.state.user.channelId).then(
+        res => {
+          if (res.data.code == 200) {
+            this.isShowOperation = res.data.result;
+          }
+        }
+      );
     }
   },
 
   mounted() {
     this.getSettlementOver();
     this.getBenefitAccount();
+    this.getReceiveTerminal();
   }
 };
 </script>

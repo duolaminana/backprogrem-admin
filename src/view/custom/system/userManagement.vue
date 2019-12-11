@@ -1255,9 +1255,9 @@ export default {
     cursor: pointer;
   }
 }
-.ivu-transfer-list-search{
+.contentBox{
   /deep/ .ivu-input-wrapper{
-    width: 332px;
+    width: 100%;
   }
 }
 </style>

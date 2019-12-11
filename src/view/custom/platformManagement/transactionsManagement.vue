@@ -82,22 +82,15 @@
             type="primary"
             size="small"
             @click="refund(row)"
-            v-if="hasPerm('set:tranlist:refundback')&&row.orderStatus==4"
+            v-if="hasPerm('set:tranlist:refundback')&&isShowOperation&&(row.orderStatus!=1&&row.orderStatus!=2)"
           >退款</Button>
           <Button
             style="margin-right:0px"
             disabled
             type="primary"
             size="small"
-            v-if="hasPerm('set:tranlist:refund')&&false"
+            v-if="hasPerm('set:tranlist:refund')&&false&&isShowOperation&&(row.orderStatus!=1&&row.orderStatus!=2)"
           >已退款</Button>
-          <Button
-            style="margin-right:0px；margin-right:10px"
-            type="error"
-            size="small"
-            @click="modalDel=true;delID=row.id;delIndex=index"
-            v-if="hasPerm('set:tranlist:refund')&&row.orderStatus==4"
-          >删除</Button>
         </template>
       </Table>
       <Page
@@ -110,13 +103,6 @@
         show-sizer
       />
     </div>
-    <!-- 删除 -->
-    <delete-component
-      :modalDel="modalDel"
-      :del_loading="modal_loading"
-      @cancel="delCancel"
-      @del="del"
-    ></delete-component>
     <!-- 订单详情弹框的模态框 -->
     <Modal v-model="isShow" :mask-closable="false" title="订单详情" width="1200">
       <Table :columns="columnsMore" :data="dataTableMore" border ref="table" style="margin:20px 0">
@@ -125,15 +111,6 @@
           <span>{{(row.actualPrice-row.buyPrice)*row.productProduce*(row.commissionPercent/100)}}</span>
         </template>
       </Table>
-      <Page
-        :total="totalMore"
-        show-elevator
-        :current="pageNumMore"
-        @on-change="pageChangeMore"
-        :page-size="pageSizeMore"
-        @on-page-size-change="sizeChangeMore"
-        show-sizer
-      />
       <div slot="footer">
         <Button type="primary" size="large" @click="isShow=false">确定</Button>
       </div>
@@ -161,6 +138,47 @@
     </Modal>
     <!-- 点位信息 -->
     <position-info :newlyAdded="newlyAdded" :formValidate="formValidate" @cancel="cancel"></position-info>
+    <!-- 退款页面 -->
+    <Modal v-model="isShowRefund" :mask-closable="false" title="退款" width="800">
+      <Table
+        :columns="columnsRefund"
+        :data="dataTableMore"
+        border
+        ref="tableRefund"
+        style="margin:20px 0"
+      >
+        <!-- 出货状态 -->
+        <template slot-scope="{row,index}" slot="productType">
+          <span v-show="(row.productNumber-row.productProduce)==0" style="color:#19be6b">出货正常</span>
+          <span
+            v-show="(row.productNumber-row.productProduce)==row.productNumber"
+            style="color:#ed4014"
+          >出货失败</span>
+          <span v-show="(row.productNumber-row.productProduce)>0" style="color:#ff9900">部分出货成功</span>
+        </template>
+        <template slot-scope="{row,index}" slot="productPrice">
+          <span v-if="row.activityPrice>0">{{row.productNumber*row.activityPrice}}</span>
+          <span v-else>{{row.productNumber*row.actualPrice}}</span>
+        </template>
+      </Table>
+      <div style="text-align: right;font-size:14px">
+        使用返利金额：
+        <strong>{{couponAmount}}</strong>&nbsp元&nbsp
+        实际收款金额：
+        <strong>{{payAmount}}</strong>&nbsp元&nbsp
+        退款金额：
+        <Input v-model="refundAmount" style="width:80px" @on-change="refundchange" />元
+      </div>
+      <div slot="footer">
+        <Button
+          type="text"
+          style="border:1px solid #c6c9ce"
+          size="large"
+          @click="isShowRefund=false"
+        >取消</Button>
+        <Button type="primary" size="large" @click="isShowRefund=false">确定</Button>
+      </div>
+    </Modal>
   </div>
 </template>
 <script>
@@ -168,29 +186,73 @@ import channelTree from "@/view/custom/components/channelTree";
 import positionInfo from "@/view/custom/components/positionInfo";
 import interestComponent from "@/view/custom/components/interestComponent";
 import format from "@/plugin/format.js"; //格式化时间YYYY-MM-DD
-import deleteComponent from "@/view/custom/components/deleteComponent";
 import {
   searchOrder,
   searchOrderMore,
   searchmachinePosition,
   searchBenefitMachine,
   getOrderExcle,
-  deleteOrder
+  deleteOrder,
+  seeReceiveTerminal
 } from "@/api/http";
 export default {
   components: {
     channelTree,
     interestComponent,
-    positionInfo,
-    deleteComponent
+    positionInfo
   },
   name: "transactionsManagement",
 
   data() {
     return {
-      modalDel: false,
-      modal_loading: false, //删除的loading
-      delID: null, //删除的ID
+      couponAmount: null,
+      payAmount: null,
+      refundAmount: null,
+      isShowRefund: false,
+      columnsRefund: [
+        {
+          title: "序号",
+          type: "index",
+          minWidth: 50,
+          align: "center"
+        },
+        {
+          title: "商品名称",
+          key: "productName",
+          align: "center",
+          minWidth: 80,
+          tooltip: true
+        },
+        {
+          title: "购买数量",
+          key: "productNumber",
+          align: "center",
+          minWidth: 80,
+          tooltip: true
+        },
+        {
+          title: "出货数量",
+          key: "productProduce",
+          align: "center",
+          minWidth: 80,
+          tooltip: true
+        },
+        {
+          title: "出货状态",
+          slot: "productType",
+          align: "center",
+          minWidth: 80,
+          tooltip: true
+        },
+        {
+          title: "实收金额(元)",
+          slot: "productPrice",
+          align: "center",
+          minWidth: 80,
+          tooltip: true
+        }
+      ],
+      isShowOperation: false,
       orderNoList: [], //订单字符串数组
       benefitId: null, //利益分配id
       interestNewlyAdded: false,
@@ -198,9 +260,6 @@ export default {
       positionId: null, //点位id
       formValidate: {},
       newlyAdded: false,
-      totalMore: null, // 页码数
-      pageNumMore: 1, // 页码
-      pageSizeMore: 15, // 页容量
       orderNoMore: null, //订单编号
       productCode: null, //商品编码
       productName: null, //商品名称
@@ -236,9 +295,6 @@ export default {
           maxWidth: 60,
           minWidth: 30,
           align: "center"
-          // render: (h, params) => {
-          //   return h("span", params.index+(this.pageNum-1)*this.pageSize+1)
-          // }
         },
         {
           title: "订单编号",
@@ -521,27 +577,12 @@ export default {
     }
   },
   methods: {
-    // 删除按钮操作
-    delCancel() {
-      this.modal_loading = false;
-      this.modalDel = false;
-    },
-    del() {
-      this.modal_loading = true;
-      deleteOrder(this.delID)
-        .then(res => {
-          if (res.data.code == 200) {
-            this.modal_loading = false;
-            this.modalDel = false;
-            this.delID = null; //删除的ID
-            this.$Message.success("删除成功");
-            this.dataTable.splice(this.delIndex, 1);
-            this.delIndex = null; //删除的索引
-          }
-        })
-        .catch(err => {
-          this.modal_loading = false;
-        });
+    refundchange(event) {
+      const value = event.target.value;
+      if (value > this.payAmount) {
+        this.$Message.error("退款金额大于实际收款金额，请重新输入");
+        this.refundAmount = null;
+      }
     },
     select(selection, row) {
       this.orderNoList = [];
@@ -589,6 +630,7 @@ export default {
       if (value) {
         this.channelId = value.id;
         this.getOrder();
+        this.getReceiveTerminal();
       }
     },
     // 用户重置按钮
@@ -610,14 +652,6 @@ export default {
       this.pageSize = value;
       this.getOrder(); // 重新获取数据
     },
-    // 交易详情页码改变时触发
-    pageChangeMore(value) {
-      this.pageNumMore = value;
-    },
-    //交易详情页容量改变时触发
-    sizeChangeMore(value) {
-      this.pageSizeMore = value;
-    },
     //查看交易详情
     seeSettlementMore(row) {
       this.orderNoMore = row.orderNo;
@@ -625,7 +659,14 @@ export default {
       this.getOrderMore();
     },
     // 退款点击事件
-    refund(row) {},
+    refund(row) {
+      this.orderNoMore = row.orderNo;
+      this.isShowRefund = true;
+      this.couponAmount = row.couponAmount;
+      this.payAmount = row.payAmount;
+      this.refundAmount = row.refundAmount;
+      this.getOrderMore();
+    },
     searchOrder() {
       this.pageNum = 1;
       this.getOrder();
@@ -665,8 +706,8 @@ export default {
         productCode: this.productCode, //商品编码
         productName: this.productName, //商品名称
         shipingStatus: this.shipingStatus, //出货状态 出货状态 1 待出货 2 出货成功 3 出货失败 4 部分出货成功
-        pageNum: this.pageNumMore, // 页码
-        pageSize: this.pageSizeMore // 页容量
+        pageNum: 1, // 页码
+        pageSize: 10000 // 页容量
       };
       searchOrderMore(data).then(res => {
         if (res.data.code == 200) {
@@ -717,8 +758,6 @@ export default {
         endDate: this.endDate, //结束时间
         startDate: this.startDate, //开始时间
         machineCode: this.machineCode, //机器编码
-        // pageNum: this.pageNum, // 页码
-        // pageSize: this.pageSize, // 页容量
         userId: this.userId,
         userType: this.userType,
         orderNoList: this.orderNoList
@@ -735,6 +774,15 @@ export default {
         URL.revokeObjectURL(elink.href); // 释放URL 对象
         document.body.removeChild(elink);
       });
+    },
+    getReceiveTerminal() {
+      seeReceiveTerminal(this.channelId, this.$store.state.user.channelId).then(
+        res => {
+          if (res.data.code == 200) {
+            this.isShowOperation = res.data.result;
+          }
+        }
+      );
     }
   },
 
@@ -743,6 +791,7 @@ export default {
     var date2 = new Date(date1);
     this.startDate = date2.setDate(date1.getDate() - 30);
     this.getOrder();
+    this.getReceiveTerminal();
   }
 };
 </script>

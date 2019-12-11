@@ -55,7 +55,7 @@
             type="primary"
             size="small"
             @click="getSettlementClick(row)"
-            v-if="hasPerm('set:sta:setback')"
+            v-if="hasPerm('set:sta:setback')&&isShowOperation"
           >结算</Button>
         </template>
       </Table>
@@ -137,7 +137,8 @@ import {
   searchAccountByAccountId,
   searchMachineByAccountId,
   getSettlementExcle,
-  searchBenefitAccount
+  searchBenefitAccount,
+  seeReceiveTerminal
 } from "@/api/http";
 export default {
   components: {
@@ -148,6 +149,7 @@ export default {
 
   data() {
     return {
+      isShowOperation: false,
       accountList: [],
       deductAccount: null,
       createDate: "",
@@ -449,6 +451,7 @@ export default {
         this.channelId = value.id;
         this.getSettlement();
         this.getBenefitAccount();
+        this.getReceiveTerminal()
       }
     },
     // 用户重置按钮
@@ -611,12 +614,22 @@ export default {
           this.accountList = res.data.result.boxVoList;
         }
       });
+    },
+    getReceiveTerminal() {
+      seeReceiveTerminal(this.channelId, this.$store.state.user.channelId).then(
+        res => {
+          if (res.data.code == 200) {
+            this.isShowOperation = res.data.result;
+          }
+        }
+      );
     }
   },
 
   mounted() {
     this.getSettlement();
     this.getBenefitAccount();
+    this.getReceiveTerminal()
   }
 };
 </script>
