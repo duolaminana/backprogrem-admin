@@ -43,8 +43,8 @@
               <a v-else class='gray'>去设定</a>
           </template>
           <template slot-scope="{ row, index }" slot="network">
-              <span v-show='row.networkStatus==1' :class='row.surplusDays<0?"gray":"green"' >在线</span>
-              <span v-show='row.networkStatus==0' class='gray'>离线</span>
+              <span v-if='row.networkStatus==1' :class='row.surplusDays<0?"gray":"green"' >在线</span>
+              <span v-else class='gray'>离线</span>
           </template>
           <template slot-scope="{ row, index }" slot="deviceStatus">
               <span v-show='row.enable==1'  :class='row.surplusDays<0?"gray":"green"'>已启用</span>
@@ -78,14 +78,17 @@
             <span v-else>{{row.expireDate}}</span>
           </template>
           <template slot-scope="{ row, index }" slot="setHumidity">
-            <a v-if='row.machineHumidness&&row.machineTemperature' class='lookDetails' :disabled="row.surplusDays<0"  @click='setHun(row,index,false)'>{{row.machineHumidness}}℃/{{row.machineTemperature}}%</a>
-            <a v-else class='green lookDetails' :disabled="row.surplusDays<0" @click='setHun(row,index,true)'>去设定</a>
+            <template v-if='row.temperatureHumidityStatus'>
+              <a v-if='row.machineHumidness&&row.machineTemperature' class='lookDetails' :disabled="row.surplusDays<0"  @click='setHun(row,index,false)'>{{row.machineTemperature}}℃/{{row.machineHumidness}}%</a>
+              <a v-else class='green lookDetails' :disabled="row.surplusDays<0" @click='setHun(row,index,true)'>去设定</a>
+            </template>
+            <span v-else>——</span>
           </template>
           <template slot-scope="{ row, index }" slot="newHumidity">
             <template v-if='row.currentTtemperature&&row.currentHumidness'>
               <span :class='row.humidnessStatus?"green":"red"'>{{row.currentTtemperature}}℃/</span><span :class='row.temperatureStatus?"green":"red"'>{{row.currentHumidness}}%</span>
             </template>
-            <span v-else>--</span>
+            <span v-else>——</span>
           </template>
           </Table>
         </Table>
@@ -341,36 +344,32 @@
         <Form ref="humidityFormValidate" :model="humidityFormValidate" :rules="humidityRuleValidate" :label-width="60">
           <FormItem label="温度" prop="machineTemperature">
             <InputNumber
-              :max="100"
-              :min="1"
+              :max="60"
+              :min="-5"
               v-model="humidityFormValidate.machineTemperature"
               :formatter="value => `${value}℃`"
               :parser="value => value.replace('℃', '')"
-              @on-blur=""
+              @on-blur="temperatureChange"
             ></InputNumber>
-            <span style='margin:0px 20px'>温度范围：{{temperatureRange}}℃，正常波动：+</span>
+            <span style='margin:0px 20px' class='gray'>温度范围：-5~60℃，正常波动：+</span>
             <InputNumber
-              :max="100"
-              :min="1"
               v-model="humidityFormValidate.rangeTemperature"
               :formatter="value => `${value}℃`"
               :parser="value => value.replace('℃', '')"
-              @on-blur=""
             ></InputNumber>
           </FormItem>
           <FormItem label="湿度" prop="machineHumidness">
             <InputNumber
-              :max="100"
-              :min="-100"
+              :max="50"
+              :min="0"
               v-model="humidityFormValidate.machineHumidness"
               :formatter="value => `${value}%`"
               :parser="value => value.replace('%', '')"
-              @on-blur=""
+              @on-blur="humidnessChange"
             ></InputNumber>
-            <span style='margin:0px 20px'>湿度范围：{{humidnessRange}} %，正常波动：+</span>
+            <span style='margin:0px 20px' class='gray'>湿度范围：0~50 %，正常波动：+</span>
             <InputNumber
-              :max="100"
-              :min="-100"
+              class='gray'
               v-model="humidityFormValidate.rangeHumidness"
               :formatter="value => `${value}%`"
               :parser="value => value.replace('%', '')"
@@ -420,14 +419,6 @@ export default {
     interestComponent,
     deleteComponent,
     tableModal
-  },
-  computed:{
-    temperatureRange(){
-      return `${this.humidityFormValidate.machineTemperature-this.humidityFormValidate.rangeTemperature}~${this.humidityFormValidate.machineTemperature+this.humidityFormValidate.rangeTemperature}`
-    },
-    humidnessRange(){
-      return `${this.humidityFormValidate.machineHumidness-this.humidityFormValidate.rangeHumidness}~${this.humidityFormValidate.machineHumidness+this.humidityFormValidate.rangeHumidness}`
-    }
   },
   data(){
     return{
@@ -770,10 +761,26 @@ export default {
     }
   },
   methods:{
+    temperatureChange(){
+      const v = this.humidityFormValidate.machineTemperature;
+      if(v<-5){
+        this.$set(this.humidityFormValidate,'machineTemperature',-5)
+      }else if(v>60){
+        this.$set(this.humidityFormValidate,'machineTemperature',60)
+      }
+    },
+    humidnessChange(){
+      const v = this.humidityFormValidate.machineHumidness;
+      if(v<0){
+        this.$set(this.humidityFormValidate,'machineHumidness',0)
+      }else if(v>50){
+        this.$set(this.humidityFormValidate,'machineHumidness',50)
+      }
+    },
     humiditySrue({machineHumidness,machineTemperature,rangeHumidness,rangeTemperature},name){
       this.$refs[name].validate(valid => {
         if (valid) {
-          let {networkStatus,machineCode,currentTemperature,currentHumidness,id,machineTemperature:oldMachineTemperature,machineHumidness:oldMachineHumidness} = this.rowData
+          let {networkStatus,machineCode,currentTemperature,currentHumidness,id,machineTemperature:oldMachineTemperature,machineHumidness:oldMachineHumidness,humitureId} = this.rowData
           const data ={
             networkStatus,
             machineCode,
@@ -785,7 +792,7 @@ export default {
             rangeTemperature,
             id
           }
-          if(oldMachineTemperature&&oldMachineHumidness){//修改
+          if(humitureId){//修改
             netWorkDevice('/machineApply/modifyMachineApply',data).then(res => {
               this.getPageDatas();
               this.humidityNewlyAdded = false;
@@ -802,6 +809,7 @@ export default {
       })
     },
     async setHun(row,index,isSet){
+      console.log(row)
       await this.initialization('humidityFormValidate');
       if(!isSet){
         this.$set(this.humidityFormValidate,'machineHumidness',row.machineHumidness)

@@ -142,6 +142,7 @@
           </Col>
         </Row>
       </Header>
+      <div class="whiteBack"></div>
       <Content>
         <div class="head">
           <div class="textHead">
@@ -403,8 +404,6 @@ li {
         }
       }
       .ivu-layout-content {
-        margin-top: 1%;
-        height: 69%;
         border: 1px solid #e8e8e8;
         background-color: #fff;
         padding: 20px;
@@ -494,5 +493,10 @@ li {
   > span {
     margin-right: 15px;
   }
+}
+.whiteBack{
+  width: 100%;
+  height: 2%;
+  background-color: #fff;
 }
 </style>

@@ -34,13 +34,13 @@
         </Select>
       <Button @click="clickQuery" type="primary">查询</Button>
       <Button @click='reset' type="primary">重置</Button>
-      <Button type="primary" @click='showNewlyAdded("xz")' class='xzbtn' icon="md-add">新增</Button>
+      <Button v-if="hasPerm('pro:goods:edit')"  type="primary" @click='showNewlyAdded("xz")' class='xzbtn' icon="md-add">新增</Button>
       <Table border ref="selection" :columns="columns" :data="datas">
         <template slot-scope="{ row, index }" slot="edit">
-          <Button type="success" v-if="row.auditStatus==1" size="small" class="marBtn" @click='submit(row)'>提交</Button>
-          <Button type="success" v-if="row.auditStatus==2" size="small" class="marBtn" @click='verify(row)'>审核</Button>
-          <Button type="primary" size="small" class="marBtn" @click='showNewlyAdded("bj",index)'>编辑</Button>
-          <Button type="error" size="small" @click="modalDel=true;delID=row.id;delIndex=index">删除</Button>
+          <Button type="success" v-if="row.auditStatus==1&&hasPerm('pro:goods:edit')" size="small" class="marBtn" @click='submit(row)'>提交</Button>
+          <Button type="success" v-if="row.auditStatus==2&&hasPerm('pro:goods:edit')" size="small" class="marBtn" @click='verify(row)'>审核</Button>
+          <Button v-if="hasPerm('pro:goods:edit')"  type="primary" size="small" class="marBtn" @click='showNewlyAdded("bj",index)'>编辑</Button>
+          <Button v-if="hasPerm('pro:goods:edit')"  type="error" size="small" @click="modalDel=true;delID=row.id;delIndex=index">删除</Button>
         </template>
         <template slot-scope="{ row}" slot="img">
           <viewer :images="[row.imageAddress]">

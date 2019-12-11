@@ -563,21 +563,21 @@ export default {
           title: "手机号码",
           key: "phone",
           align: "center",
-          minWidth: 60,
+          minWidth: 80,
           tooltip: true
         },
         {
           title: "邮箱",
           key: "email",
           align: "center",
-          minWidth: 30,
+          minWidth: 60,
           tooltip: true
         },
         {
           title: "所属部门",
           key: "deptName",
           align: "center",
-          minWidth: 60,
+          minWidth: 80,
           tooltip: true
         },
         {
@@ -591,7 +591,7 @@ export default {
           title: "角色",
           align: "center",
           key: "roleName",
-          minWidth: 30,
+          minWidth: 60,
           tooltip: true
         },
         {
@@ -1253,6 +1253,11 @@ export default {
     vertical-align: -3px;
     margin-left: 5px;
     cursor: pointer;
+  }
+}
+.ivu-transfer-list-search{
+  /deep/ .ivu-input-wrapper{
+    width: 332px;
   }
 }
 </style>

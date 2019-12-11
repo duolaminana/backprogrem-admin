@@ -174,7 +174,7 @@
         <Option v-for="item in list" :value="item.value" :key="item.value">{{ item.label }}</Option>
       </Select>
       <Button @click='timeBtn("before")' style="margin-right:10px">前一{{index==1?'天':index==2?'月':'年'}}</Button>
-      <DatePicker v-model="dateValue" :options='options' :type="index==2?'month':index==3?'year':'date'" placeholder="时间选择" style="margin-right:10px" :clearable='false' ></DatePicker>
+      <DatePicker v-model="dateValue" @on-change='dateChange' :options='options' :type="index==2?'month':index==3?'year':'date'" placeholder="时间选择" style="margin-right:10px" :clearable='false' ></DatePicker>
       <Button @click='timeBtn("after")' :disabled='disableDate'>后一{{index==1?'天':index==2?'月':'年'}}</Button>
       <div class='date'>
         <span :class='{"action":index==1}' @click='tabNav(1)'>日</span>
@@ -230,7 +230,7 @@ export default {
       decimals:2, //显示的小数位数
       isZero:0,
       startVal:0, //起始值
-      colorList:['#FF0000', '#00FFFF', '#00FF00', '#FFFF00', '#FF8C00', '#FE8463'],
+      colorList:['#40A4F9', '#15D0FF', '#FB7E33', '#FFDB15', '#28D59D', '#F66F95'],
       pieData:[
         // {name: "芙蓉王（硬红带细支）", value: 1},
         // {name: "软白沙", value: 3}, 
@@ -264,6 +264,10 @@ export default {
     }
   },
   methods:{
+    dateChange(value){
+      this.getFindCompanySales();
+      this.getFindProductSales();
+    },
     selectChange(value){
       if(!value){
         this.selectValue = 0;

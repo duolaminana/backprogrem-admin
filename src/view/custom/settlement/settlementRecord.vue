@@ -86,7 +86,7 @@
       />
     </div>
     <!-- 结算详情弹框的模态框 -->
-    <Modal v-model="isShow" :mask-closable="false" :title="'结算详情('+deductAccount+')'" width="1400">
+    <Modal v-model="isShow" :mask-closable="false" :title="'结算详情('+deductAccount+')'" width="1500">
       <Table :columns="columnsMore" :data="dataTableMore" border ref="table" style="margin:20px 0">
         <template slot-scope="{row,index}" slot="Price">
            <span>{{parseFloat((row.actualPrice-row.buyPrice)*row.productProduce*(row.commissionPercent/100)).toFixed(2)}}</span>
@@ -299,7 +299,7 @@ export default {
           title: "消费者",
           slot: "cardNo",
           align: "center",
-          minWidth: 100,
+          minWidth: 120,
           tooltip: true
         },
         {
@@ -313,7 +313,7 @@ export default {
           title: "商品名称",
           key: "productName",
           align: "center",
-          minWidth: 80,
+          minWidth: 100,
           tooltip: true
         },
         {
@@ -366,7 +366,7 @@ export default {
           tooltip: true
         },
         {
-          title: "抽成金额(元)",
+          title: "被抽成金额(元)",
           slot: "Price",
           align: "center",
           minWidth: 80,
@@ -393,14 +393,14 @@ export default {
           title: "结算金额(元)",
           key: "benefitPrice",
           align: "center",
-          minWidth: 60,
+          minWidth: 80,
           tooltip: true
         },
         {
           title: "结算时间",
           key: "updateDate",
           align: "center",
-          minWidth: 60,
+          minWidth: 100,
           tooltip: true
         }
       ],

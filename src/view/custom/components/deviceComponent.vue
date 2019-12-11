@@ -12,8 +12,8 @@
     </div>
     <Divider />
     <!-- <Input v-model="stock"  placeholder="最大库存" style="width:100px" clearable class='marginRight'/> -->
-    行：<InputNumber :max="maxColumnNo" :min="1"   placeholder="行"  v-model="columnNo"  style="margin-right:10px"></InputNumber>
-    列：<InputNumber :max="maxLayerNo"  :min="1" placeholder="列"  v-model="layerNo"  style="margin-right:40px"></InputNumber>
+    行：<InputNumber :max="maxLayerNo"  :min="1" placeholder="行"  v-model="layerNo"  style="margin-right:40px"></InputNumber>
+    列：<InputNumber :max="maxColumnNo" :min="1"   placeholder="列"  v-model="columnNo"  style="margin-right:10px"></InputNumber>
     <Button type="primary" size="large" @click='generate' :disabled='isKong>0' >生成货道</Button>
     <Button type="primary" size="large" @click='reset'>复位货道</Button>
     <Button type="error" size="large" @click='deleteRow' style="float:right;" :disabled='listData.length==0' >删除行</Button>

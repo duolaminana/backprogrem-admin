@@ -289,8 +289,8 @@ export default {
       console.log(this.rowData.id)
       let data = {
         channelId:this.channelId,
-        pageNum:this.pageNum,
-        pageSize:isAll?1:this.pageSize,
+        pageNum:isAll?1:this.pageNum,
+        pageSize:this.pageSize,
         templateName:this.templateName,
         templateId:isAll?null:this.rowData.id
       }
