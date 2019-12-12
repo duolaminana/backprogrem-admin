@@ -113,10 +113,10 @@
         <Input v-model.trim="form.name" placeholder="请输入真实姓名"></Input>
       </FormItem>
       <FormItem prop="phone" label="手机号码" style="margin-bottom:20px">
-        <Input v-model.trim="form.phone" placeholder="请输入手机号码"></Input>
+        <Input :maxlength="11" v-model.trim="form.phone" placeholder="请输入手机号码"></Input>
       </FormItem>
       <FormItem prop="card" label="身份证号" style="margin-bottom:20px">
-        <Input v-model.trim="form.card" placeholder="请输入身份证号"></Input>
+        <Input :maxlength="18" v-model.trim="form.card" placeholder="请输入身份证号"></Input>
       </FormItem>
       <FormItem prop="NewareaNames" label="所在区域" style="margin-bottom:20px;width:325px">
         <Cascader
@@ -151,7 +151,7 @@
         <Input v-model.trim="form.name" placeholder="请输入收款人"></Input>
       </FormItem>
       <FormItem prop="card" class="card" label="收款人身份证号码" style="margin-bottom:10px">
-        <Input v-model.trim="form.card" placeholder="请输入收款人身份证号码"></Input>
+        <Input :maxlength="18" v-model.trim="form.card" placeholder="请输入收款人身份证号码"></Input>
       </FormItem>
       <FormItem
         prop="receiveAccount"

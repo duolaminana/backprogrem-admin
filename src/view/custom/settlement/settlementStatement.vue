@@ -1,7 +1,7 @@
 <template>
   <div class="settlement">
     <div class="leftBox">
-      <channel-tree @clickTreeRow="clickTreeRow"></channel-tree>
+      <channel-tree @clickTreeRow="clickTreeRow" ref="channelTree"></channel-tree>
     </div>
     <div class="rightDiv">
       <Input v-model="accountName" style="margin-right:10px" placeholder="收款人" clearable />
@@ -25,16 +25,8 @@
         @on-change="handleChangeEnd"
         style="width: 160px"
       ></DatePicker>
-      <Button
-        type="primary"
-        @click="searchSettlement"
-        v-if="hasPerm('set:sta:see')"
-      >查询</Button>
-      <Button
-        type="primary"
-        @click="reset"
-        v-if="hasPerm('set:sta:see')"
-      >重置</Button>
+      <Button type="primary" @click="searchSettlement" v-if="hasPerm('set:sta:see')">查询</Button>
+      <Button type="primary" @click="reset" v-if="hasPerm('set:sta:see')">重置</Button>
       <Table
         highlight-row
         :columns="columns"
@@ -59,7 +51,7 @@
         <template slot-scope="{row,index}" slot="operation">
           <!-- 结算 -->
           <Button
-          style="margin-right:0px"
+            style="margin-right:0px"
             type="primary"
             size="small"
             @click="getSettlementClick(row)"
@@ -465,7 +457,7 @@ export default {
         this.channelId = value.id;
         this.getSettlement();
         this.getBenefitAccount();
-        this.getReceiveTerminal()
+        this.getReceiveTerminal();
       }
     },
     // 用户重置按钮
@@ -475,7 +467,10 @@ export default {
       this.clearingStartDate = "";
       this.clearingEndDate = "";
       this.pageNum = 1;
+      this.pageSize = 15;
+      this.total = null;
       this.getSettlement();
+      this.$refs.channelTree.getTreeData();
     },
     // 页码改变时触发
     pageChange(value) {
@@ -643,7 +638,7 @@ export default {
   mounted() {
     this.getSettlement();
     this.getBenefitAccount();
-    this.getReceiveTerminal()
+    this.getReceiveTerminal();
   }
 };
 </script>

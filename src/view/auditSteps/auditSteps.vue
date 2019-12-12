@@ -48,7 +48,6 @@ export default {
   },
   mounted() {
     this.steps = parseInt(this.$route.query.auditStatus);
-    console.log(this.$route.query.auditStatus);
     this.steps == 1
       ? (this.percent = 25)
       : this.steps == 2

@@ -335,7 +335,7 @@ export const searchRouteListByChannelId = channelId => {
   });
 };
 // 根据渠道id查询线路树
-export const searchRouteTreeByChannelId = (channelId,userId) => {
+export const searchRouteTreeByChannelId = (channelId, userId) => {
   return axios.request({
     url: "/position/route/queryUserRouteTree",
     params: {
@@ -347,10 +347,11 @@ export const searchRouteTreeByChannelId = (channelId,userId) => {
 };
 
 // 查询开门权限设备列表信息
-export const searchUserMachineList = ({ channelId, userId }) => {
+export const searchUserMachineList = ({ channelId, userId, managerRoute }) => {
   const data = {
     channelId: channelId,
-    userId: userId
+    userId: userId,
+    managerRoute: managerRoute
   };
   return axios.request({
     url: "/position/userMachine/list",

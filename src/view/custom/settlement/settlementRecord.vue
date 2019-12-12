@@ -1,7 +1,7 @@
 <template>
   <div class="settlementRecord">
     <div class="leftBox">
-      <channel-tree @clickTreeRow="clickTreeRow"></channel-tree>
+      <channel-tree @clickTreeRow="clickTreeRow" ref="channelTree"></channel-tree>
     </div>
     <div class="rightDiv">
       <Input v-model="accountName" style="margin-right:10px" placeholder="收款人" clearable />
@@ -87,7 +87,14 @@
     </div>
     <!-- 结算详情弹框的模态框 -->
     <Modal v-model="isShow" :mask-closable="false" :title="'结算详情('+deductAccount+')'" width="1500">
-      <Table :columns="columnsMore" :data="dataTableMore" border ref="table" style="margin:20px 0">
+      <Table
+        class="setMore"
+        :columns="columnsMore"
+        :data="dataTableMore"
+        border
+        ref="table"
+        style="margin:20px 0"
+      >
         <template slot-scope="{row,index}" slot="Price">
           <span>{{parseFloat((row.actualPrice-row.buyPrice)*row.productProduce*(row.commissionPercent/100)).toFixed(2)}}</span>
         </template>
@@ -365,21 +372,24 @@ export default {
           slot: "primayCapital",
           align: "center",
           minWidth: 60,
-          tooltip: true
+          tooltip: true,
+          className: "more"
         },
         {
           title: "被抽成金额(元)",
           slot: "Price",
           align: "center",
           minWidth: 80,
-          tooltip: true
+          tooltip: true,
+          className: "more"
         },
         {
           title: "利润(元)",
           key: "profitPrice",
           align: "center",
           minWidth: 60,
-          tooltip: true
+          tooltip: true,
+          className: "more"
         },
         {
           title: "利润百分比",
@@ -387,6 +397,7 @@ export default {
           align: "center",
           minWidth: 70,
           tooltip: true,
+          className: "more",
           render: (h, param) => {
             return h("div", param.row.profitPercent + "%");
           }
@@ -396,7 +407,8 @@ export default {
           key: "benefitPrice",
           align: "center",
           minWidth: 80,
-          tooltip: true
+          tooltip: true,
+          className: "more"
         },
         {
           title: "结算时间",
@@ -501,7 +513,10 @@ export default {
       this.clearingStartDate = "";
       this.clearingEndDate = "";
       this.pageNum = 1;
+      this.pageSize = 15;
+      this.total = null;
       this.getSettlementOver();
+      this.$refs.channelTree.getTreeData();
     },
     // 页码改变时触发
     pageChange(value) {
@@ -700,6 +715,11 @@ export default {
   }
   .lookDetails {
     text-decoration: underline;
+  }
+}
+.setMore {
+  /deep/ .ivu-table .more {
+    color: #2d8cf0;
   }
 }
 </style>

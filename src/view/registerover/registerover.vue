@@ -5,7 +5,7 @@
         <img src="../../assets/images/registerover.png" alt />
         <div>注册完成</div>
       </div>
-      <div class="text">待审核，我们会栽7个工作日内给您返回审核结果，请留言您的来电信息，感谢您的加入！</div>
+      <div class="text">待审核，我们会在3个工作日内给您返回审核结果，请留言您的来电信息，感谢您的加入！</div>
       <Button type="primary" style="width:360px;margin-top:120px;margin-left:120px" @click="login">返回登录页</Button>
     </div>
   </div>

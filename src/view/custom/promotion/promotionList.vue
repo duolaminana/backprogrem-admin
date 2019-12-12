@@ -1,7 +1,7 @@
 <template>
   <div class="activity">
     <div class="leftBox">
-      <channel-tree @clickTreeRow="clickTreeRow"></channel-tree>
+      <channel-tree @clickTreeRow="clickTreeRow" ref='channelTree'></channel-tree>
     </div>
     <div class="rightDiv">
       <Input v-model="activityName" style="margin-right:10px" placeholder="活动名称" clearable />
@@ -666,7 +666,11 @@ export default {
       this.activityName = null;
       this.machineCode = null;
       this.pageNum = 1;
+      this.pageSize = 15;
+      this.total = null;
+      this.channelId = this.$store.state.user.channelId;
       this.getActivity(); // 重新获取数据
+      this.$refs.channelTree.getTreeData();
     },
     // 页码改变时触发
     pageChange(value) {

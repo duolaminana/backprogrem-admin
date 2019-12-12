@@ -1,6 +1,5 @@
 <template>
   <div>
-    <!-- <Coustom-tree></Coustom-tree> -->
     <div>
       <Input style="margin-right:10px" v-model="appId" placeholder="请输入应用id" clearable />
       <Input style="margin-right: 10px" v-model="appName" placeholder="请输入应用名称" clearable />

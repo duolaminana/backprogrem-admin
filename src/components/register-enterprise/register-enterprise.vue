@@ -111,10 +111,10 @@
         <Input v-model.trim="form.name" placeholder="请输入法人姓名"></Input>
       </FormItem>
       <FormItem prop="phone" label="手机号码" style="margin-bottom:20px">
-        <Input v-model.trim="form.phone" placeholder="请输入手机号码"></Input>
+        <Input :maxlength="11" v-model.trim="form.phone" placeholder="请输入手机号码"></Input>
       </FormItem>
       <FormItem prop="companyNo" label="公司税号" style="margin-bottom:20px">
-        <Input v-model.trim="form.companyNo" placeholder="请输入公司税号"></Input>
+        <Input :maxlength="18" v-model.trim="form.companyNo" placeholder="请输入公司税号"></Input>
       </FormItem>
       <FormItem prop="NewareaNames" label="所在区域" style="margin-bottom:20px;width:325px">
         <Cascader
@@ -149,7 +149,7 @@
         <Input v-model.trim="form.receiveName" placeholder="请输入收款人"></Input>
       </FormItem>
       <FormItem prop="receiveCard" class="card" label="收款人身份证号码" style="margin-bottom:10px">
-        <Input v-model.trim="form.receiveCard" placeholder="请输入收款人身份证号码"></Input>
+        <Input :maxlength="18" v-model.trim="form.receiveCard" placeholder="请输入收款人身份证号码"></Input>
       </FormItem>
       <FormItem
         prop="receiveAccount"
@@ -405,7 +405,7 @@ export default {
           value
         )
       ) {
-        callback(new Error("公司税号格式错误"));
+        callback(new Error("公司税号格式错误,请输入18位公司税号"));
       } else {
         callback();
       }
@@ -415,7 +415,7 @@ export default {
       if (!val) {
         return callback(new Error("输入不能为空"));
       } else if (!/^(\d{15}|\d{16}|\d{17}|\d{19})$/.test(val)) {
-        callback(new Error("银行账号格式错误"));
+        callback(new Error("收款账号格式错误"));
       } else {
         callback();
       }

@@ -101,7 +101,12 @@
 
       <div slot="footer">
         <Button type="text" size="large" style="border:1px solid #c6c9ce" @click="cancel">取消</Button>
-        <Button type="primary" size="large" :loading="loadingType" @click="getDictTypeModal('formValidate')">确定</Button>
+        <Button
+          type="primary"
+          size="large"
+          :loading="loadingType"
+          @click="getDictTypeModal('formValidate')"
+        >确定</Button>
       </div>
       <div slot="close">
         <Icon
@@ -144,7 +149,12 @@
 
       <div slot="footer">
         <Button type="text" size="large" style="border:1px solid #c6c9ce" @click="cancelData">取消</Button>
-        <Button type="primary" size="large" :loading="loadingData" @click="getDictDataModal('formValidateData')">确定</Button>
+        <Button
+          type="primary"
+          size="large"
+          :loading="loadingData"
+          @click="getDictDataModal('formValidateData')"
+        >确定</Button>
       </div>
       <div slot="close">
         <Icon
@@ -391,6 +401,7 @@ export default {
       this.dataValue = "";
       this.pageNum = 1;
       this.getDictData();
+      this.getDictType();
     },
 
     // 字典数据模态框取消按钮点击事件
@@ -450,12 +461,12 @@ export default {
                   this.getDictData();
                 } else {
                   this.loadingData = false;
-                  this.$Message.error(res.data.message)
+                  this.$Message.error(res.data.message);
                 }
               })
               .catch(err => {
                 this.loadingData = false;
-                this.$Message.error(res.data.message)
+                this.$Message.error(res.data.message);
               });
           } else if (!this.isAddData) {
             if (
@@ -473,12 +484,12 @@ export default {
                     this.getDictData();
                   } else {
                     this.loadingData = false;
-                    this.$Message.error(res.data.message)
+                    this.$Message.error(res.data.message);
                   }
                 })
                 .catch(err => {
                   this.loadingData = false;
-                  this.$Message.error(res.data.message)
+                  this.$Message.error(res.data.message);
                 });
             }
           }
@@ -552,40 +563,44 @@ export default {
           if (this.isAdd) {
             // 对的
             this.loadingType = true;
-            addDictType(this.formValidate).then(backData => {
-              if (backData.data.code == 200) {
-                this.loadingType = false;
-                this.isShow = false;
-                this.$Message.info("新增成功");
-                this.getDictType(); // 重新获取字典类型
-              }else{
+            addDictType(this.formValidate)
+              .then(backData => {
+                if (backData.data.code == 200) {
                   this.loadingType = false;
-                  this.$Message.error(res.data.message)
+                  this.isShow = false;
+                  this.$Message.info("新增成功");
+                  this.getDictType(); // 重新获取字典类型
+                } else {
+                  this.loadingType = false;
+                  this.$Message.error(res.data.message);
                 }
-            }).catch(err => {
+              })
+              .catch(err => {
                 this.loadingType = false;
-                this.$Message.error(res.data.message)
+                this.$Message.error(res.data.message);
               });
           } else if (!this.isAdd) {
             if (this.formValidateStr == JSON.stringify(this.formValidate)) {
               this.isShow = false;
               this.loadingType = false;
             } else {
-              editDictType(this.formValidate).then(backData => {
-                if (backData.data.code == 200) {
+              editDictType(this.formValidate)
+                .then(backData => {
+                  if (backData.data.code == 200) {
+                    this.loadingType = false;
+                    this.isShow = false;
+                    this.$Message.info("修改成功");
+                    this.getDictType(); // 重新获取字典类型
+                    this.getsearchDictTypeByID();
+                  } else {
+                    this.loadingType = false;
+                    this.$Message.error(res.data.message);
+                  }
+                })
+                .catch(err => {
                   this.loadingType = false;
-                  this.isShow = false;
-                  this.$Message.info("修改成功");
-                  this.getDictType(); // 重新获取字典类型
-                  this.getsearchDictTypeByID();
-                }else{
-                  this.loadingType = false;
-                  this.$Message.error(res.data.message)
-                }
-              }).catch(err => {
-                this.loadingType = false;
-                this.$Message.error(res.data.message)
-              });
+                  this.$Message.error(res.data.message);
+                });
             }
           }
         }

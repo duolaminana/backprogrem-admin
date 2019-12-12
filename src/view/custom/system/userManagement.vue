@@ -405,6 +405,7 @@ export default {
       }
     };
     return {
+      managerRoute: null,
       isShowRouteTree: false,
       routeTreeList: [],
       formValidateStr: "",
@@ -535,7 +536,7 @@ export default {
           title: "用户名",
           key: "userName",
           align: "center",
-          minWidth: 50,
+          minWidth: 80,
           tooltip: true
         },
         {
@@ -656,6 +657,7 @@ export default {
     },
     // 去开门弹框
     toOpenModal(row) {
+      this.managerRoute = row.managerRoute;
       this.userId = row.id;
       this.isShowOpen = true;
       this.openDoor = row.openDoor + "";
@@ -761,6 +763,7 @@ export default {
       this.status = ""; // 用户状态
       this.pageNum = 1;
       this.getuserManagement();
+      this.getDepData();
     },
 
     // 页码改变时触发
@@ -1131,7 +1134,8 @@ export default {
     getUserMachineList() {
       searchUserMachineList({
         channelId: this.channelId,
-        userId: this.userId
+        userId: this.userId,
+        managerRoute: this.managerRoute
       }).then(res => {
         if (res.data.code == 200) {
           this.transferData = res.data.result.data;
@@ -1255,8 +1259,8 @@ export default {
     cursor: pointer;
   }
 }
-.contentBox{
-  /deep/ .ivu-input-wrapper{
+.contentBox {
+  /deep/ .ivu-input-wrapper {
     width: 100%;
   }
 }

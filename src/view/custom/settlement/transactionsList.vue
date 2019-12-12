@@ -1,7 +1,7 @@
 <template>
   <div class="transactionsList">
     <div class="leftBox">
-      <channel-tree @clickTreeRow="clickTreeRow"></channel-tree>
+      <channel-tree @clickTreeRow="clickTreeRow" ref="channelTree"></channel-tree>
     </div>
     <div class="rightDiv">
       <Input v-model="orderNo" style="margin-right:10px" placeholder="订单编号" clearable />
@@ -86,14 +86,14 @@
             type="primary"
             size="small"
             @click="refund(row)"
-            v-if="hasPerm('set:tranlist:refund')&&isShowOperation&&(row.orderStatus!=1&&row.orderStatus!=2)"
+            v-if="hasPerm('set:tranlist:refund')&&(row.orderStatus!=1&&row.orderStatus!=2)&&(isShowOperation||((channelId==$store.state.user.channelId)&&$store.state.user.userVo.type))"
           >&nbsp退款&nbsp</Button>
           <Button
             style="margin-right:0px"
             disabled
             type="primary"
             size="small"
-            v-if="hasPerm('set:tranlist:refund')&&false&&isShowOperation&&(row.orderStatus!=1&&row.orderStatus!=2)"
+            v-if="hasPerm('set:tranlist:refund')&&false&&(row.orderStatus!=1&&row.orderStatus!=2)&&(isShowOperation||((channelId==$store.state.user.channelId)&&$store.state.user.userVo.type))"
           >已退款</Button>
         </template>
       </Table>
@@ -412,7 +412,7 @@ export default {
           title: "操作",
           align: "center",
           slot: "operation",
-          minWidth: 120,
+          minWidth: 60,
           tooltip: true
         }
       ],
@@ -505,6 +505,9 @@ export default {
           // minWidth: 60,
           tooltip: true,
           render: (h, param) => {
+            if (param.row.benefitPercent == 0) {
+              return h("div", "————");
+            }
             return h("div", param.row.benefitPercent + "%");
           }
         },
@@ -635,6 +638,7 @@ export default {
     clickTreeRow(value) {
       if (value) {
         this.channelId = value.id;
+
         this.getOrder();
         this.getReceiveTerminal();
       }
@@ -646,7 +650,11 @@ export default {
       this.orderNo = "";
       this.machineCode = null;
       this.pageNum = 1;
+      this.pageSize = 15;
+      this.total = null;
+      this.channelId = this.$store.state.user.channelId;
       this.getOrder(); // 重新获取数据
+      this.$refs.channelTree.getTreeData();
     },
     // 页码改变时触发
     pageChange(value) {

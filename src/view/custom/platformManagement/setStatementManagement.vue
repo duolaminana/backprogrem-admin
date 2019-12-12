@@ -1,7 +1,7 @@
 <template>
   <div class="setStatementManagement">
     <div class="leftBox">
-      <channel-tree @clickTreeRow="clickTreeRow"></channel-tree>
+      <channel-tree @clickTreeRow="clickTreeRow" ref="channelTree"></channel-tree>
     </div>
     <div class="rightDiv">
       <Input v-model="accountName" style="margin-right:10px" placeholder="收款人" clearable />
@@ -461,7 +461,9 @@ export default {
       this.clearingStartDate = "";
       this.clearingEndDate = "";
       this.pageNum = 1;
+       this.total = null;
       this.getSettlement();
+      this.$refs.channelTree.getTreeData();
     },
     // 页码改变时触发
     pageChange(value) {

@@ -1,7 +1,10 @@
 <template>
   <div class="channelMerchants">
     <div class="leftBox">
-      <div class="QRcode" v-if="$store.state.user.merchant.receiveTerminal==2&&$store.state.user.userVo.type==2">
+      <div
+        class="QRcode"
+        v-if="$store.state.user.merchant.receiveTerminal==2&&$store.state.user.userVo.type==2"
+      >
         <p>设备收钱码配置</p>
         <div class="btn">
           <Button
@@ -44,7 +47,7 @@
         </div>
       </div>
       <!-- 渠道树 -->
-      <channel-tree @clickTreeRow="clickTreeRow"></channel-tree>
+      <channel-tree @clickTreeRow="clickTreeRow" ref="channelTree"></channel-tree>
     </div>
     <div class="rightDiv">
       <Input v-model="channelName" style="margin-right:10px" placeholder="请输入商户名称" clearable />
@@ -80,23 +83,23 @@
             type="success"
             size="small"
             @click="changeAuditStatus(row)"
-            v-if="(channelId==$store.state.user.channelId&&($store.state.user.channelId==1&&$store.state.user.userVo.type==2)&&row.auditStatus==1)"
+            v-if="$store.state.user.userVo.type==2&&row.auditStatus==1"
           >提交</Button>
 
           <Button
             type="success"
             size="small"
             @click="seeReason(row)"
-            v-if="($store.state.user.channelId==1&&$store.state.user.userVo.type==2)&&((channelId==$store.state.user.channelId&&(row.auditStatus==4||row.auditStatus==2))||(row.channelId!=$store.state.user.channelId&&(row.auditStatus==4||row.auditStatus==2)))"
+            v-if="$store.state.user.userVo.type==2&&((channelId==$store.state.user.channelId&&(row.auditStatus==4||row.auditStatus==2))||(row.channelId!=$store.state.user.channelId&&(row.auditStatus==4||row.auditStatus==2)))"
           >查看</Button>
 
           <!-- 编辑按钮 -->
           <Button
-          style="margin-right:0px"
+            style="margin-right:0px"
             type="primary"
             size="small"
             @click="editModal(row)"
-            v-if="($store.state.user.channelId==1&&$store.state.user.userVo.type==2)&&((channelId==$store.state.user.channelId&&row.auditStatus!=2&&row.channelId==$store.state.user.channelId)||row.auditStatus==3)"
+            v-if="$store.state.user.userVo.type==2&&((channelId==$store.state.user.channelId&&row.auditStatus!=2&&row.channelId==$store.state.user.channelId)||row.auditStatus==3)"
           >编辑</Button>
 
           <!-- 删除按钮 -->
@@ -105,7 +108,7 @@
             type="error"
             size="small"
             @click="modalDel=true;delID=row.id;delIndex=index"
-            v-if="($store.state.user.channelId==1&&$store.state.user.userVo.type==2)&&row.auditStatus==3"
+            v-if="$store.state.user.userVo.type==2&&row.auditStatus==3"
           >删除</Button>
         </template>
         <!-- 状态 -->
@@ -1013,7 +1016,7 @@ export default {
           value
         )
       ) {
-        callback(new Error("公司税号格式错误"));
+        callback(new Error("公司税号格式错误,请输入18位公司税号"));
       } else {
         callback();
       }
@@ -1612,7 +1615,10 @@ export default {
       this.auditStatus = null; // 审核状态
       this.accountType = null; // 注册类型
       this.pageNum = 1;
+      this.pageSize = 15;
+      this.total = null;
       this.getMerchant();
+      this.$refs.channelTree.getTreeData();
     },
 
     // 页码改变时触发

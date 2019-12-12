@@ -1237,27 +1237,6 @@ export default {
       });
     },
     // 查询渠道商的业务范围
-    // getMerchantCategory() {
-    //   searchMerchantCategory(this.channelId).then(res => {
-    //     if (res.data.code == 200) {
-    //       this.saleData = res.data.result;
-    //       if (this.saleData.length == 0) {
-    //         this.saleData = this.saleArray;
-    //         console.log(this.saleData);
-    //       } else {
-    //         this.saleData.forEach((item, index) => {
-    //           item.activityAuthority == 1
-    //             ? (item.activityAuthority = true)
-    //             : (item.activityAuthority = false);
-    //           item.categoryId = this.saleList.find(
-    //             v => v.categoryName == item.categoryName
-    //           ).id;
-    //         });
-    //       }
-    //     }
-    //   });
-    // },
-    // 查询渠道商的业务范围
     getMerchantCategorySale() {
       searchMerchantCategorySale(this.channelId, this.businessStr).then(res => {
         if (res.data.code == 200) {

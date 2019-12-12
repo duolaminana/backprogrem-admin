@@ -1,7 +1,7 @@
 <template>
   <div class="transactionsManagement">
     <div class="leftBox">
-      <channel-tree @clickTreeRow="clickTreeRow"></channel-tree>
+      <channel-tree @clickTreeRow="clickTreeRow" ref="channelTree"></channel-tree>
     </div>
     <div class="rightDiv">
       <Input v-model="orderNo" style="margin-right:10px" placeholder="订单编号" clearable />
@@ -23,7 +23,7 @@
         @on-change="handleChangeEnd"
         style="width: 160px"
       ></DatePicker>
-      <Button type="primary" @click="searchOrder" v-if="hasPerm('set:tranlist:seeback')">查询</Button>
+      <Button type="primary" @click="getSearchOrder" v-if="hasPerm('set:tranlist:seeback')">查询</Button>
       <Button type="primary" @click="reset" v-if="hasPerm('set:tranlist:seeback')">重置</Button>
       <Button type="primary" @click="exportTable" v-if="hasPerm('set:tranlist:seeback')">导出</Button>
       <Table
@@ -108,7 +108,7 @@
       <Table :columns="columnsMore" :data="dataTableMore" border ref="table" style="margin:20px 0">
         <!-- 订单详情抽成金额 -->
         <template slot-scope="{row,index}" slot="commissionPriceMore">
-          <span>{{(row.actualPrice-row.buyPrice)*row.productProduce*(row.commissionPercent/100)}}</span>
+          <span>{{parseFloat((row.actualPrice-row.buyPrice)*row.productProduce*(row.commissionPercent/100)).toFixed(2)}}</span>
         </template>
       </Table>
       <div slot="footer">
@@ -409,7 +409,7 @@ export default {
           title: "操作",
           align: "center",
           slot: "operation",
-          minWidth: 120,
+          minWidth: 60,
           tooltip: true
         }
       ],
@@ -502,6 +502,9 @@ export default {
           // minWidth: 60,
           tooltip: true,
           render: (h, param) => {
+            if(param.row.benefitPercent==0){
+              return h("div","————")
+            }
             return h("div", param.row.benefitPercent + "%");
           }
         },
@@ -640,7 +643,10 @@ export default {
       this.orderNo = "";
       this.machineCode = null;
       this.pageNum = 1;
+      this.pageSize = 15;
+      this.total = null;
       this.getOrder(); // 重新获取数据
+      this.$refs.channelTree.getTreeData();
     },
     // 页码改变时触发
     pageChange(value) {
@@ -667,7 +673,8 @@ export default {
       this.refundAmount = row.refundAmount;
       this.getOrderMore();
     },
-    searchOrder() {
+    getSearchOrder() {
+      this.channelId=null
       this.pageNum = 1;
       this.getOrder();
     },
