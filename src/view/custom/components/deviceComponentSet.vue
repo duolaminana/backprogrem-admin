@@ -386,7 +386,7 @@ export default {
       }
     },
     generate(){
-      this.modal = null;
+      // this.modal = null;
       this.listData = [];
       for(let i=1;i<=this.layerNo;i++){
         let AddMachineTypeRoadDto = [];

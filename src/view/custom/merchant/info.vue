@@ -164,10 +164,10 @@
             <Input v-model.trim="formValidatePre.name" placeholder="真实姓名" :disabled="isdisabled"></Input>
           </FormItem>
           <FormItem label="手机号码" prop="phone">
-            <Input v-model.trim="formValidatePre.phone" placeholder="手机号码" :disabled="isdisabled"></Input>
+            <Input :maxlength="11" v-model.trim="formValidatePre.phone" placeholder="手机号码" :disabled="isdisabled"></Input>
           </FormItem>
           <FormItem label="身份证号码" prop="card">
-            <Input v-model.trim="formValidatePre.card" placeholder="身份证号码" :disabled="isdisabled"></Input>
+            <Input :maxlength="18" v-model.trim="formValidatePre.card" placeholder="身份证号码" :disabled="isdisabled"></Input>
           </FormItem>
           <FormItem label="区域" class="NewareaNames" prop="NewareaNames">
             <Cascader
@@ -216,6 +216,7 @@
           </FormItem>
           <FormItem prop="card" label="收款人身份证号码" style="margin-bottom:10px">
             <Input
+            :maxlength="18"
               v-model.trim="formValidatePre.card"
               placeholder="收款人身份证号码"
               :disabled="isdisabled"
@@ -470,7 +471,7 @@
             <Input v-model.trim="formValidateEnt.name" placeholder="法人姓名" :disabled="isdisabled"></Input>
           </FormItem>
           <FormItem label="手机号码" prop="phone">
-            <Input v-model.trim="formValidateEnt.phone" placeholder="手机号码" :disabled="isdisabled"></Input>
+            <Input :maxlength="11" v-model.trim="formValidateEnt.phone" placeholder="手机号码" :disabled="isdisabled"></Input>
           </FormItem>
           <FormItem label="公司税号" prop="companyNo">
             <Input
@@ -530,6 +531,7 @@
           </FormItem>
           <FormItem prop="receiveCard" label="收款人身份证号" style="margin-bottom:10px">
             <Input
+            :maxlength="18"
               v-model.trim="formValidateEnt.receiveCard"
               placeholder="收款人身份证号"
               :disabled="isdisabled"
@@ -1011,12 +1013,8 @@ export default {
     const validateCompanyNo = (rule, value, callback) => {
       if (!value) {
         return callback(new Error("输入不能为空"));
-      } else if (
-        !/^(?:(?![IOZSV])[\dA-Z]){2}\d{6}(?:(?![IOZSV])[\dA-Z]){10}$/.test(
-          value
-        )
-      ) {
-        callback(new Error("公司税号格式错误,请输入18位公司税号"));
+      } else if (!/^([0-9a-zA-Z]{15}|[0-9a-zA-Z]{18}|[0-9a-zA-Z]{20})$/.test(value)) {
+        callback(new Error("公司税号格式错误"));
       } else {
         callback();
       }

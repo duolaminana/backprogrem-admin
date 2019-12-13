@@ -29,7 +29,7 @@
             <template slot-scope="{ row, index }" slot="position">
               <a class='lookDetails' v-if='row.positionId' :disabled='row.status!=3' @click='positionInfo(row,index,false)'>{{row.positionName}}</a>
               <a v-else-if='!row.positionId&&(row.status==1||row.status==7)' @click='positionInfo(row,index,true)' class='green' >去设定</a>
-              <a v-else class='gray'>去设定</a>
+              <a v-else class='gray'>去设定{{row.status}}</a>
             </template>
             <template slot-scope="{ row, index }" slot="network">
               <span v-show='row.networkStatus==1' class='green'>在线</span>
@@ -72,15 +72,15 @@
         <Modal v-model="newlyAdded" width="700" :title="showNewlyType=='xz'?'新增信息管理':'编辑信息管理'"  :mask-closable='false'>
           <Form ref="formValidate" class='newAddModal' :model="formValidate" :rules="ruleValidate" :label-width="120" inline>
             <FormItem label="设备类型" prop="remark" v-if='showNewlyType=="sh"'>
-              <Input v-model.trim="formValidate.remark" :disabled='showNewlyType=="ck"||showNewlyType=="sh"' placeholder="请输入机型"/>
+              <Input v-model.trim="formValidate.remark" :disabled='showNewlyType=="ck"||showNewlyType=="sh"||showNewlyType=="bj"' placeholder="请输入机型"/>
             </FormItem>
             <FormItem label="设备类型" prop="machineType" v-else>
-              <Select v-model="formValidate.machineType" :disabled='showNewlyType=="ck"||showNewlyType=="sh"'>
+              <Select v-model="formValidate.machineType" :disabled='showNewlyType=="ck"||showNewlyType=="sh"||showNewlyType=="bj"'>
                   <Option v-for="item in equipmentList" :value="item.value" :key="item.value">{{ item.label }}</Option>
               </Select>
             </FormItem>
             <FormItem label="设备编码" prop="machineCode" >
-              <Input v-model.trim="formValidate.machineCode" :disabled='showNewlyType=="ck"||showNewlyType=="sh"' placeholder="请输入机器编码"/>
+              <Input v-model.trim="formValidate.machineCode" :disabled='showNewlyType=="ck"||showNewlyType=="sh"||showNewlyType=="bj"' placeholder="请输入机器编码"/>
             </FormItem>
             <FormItem label="IMEI" prop="machineImei" >
               <Input v-model.trim="formValidate.machineImei" :disabled='showNewlyType=="ck"||showNewlyType=="sh"' placeholder="请输入机器串号"/>
@@ -403,21 +403,28 @@ export default {
           title: '开门时间',
           key: 'openDate',
           align: 'center',
-          width: 170,
+          width: 127,
           tooltip:true
         },
         {
           title: '用户',
           key: 'operatorName',
           align: 'center',
-          width: 170,
+          width: 127,
+          tooltip:true
+        },
+        {
+          title: '开门方式',
+          key: 'openTypeName',
+          align: 'center',
+          width: 127,
           tooltip:true
         },
         {
           title: '手机号',
           key: 'operatorName',
           align: 'center',
-          width: 170,
+          width: 127,
           tooltip:true
         },
       ],
@@ -622,7 +629,7 @@ export default {
         {
           title: '序号',
           type: 'index',
-          width:50,
+          width:40,
           align: 'center'
         },
         {
@@ -635,6 +642,7 @@ export default {
           title: '设备类型',
           key: 'machineName',
           align: 'center',
+          width:140,
           tooltip:true
         },
         // {

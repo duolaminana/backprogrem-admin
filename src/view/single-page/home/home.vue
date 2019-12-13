@@ -277,14 +277,14 @@ export default {
     },
     getHeadInfo() {
       const store = this.$store.state.user;
-      let url = `/report/findOrderDetailReport?channelId=${store.channelId}&&userId=${store.userId}&&userType=${store.userVo.type}`;
+      let url = `/report/findOrderDetailReport?channelId=${store.channelId}&&userId=${store.userId}&&userType=${store.userVo.type}&&managerRoute=${store.userVo.managerRoute}`;
       return netWorkOrder(url, null, "get").then(res => {
         this.headInfoData = res.result;
       });
     },
     getSalesVolumeReport() {
       const store = this.$store.state.user;
-      let url = `/report/findSalesVolumeReport?channelId=${store.channelId}&&userId=${store.userId}&&userType=${store.userVo.type}&&dateType=${this.tabIndex}`;
+      let url = `/report/findSalesVolumeReport?channelId=${store.channelId}&&userId=${store.userId}&&userType=${store.userVo.type}&&dateType=${this.tabIndex}&&managerRoute=${store.userVo.managerRoute}`;
       return netWorkOrder(url, null, "get").then(res => {
         this.xAxisData = res.result.dateList;
         this.series = res.result.lineGraphSeriesList;
@@ -296,7 +296,7 @@ export default {
     },
     getPieReport() {
       const store = this.$store.state.user;
-      let url = `/report/findPieReport?channelId=${store.channelId}&&userId=${store.userId}&&userType=${store.userVo.type}&&dateType=${this.tabIndex}`;
+      let url = `/report/findPieReport?channelId=${store.channelId}&&userId=${store.userId}&&userType=${store.userVo.type}&&dateType=${this.tabIndex}&&managerRoute=${store.userVo.managerRoute}`;
       return netWorkOrder(url, null, "get").then(res => {
         this.saleList = res.result.categoryList;
         this.pieDataList = res.result.pieData;

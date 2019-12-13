@@ -46,17 +46,23 @@ export default {
       this.dataList.map((v,i)=>{
         let imgUrl;
         switch(v.categoryId){
-          case 174:
+          case 175:
             imgUrl = require('../../../assets/images/p_red.png');
             break;
-          case 157:
+          case 174:
             imgUrl = require('../../../assets/images/p_orange.png');
             break;
-          case 175:
+          case 157:
             imgUrl = require('../../../assets/images/p_green.png');
             break;
+          case 183:
+            imgUrl = require('../../../assets/images/p_pink.png');
+            break;
+          case 182:
+            imgUrl = require('../../../assets/images/p_blue.png');
+            break;
           default:
-            imgUrl = require('../../../assets/images/p_red.png');
+            imgUrl = require('../../../assets/images/p_change.png');
         }
         let marker = new AMap.Marker({
           icon:imgUrl,

@@ -114,7 +114,7 @@
         <Input :maxlength="11" v-model.trim="form.phone" placeholder="请输入手机号码"></Input>
       </FormItem>
       <FormItem prop="companyNo" label="公司税号" style="margin-bottom:20px">
-        <Input :maxlength="18" v-model.trim="form.companyNo" placeholder="请输入公司税号"></Input>
+        <Input v-model.trim="form.companyNo" placeholder="请输入公司税号"></Input>
       </FormItem>
       <FormItem prop="NewareaNames" label="所在区域" style="margin-bottom:20px;width:325px">
         <Cascader
@@ -401,11 +401,9 @@ export default {
       if (!value) {
         return callback(new Error("输入不能为空"));
       } else if (
-        !/^(?:(?![IOZSV])[\dA-Z]){2}\d{6}(?:(?![IOZSV])[\dA-Z]){10}$/.test(
-          value
-        )
+        !/^([0-9a-zA-Z]{15}|[0-9a-zA-Z]{18}|[0-9a-zA-Z]{20})$/.test(value)
       ) {
-        callback(new Error("公司税号格式错误,请输入18位公司税号"));
+        callback(new Error("公司税号格式错误"));
       } else {
         callback();
       }

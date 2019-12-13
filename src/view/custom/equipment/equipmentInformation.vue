@@ -104,13 +104,13 @@
               </Radio>
             </RadioGroup>
           </FormItem>
-          <FormItem label="出货方式" >
+          <FormItem label="取货方式" >
             <RadioGroup v-model="formValidate.shippingWay">
               <Radio label="1">
-                  <span>直接出货</span>
+                  <span>直接取货</span>
               </Radio>
               <Radio label="0">
-                  <span>二维码扫码出货</span>
+                  <span>二维码电子凭证取货</span>
               </Radio>
             </RadioGroup>
           </FormItem>
@@ -533,7 +533,7 @@ export default {
     getRootCategory(){
       netWorkGoods('/category/findChannelRootCategory',null,'get').then(res => {
         this.rootCategory = res.result;
-        this.rootCategory.push({value:-1,label: "混合"})
+        this.rootCategory.push({value:0,label: "混合"})
       })
     },
     getPageDatas() {

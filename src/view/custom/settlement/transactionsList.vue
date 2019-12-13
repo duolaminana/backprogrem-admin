@@ -703,7 +703,8 @@ export default {
         pageNum: this.pageNum, // 页码
         pageSize: this.pageSize, // 页容量
         userId: this.userId,
-        userType: this.userType
+        userType: this.userType,
+        managerRoute:this.$store.state.user.userVo.managerRoute
       };
       searchOrder(data).then(res => {
         if (res.data.code == 200) {
@@ -774,7 +775,8 @@ export default {
         machineCode: this.machineCode, //机器编码
         userId: this.userId,
         userType: this.userType,
-        orderNoList: this.orderNoList
+        orderNoList: this.orderNoList,
+        managerRoute:this.$store.state.user.userVo.managerRoute
       };
       getOrderExcle(data).then(res => {
         const blob = new Blob([res.data]);

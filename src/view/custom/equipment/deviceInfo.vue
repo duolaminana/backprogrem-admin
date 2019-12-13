@@ -71,7 +71,7 @@
             <img @click='erweimaClick(row)' :src="require('../../../assets/images/erweima.png')">
           </template>
           <template slot-scope="{ row, index }" slot="kaimen">
-            <a class='lookDetails' @click='openTheDoor(row)' :disabled="row.surplusDays<0||channelId!=$store.state.user.userVo.channelId">查看详情</a>
+            <a class='lookDetails' @click='pushPlate(row)' :disabled="row.surplusDays<0||channelId!=$store.state.user.userVo.channelId">查看详情</a>
           </template>
           <template slot-scope="{ row, index }" slot="expireDate">
             <span v-if='row.surplusDays<0' class='red'>已到期</span>
@@ -79,8 +79,8 @@
           </template>
           <template slot-scope="{ row, index }" slot="setHumidity">
             <template v-if='row.temperatureHumidityStatus'>
-              <a v-if='row.machineHumidness&&row.machineTemperature' class='lookDetails' :disabled="row.surplusDays<0"  @click='setHun(row,index,false)'>{{row.machineTemperature}}℃/{{row.machineHumidness}}%</a>
-              <a v-else class='green lookDetails' :disabled="row.surplusDays<0" @click='setHun(row,index,true)'>去设定</a>
+              <a v-if='row.machineHumidness&&row.machineTemperature' class='lookDetails' :disabled="row.surplusDays<0||channelId!=$store.state.user.userVo.channelId"  @click='setHun(row,index,false)'>{{row.machineTemperature}}℃/{{row.machineHumidness}}%</a>
+              <a v-else class='green lookDetails' :disabled="row.surplusDays<0||channelId!=$store.state.user.userVo.channelId" @click='setHun(row,index,true)'>去设定</a>
             </template>
             <span v-else>——</span>
           </template>
@@ -332,7 +332,11 @@
         :newlyAdded = 'openDoorNewlyAdded'
         :datas = 'openDoorData'
         :columns = 'openDoorColumns'
-        :showPage = 'false'
+        :pageSize = 'openPageSize'
+        :total = 'openTotal'
+        :pageNum = 'openPageNum'
+        @pageChange = 'openPageChange'
+        @sizeChange = 'openSizeChange'
         @sure = 'openDoorCancel'
         @cancel = 'openDoorCancel'
       ></table-modal>
@@ -422,6 +426,9 @@ export default {
   },
   data(){
     return{
+      openPageNum:1,
+      openTotal:null,
+      openPageSize:10,
       humidityRuleValidate: {
         machineTemperature: [
           {
@@ -461,23 +468,30 @@ export default {
           title: '开门时间',
           key: 'openDate',
           align: 'center',
-          width: 170,
+          width: 127,
           tooltip:true
         },
         {
           title: '用户',
           key: 'operatorName',
           align: 'center',
-          width: 170,
+          width: 127,
           tooltip:true
         },
         {
           title: '开门方式',
           key: 'openTypeName',
           align: 'center',
-          width: 170,
+          width: 127,
           tooltip:true
-        }
+        },
+        {
+          title: '手机号',
+          key: 'operatorName',
+          align: 'center',
+          width: 127,
+          tooltip:true
+        },
       ],
       routeName:null,
       erweimaMachineCode:null,
@@ -631,7 +645,7 @@ export default {
         {
           title: '序号',
           type: 'index',
-          width:50,
+          width:40,
           align: 'center'
         },
         {
@@ -644,6 +658,7 @@ export default {
           title: '设备类型',
           key: 'machineName',
           align: 'center',
+          width:140,
           tooltip:true
         },
         {
@@ -761,6 +776,18 @@ export default {
     }
   },
   methods:{
+    pushPlate(row){
+      this.rowData = row;
+      this.openTheDoor();
+    },
+    openPageChange(value){
+      this.openPageNum = value;
+      this.openTheDoor();
+    },
+    openSizeChange(value){
+      this.openPageSize = value;
+      this.openTheDoor();
+    },
     temperatureChange(){
       const v = this.humidityFormValidate.machineTemperature;
       if(v<-5){
@@ -916,12 +943,16 @@ export default {
         this.$set(this.interestTemList[index],'effectDate',format(new Date((Date.now())+(5*60*1000)), "YYYY-MM-DD HH:mm:ss"))
       }
     },
-    openTheDoor(row){
+    openTheDoor(){
       const data ={
+        pageNum:this.openPageNum,
+        pageSize:this.openPageSize,
         channelId:this.channelId,
-        machineCode:row.machineCode
+        machineCode:this.rowData.machineCode
       }
       netWorkDevice('/positionDoor/list',data).then(res => {
+        this.openPageNum = res.result.pageNum;
+        this.openTotal = res.result.total;
         this.openDoorData = res.result.list
         this.openDoorNewlyAdded =  true;
       })
@@ -1571,7 +1602,8 @@ export default {
         pageNum: this.pageNum,
         pageSize: this.pageSize,
         machineCode:this.name,
-        routeName:this.routeName
+        routeName:this.routeName,
+        managerRoute:this.$store.state.user.userVo.managerRoute
       };
       netWorkDevice("/machineInfo/list", data).then(res => {
         this.pageNum = res.result.pageNum;

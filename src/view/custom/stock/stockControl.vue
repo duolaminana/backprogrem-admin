@@ -71,7 +71,6 @@ export default {
       total: null,
       productCode: null,
       machineCode: null, //机器编码
-      managerRoute:this.$store.state.user.userVo.managerRoute,
       positionName: null, //点位名称
       type: this.$store.state.user.userVo.type, //用户类型
       userId: this.$store.state.user.userVo.id, //用户id
@@ -189,7 +188,7 @@ export default {
       let data = {
         channelId: this.channelId,
         machineCode: this.machineCode,
-        managerRoute:this.managerRoute,
+        managerRoute:this.$store.state.user.userVo.managerRoute,
         pageNum: this.pageNum,
         pageSize: this.pageSize,
         positionName: this.positionName,
@@ -209,7 +208,7 @@ export default {
       let data = {
         channelId: this.channelId,
         machineCode: this.machineCode,
-        managerRoute:this.managerRoute,
+        managerRoute:this.$store.state.user.userVo.managerRoute,
         pageNum: this.pageNumAll,
         pageSize: this.pageSizeAll,
         type: this.type,

@@ -55,8 +55,8 @@
             <Input v-model.trim="formValidate.remark" placeholder="请输入备注"/>
           </FormItem>
           <FormItem label="线路类型" v-show='showNewlyType=="xz"' class='modelInput'>
-            <RadioGroup v-model="formValidate.routeType">
-              <Radio label="1">分区</Radio>
+            <RadioGroup v-model="formValidate.routeType" >
+              <Radio label="1" :disabled="$store.state.user.userVo.managerRoute==2">分区</Radio>
               <Radio label="2">线路</Radio>
             </RadioGroup>
             <p class='gray'>(注：分区下面还可新增分区，路线下面不能新增分区，用于直接关联设备)</p>
@@ -105,7 +105,7 @@ export default {
       formValidate:{
         routeName:null,
         remark:null,
-        routeType:'1'
+        routeType:this.$store.state.user.userVo.managerRoute==2?'2':'1'
       },
       ruleValidate:{
         routeName: [
@@ -309,8 +309,13 @@ export default {
       this.getPageDatas();
     },
     getTreeData(){
-      let url = "/route/queryRouteTreeByChannelId?channelId="+this.channelId
-      netWorkDevice(url, null,'get').then(res => {
+      const data = {
+        channelId:this.channelId,
+        managerRoute:this.$store.state.user.userVo.managerRoute,
+        userId:this.$store.state.user.userVo.id,
+        type:this.$store.state.user.userVo.type
+      }
+      netWorkDevice('/route/queryRouteTreeByUser', data).then(res => {
         this.treeData = res.result;
       })
     },
@@ -321,7 +326,10 @@ export default {
         pageNum:this.pageNum,
         pageSize:this.pageSize,
         channelId:this.channelId,
-        id:this.routeID
+        id:this.routeID,
+        managerRoute:this.$store.state.user.userVo.managerRoute,
+        userId:this.$store.state.user.userVo.id,
+        type:this.$store.state.user.userVo.type
       }
       netWorkDevice('/route/queryRouteListByCondition', data).then(res => {
         this.pageNum = res.result.pageNum;

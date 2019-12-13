@@ -144,7 +144,6 @@ export default {
       operator: this.$store.state.user.userId,
       operatorName: this.$store.state.user.userName,
       channelId: this.$store.state.user.channelId,
-      managerRoute:this.$store.state.user.userVo.managerRoute,
       type: this.$store.state.user.userVo.type, //用户类型
       userId: this.$store.state.user.userVo.id, //用户id
       machineCode: null, //设备编码
@@ -202,7 +201,7 @@ export default {
       let data = {
         channelId: this.channelId,
         machineCode: this.machineCode,
-        managerRoute:this.managerRoute,
+        managerRoute:this.$store.state.user.userVo.managerRoute,
         operateType: this.operateType,
         positionId: this.positionId,
         positionName: this.positionName,

@@ -183,6 +183,7 @@
       </div>
     </div>
     <div class='content'>
+      <p class='nums'>销售额<span>{{mapData.sales}}</span>元&nbsp&nbsp&nbsp&nbsp&nbsp利润额<span>{{mapData.profits}}</span>元</p>
       <big-data-map 
         :dataList = 'mapList'
       ></big-data-map>
@@ -224,6 +225,7 @@ export default {
   name:'bigData',
   data(){
     return{
+      mapData:{},
       mapList:[],
       cylindricalData:[],
       duration:2000,//持续时间
@@ -375,6 +377,7 @@ export default {
       const url = `/machinePosition/queryPlat`
       return netWorkDevice(url,null,'get').then(res=>{
         this.mapList = res.result.list;
+        this.mapData = res.result
       })
     },
   },
@@ -469,6 +472,19 @@ export default {
   }
   .content{
     overflow: hidden;
+    width:100%;
+    position: relative;
+    .nums{
+      position: absolute;
+      top:15px;
+      left: 40px;
+      z-index: 999;
+      font-size: 18px;
+      >span{
+        font-size: 24px;
+        margin:0 10px;
+      }
+    }
     >div{
       display: inline-block;
       vertical-align: top;
