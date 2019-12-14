@@ -6,6 +6,24 @@
     <div class="rightDiv">
       <Input v-model="orderNo" style="margin-right:10px" placeholder="订单编号" clearable />
       <Input v-model="machineCode" style="margin-right:10px" placeholder="设备编码" clearable />
+      <Select
+        v-model="orderStatus"
+        clearable
+        placeholder="交易状态"
+        @on-change="orderStatusChange"
+        style="margin-right:10px"
+      >
+        <Option v-for="item in statusList" :value="item.value">{{ item.label }}</Option>
+      </Select>
+      <Select
+        v-model="refundStatus"
+        clearable
+        placeholder="退款状态"
+        @on-change="refundStatusChange"
+        style="margin-right:10px"
+      >
+        <Option v-for="item in refundList" :value="item.value">{{ item.label }}</Option>
+      </Select>
       <DatePicker
         v-model="startDate"
         type="datetime"
@@ -52,12 +70,12 @@
         </template>
         <!-- 抽成金额 -->
         <template slot-scope="{row,index}" slot="commissionPrice">
-          <span>{{row.commissionPrice|amountText}}</span>
+          <span style="color:#ed4014">{{row.commissionPrice|amountText}}</span>
         </template>
         <!-- 收款金额 -->
         <template slot-scope="{row,index}" slot="payAmount">
-          <span v-show="row.orderStatus!=1">{{row.payAmount}}</span>
-          <span v-show="row.orderStatus==1">0</span>
+          <span style="color:#19be6b" v-show="row.orderStatus!=1">{{row.payAmount}}</span>
+          <span style="color:#19be6b" v-show="row.orderStatus==1">0</span>
         </template>
         <!-- 利益分配 -->
         <template slot-scope="{row,index}" slot="templateName">
@@ -67,10 +85,11 @@
         <!-- 交易状态 -->
         <template slot-scope="{row,index}" slot="orderStatus">
           <span v-show="row.orderStatus==1">待支付</span>
-          <span v-show="row.orderStatus==2" style="color:#2d8cf0">待出货</span>
-          <span v-show="row.orderStatus==3" style="color:#19be6b">交易正常</span>
-          <span v-show="row.orderStatus==6" style="color:#ff9900">交易异常</span>
-          <span v-show="row.orderStatus==4||row.orderStatus==5" style="color:#ed4014">交易失败</span>
+          <span v-show="row.orderStatus==2">待出货</span>
+          <span v-show="row.orderStatus==3">交易正常</span>
+          <span v-show="row.orderStatus==4">交易失败</span>
+          <span v-show="row.orderStatus==5">订单关闭</span>
+          <span v-show="row.orderStatus==6">交易异常</span>
         </template>
         <!-- 出货状态 -->
         <template slot-scope="{row,index}" slot="Status">
@@ -82,19 +101,33 @@
         <template slot-scope="{row,index}" slot="operation">
           <!-- 退款按钮 -->
           <Button
+            style="margin-right:10px"
+            type="primary"
+            size="small"
+            @click="refund(row)"
+            v-if="hasPerm('set:tranlist:refund')&&row.refundStatus==1&&(isShowOperation||((channelId==$store.state.user.channelId)&&$store.state.user.userVo.type))"
+          >&nbsp退款&nbsp</Button>
+          <Button
+            style="margin-right:10px"
+            disabled
+            type="primary"
+            size="small"
+            v-if="hasPerm('set:tranlist:refund')&&row.refundStatus==2&&(isShowOperation||((channelId==$store.state.user.channelId)&&$store.state.user.userVo.type))"
+          >已退款</Button>
+          <Button
             style="margin-right:0px"
             type="primary"
             size="small"
             @click="refund(row)"
-            v-if="hasPerm('set:tranlist:refund')&&(row.orderStatus!=1&&row.orderStatus!=2)&&(isShowOperation||((channelId==$store.state.user.channelId)&&$store.state.user.userVo.type))"
-          >&nbsp退款&nbsp</Button>
+            v-if="hasPerm('set:tranlist:refund')&&!row.sendBack&&(isShowOperation||((channelId==$store.state.user.channelId)&&$store.state.user.userVo.type))"
+          >&nbsp清算&nbsp</Button>
           <Button
             style="margin-right:0px"
             disabled
             type="primary"
             size="small"
-            v-if="hasPerm('set:tranlist:refund')&&false&&(row.orderStatus!=1&&row.orderStatus!=2)&&(isShowOperation||((channelId==$store.state.user.channelId)&&$store.state.user.userVo.type))"
-          >已退款</Button>
+            v-if="hasPerm('set:tranlist:refund')&&row.sendBack&&(isShowOperation||((channelId==$store.state.user.channelId)&&$store.state.user.userVo.type))"
+          >已清算</Button>
         </template>
       </Table>
       <Page
@@ -142,7 +175,13 @@
     <!-- 点位信息 -->
     <position-info :newlyAdded="newlyAdded" :formValidate="formValidate" @cancel="cancel"></position-info>
     <!-- 退款页面 -->
-    <Modal v-model="isShowRefund" :mask-closable="false" title="退款" width="800">
+    <Modal
+      v-model="isShowRefund"
+      :mask-closable="false"
+      title="退款"
+      width="1200"
+      class="refundModal"
+    >
       <Table
         :columns="columnsRefund"
         :data="dataTableMore"
@@ -159,9 +198,24 @@
           >出货失败</span>
           <span v-show="(row.productNumber-row.productProduce)>0" style="color:#ff9900">部分出货成功</span>
         </template>
+        <template slot-scope="{row,index}" slot="activityPrice">{{row.activityPrice|activityText}}</template>
         <template slot-scope="{row,index}" slot="productPrice">
           <span v-if="row.activityPrice>0">{{row.productNumber*row.activityPrice}}</span>
           <span v-else>{{row.productNumber*row.actualPrice}}</span>
+        </template>
+        <template slot-scope="{row,index}" slot="refundNum">
+          <div>
+            <button class="subBtn" @click.prevent="subtract(row,index)">-</button>
+            <Input
+              type="text"
+              class="countInput"
+              v-model="row.refundNumber"
+              @on-change="countChange(row)"
+            />
+            <button class="addBtn" @click.prevent="add(row,index)">
+              <span class="spanAdd">+</span>
+            </button>
+          </div>
         </template>
       </Table>
       <div style="text-align: right;font-size:14px">
@@ -170,7 +224,7 @@
         实际收款金额：
         <strong>{{payAmount}}</strong>&nbsp元&nbsp
         退款金额：
-        <Input v-model="refundAmount" style="width:80px" @on-change="refundchange" />元
+        <Input disabled v-model="refundAmount" class="refundText" @on-change="refundchange" />元
       </div>
       <div slot="footer">
         <Button
@@ -208,6 +262,43 @@ export default {
 
   data() {
     return {
+      count: 0,
+      statusList: [
+        {
+          value: "1",
+          label: "待支付"
+        },
+        {
+          value: "2",
+          label: "待出货"
+        },
+        {
+          value: "3",
+          label: "交易正常"
+        },
+        {
+          value: "4",
+          label: "交易失败"
+        },
+        {
+          value: "5",
+          label: "订单关闭"
+        },
+        {
+          value: "6",
+          label: "交易异常"
+        }
+      ],
+      refundList: [
+        {
+          value: "1",
+          label: "未退款"
+        },
+        {
+          value: "2",
+          label: "已退款"
+        }
+      ],
       couponAmount: null,
       payAmount: null,
       refundAmount: null,
@@ -248,10 +339,31 @@ export default {
           tooltip: true
         },
         {
+          title: "实际售价(元)",
+          key: "actualPrice",
+          align: "center",
+          minWidth: 60,
+          tooltip: true
+        },
+        {
+          title: "活动价格(元)",
+          slot: "activityPrice",
+          align: "center",
+          minWidth: 60,
+          tooltip: true
+        },
+        {
           title: "实收金额(元)",
           slot: "productPrice",
           align: "center",
           minWidth: 80,
+          tooltip: true
+        },
+        {
+          title: "退款数量",
+          align: "center",
+          slot: "refundNum",
+          minWidth: 120,
           tooltip: true
         }
       ],
@@ -275,6 +387,7 @@ export default {
       startDate: "", //开始时间
       machineCode: null, //机器编码
       orderNo: null, //主键
+      refundStatus: null, //是否已退款 1 未退款 2 已退款
       orderStatus: null, //订单状态 1 待支付 2 待出货 3 出货成功 4 出货失败 5 订单关闭 6 部分出货成功
       pageNum: 1, // 页码
       pageSize: 15, // 页容量
@@ -349,21 +462,11 @@ export default {
           minWidth: 50,
           tooltip: true
         },
-        // {
-        //   title: "利润抽成比例(%)",
-        //   key: "commissionPercent",
-        //   align: "center",
-        //   minWidth: 50,
-        //   tooltip: true,
-        //   render: (h, param) => {
-        //     return h("div", param.row.commissionPercent + "%");
-        //   }
-        // },
         {
-          title: "利润抽成金额(元)",
+          title: "利润抽成总金额(元)",
           slot: "commissionPrice",
           align: "center",
-          minWidth: 50,
+          minWidth: 80,
           tooltip: true
         },
         {
@@ -384,7 +487,7 @@ export default {
           title: "收款方",
           key: "channelName",
           align: "center",
-          minWidth: 40,
+          minWidth: 60,
           tooltip: true
         },
         {
@@ -412,6 +515,20 @@ export default {
           title: "操作",
           align: "center",
           slot: "operation",
+          minWidth: 120,
+          tooltip: true
+        },
+        {
+          title: "退款金额",
+          align: "center",
+          key: "refundAmount",
+          minWidth: 60,
+          tooltip: true
+        },
+        {
+          title: "退款时间",
+          align: "center",
+          key: "refundDate",
           minWidth: 60,
           tooltip: true
         }
@@ -583,9 +700,65 @@ export default {
     },
     cardNo(value) {
       return `${value.substring(0, 3)}****${value.substring(value.length - 4)}`;
+    },
+    activityText(value) {
+      let realVal = "";
+      if (value) {
+        // 截取当前数据到小数点后两位
+        realVal = parseFloat(value).toFixed(2);
+      } else {
+        realVal = "——";
+      }
+      return realVal;
     }
   },
   methods: {
+    countChange(event, row) {
+      console.log(event);
+      console.log(row);
+      const val = event.target.value;
+      if (val > row.productNumber) {
+        this.count = row.productNumber;
+      }
+    },
+    add(row, index) {
+      if (row.refundNumber >= row.productNumber) {
+        this.dataTableMore[index].refundNumber = row.productNumber;
+      } else {
+        row.refundNumber++;
+        this.dataTableMore[index].refundNumber = row.refundNumber;
+      }
+      if (row.activityPrice != null) {
+        this.refundAmount +=
+          this.dataTableMore[index].refundNumber * row.activityPrice;
+      } else {
+        this.refundAmount +=
+          this.dataTableMore[index].refundNumber * row.actualPrice;
+      }
+      if (this.refundAmount > this.payAmount) {
+        this.refundAmount = this.payAmount;
+      }
+    },
+    subtract(row, index) {
+      if (row.refundNumber <= 0) {
+        this.dataTableMore[index].refundNumber = 0;
+      } else {
+        row.refundNumber--;
+        this.dataTableMore[index].refundNumber = row.refundNumber;
+      }
+      if (row.activityPrice != null) {
+        this.refundAmount +=
+          this.dataTableMore[index].refundNumber * row.activityPrice;
+      } else {
+        this.refundAmount +=
+          this.dataTableMore[index].refundNumber * row.actualPrice;
+      }
+      if (this.refundAmount > this.payAmount) {
+        this.refundAmount = this.payAmount;
+      }
+    },
+    refundStatusChange(value) {},
+    orderStatusChange(value) {},
     refundchange(event) {
       const value = event.target.value;
       if (value > this.payAmount) {
@@ -649,6 +822,8 @@ export default {
       this.endDate = "";
       this.orderNo = "";
       this.machineCode = null;
+      this.orderStatus = null;
+      this.refundStatus = null;
       this.pageNum = 1;
       this.pageSize = 15;
       this.total = null;
@@ -696,6 +871,7 @@ export default {
         startDate: this.startDate, //开始时间
         machineCode: this.machineCode, //机器编码
         orderNo: this.orderNo, //主键
+        refundStatus: this.refundStatus,
         orderStatus: this.orderStatus, //订单状态 1 待支付 2 待出货 3 出货成功 4 出货失败 5 订单关闭 6 部分出货成功
         paymentType: this.paymentType, //支付类型 1:微信, 2:支付宝, 3:人脸支付
         positionId: this.positionId, //点位id
@@ -704,7 +880,7 @@ export default {
         pageSize: this.pageSize, // 页容量
         userId: this.userId,
         userType: this.userType,
-        managerRoute:this.$store.state.user.userVo.managerRoute
+        managerRoute: this.$store.state.user.userVo.managerRoute
       };
       searchOrder(data).then(res => {
         if (res.data.code == 200) {
@@ -727,6 +903,19 @@ export default {
       searchOrderMore(data).then(res => {
         if (res.data.code == 200) {
           this.dataTableMore = res.data.result;
+          console.log(this.dataTableMore);
+          this.dataTableMore.forEach(item => {
+            if (item.productNumber != item.productProduce) {
+              if (item.activityPrice != null) {
+                this.refundAmount +=
+                  (item.productNumber - item.productProduce) *
+                  item.activityPrice;
+              } else {
+                this.refundAmount +=
+                  (item.productNumber - item.productProduce) * item.actualPrice;
+              }
+            }
+          });
         }
       });
     },
@@ -776,7 +965,7 @@ export default {
         userId: this.userId,
         userType: this.userType,
         orderNoList: this.orderNoList,
-        managerRoute:this.$store.state.user.userVo.managerRoute
+        managerRoute: this.$store.state.user.userVo.managerRoute
       };
       getOrderExcle(data).then(res => {
         const blob = new Blob([res.data]);
@@ -840,6 +1029,51 @@ export default {
   }
   .lookDetails {
     text-decoration: underline;
+    text-align: center;
+    line-height: center;
+  }
+}
+.refundModal {
+  .subBtn,
+  .addBtn {
+    width: 22px;
+    height: 22px;
+    margin: 0 5px;
+    border: 0px;
+    border-radius: 2px;
+    line-height: 19px;
+  }
+  .subBtn {
+    border: 1px solid #ddd;
+    background-color: #fff;
+    /deep/ .spanSubtract {
+      font-size: 14px;
+    }
+  }
+  .addBtn {
+    border: 1px solid #2d8cf0;
+    background-color: #2d8cf0;
+    margin-left: 0px;
+    /deep/ .spanAdd {
+      font-size: 14px;
+      color: #fff;
+    }
+  }
+  .countInput {
+    width: 60px;
+    height: 24px;
+    text-align: center;
+    /deep/ .ivu-input {
+      height: 24px;
+      text-align: center;
+    }
+  }
+  .refundText {
+    width: 80px;
+    /deep/ .ivu-input {
+      text-align: center;
+      font-size: 14px;
+    }
   }
 }
 </style>

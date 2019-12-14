@@ -69,7 +69,7 @@
       <Button
         type="primary"
         @click="addModal"
-        v-if="channelId==$store.state.user.channelId&&($store.state.user.channelId==1&&$store.state.user.userVo.type==2)"
+        v-if="channelId==$store.state.user.channelId&&$store.state.user.userVo.type==2"
         class="xzbtn"
       >新增子商户</Button>
       <Button type="primary" @click="reset" v-if="hasPerm('sys:merchantinfo:see')">重置</Button>
@@ -161,13 +161,28 @@
             ></Input>
           </FormItem>
           <FormItem label="真实姓名" prop="name">
-            <Input v-model.trim="formValidatePre.name" placeholder="真实姓名" :disabled="isdisabled"></Input>
+            <Input
+              :maxlength="30"
+              v-model.trim="formValidatePre.name"
+              placeholder="真实姓名"
+              :disabled="isdisabled"
+            ></Input>
           </FormItem>
           <FormItem label="手机号码" prop="phone">
-            <Input :maxlength="11" v-model.trim="formValidatePre.phone" placeholder="手机号码" :disabled="isdisabled"></Input>
+            <Input
+              :maxlength="11"
+              v-model.trim="formValidatePre.phone"
+              placeholder="手机号码"
+              :disabled="isdisabled"
+            ></Input>
           </FormItem>
           <FormItem label="身份证号码" prop="card">
-            <Input :maxlength="18" v-model.trim="formValidatePre.card" placeholder="身份证号码" :disabled="isdisabled"></Input>
+            <Input
+              :maxlength="18"
+              v-model.trim="formValidatePre.card"
+              placeholder="身份证号码"
+              :disabled="isdisabled"
+            ></Input>
           </FormItem>
           <FormItem label="区域" class="NewareaNames" prop="NewareaNames">
             <Cascader
@@ -212,11 +227,11 @@
             </RadioGroup>-->
           </div>
           <FormItem prop="name" label="收款人" style="margin-bottom:20px">
-            <Input v-model.trim="formValidatePre.name" placeholder="收款人" :disabled="isdisabled"></Input>
+            <Input :maxlength="30" v-model.trim="formValidatePre.name" placeholder="收款人" :disabled="isdisabled"></Input>
           </FormItem>
           <FormItem prop="card" label="收款人身份证号码" style="margin-bottom:10px">
             <Input
-            :maxlength="18"
+              :maxlength="18"
               v-model.trim="formValidatePre.card"
               placeholder="收款人身份证号码"
               :disabled="isdisabled"
@@ -228,6 +243,7 @@
             :label="this.isReceiveType==2?'收款账号':'支付宝账号'"
           >
             <Input
+              :maxlength="30"
               v-model.trim="formValidatePre.receiveAccount"
               placeholder="收款账号"
               :disabled="isdisabled"
@@ -252,6 +268,7 @@
           </div>
           <FormItem label="用户名称" prop="userName">
             <Input
+              :maxlength="30"
               v-model.trim="formValidatePre.userName"
               placeholder="登陆账号用户名"
               :disabled="isdisabled"
@@ -259,6 +276,7 @@
           </FormItem>
           <FormItem label="密码" prop="password">
             <Input
+              :maxlength="30"
               v-model.trim="formValidatePre.password"
               type="password"
               placeholder="密码"
@@ -407,44 +425,6 @@
               </FormItem>
             </div>
           </div>
-          <div v-if="false&&formValidatePre.receiveTerminal&&isdisabled">
-            <Divider />
-            <div class="other" style="margin:10px 0">
-              <strong>商户设置</strong>
-            </div>
-            <div class="setMerchant">
-              <div style="height:40px">
-                <Checkbox
-                  disabled
-                  style="margin-top:8px"
-                  v-model="formValidatePre.receiveTerminal"
-                >商户收款</Checkbox>
-                <FormItem label="上级商户" prop style="float:right">
-                  <Input v-model="parentChannelName" placeholder="上级商户" disabled></Input>
-                </FormItem>
-              </div>
-              <Divider />
-              <Table :columns="columnsSale" :data="saleData">
-                <!-- 抽成比例 -->
-                <template slot-scope="{ row, index }" slot="businessScope">
-                  <InputNumber
-                    disabled
-                    :max="100"
-                    :min="0"
-                    v-model="row.benefitPercent"
-                    :formatter="value => `${value}%`"
-                    :parser="value => value.replace('%', '')"
-                  ></InputNumber>
-                </template>
-                <!-- 开关 -->
-                <template slot-scope="{ row, index }" slot="activityScopee">
-                  <i-switch disabled v-model="row.activityAuthority" />
-                  <span v-show="row.activityAuthority" style="color:#2d8cf0">&nbsp开通</span>
-                  <span v-show="!row.activityAuthority">&nbsp关闭</span>
-                </template>
-              </Table>
-            </div>
-          </div>
         </Form>
       </div>
 
@@ -468,13 +448,19 @@
             ></Input>
           </FormItem>
           <FormItem label="法人姓名" prop="name">
-            <Input v-model.trim="formValidateEnt.name" placeholder="法人姓名" :disabled="isdisabled"></Input>
+            <Input :maxlength="30" v-model.trim="formValidateEnt.name" placeholder="法人姓名" :disabled="isdisabled"></Input>
           </FormItem>
           <FormItem label="手机号码" prop="phone">
-            <Input :maxlength="11" v-model.trim="formValidateEnt.phone" placeholder="手机号码" :disabled="isdisabled"></Input>
+            <Input
+              :maxlength="11"
+              v-model.trim="formValidateEnt.phone"
+              placeholder="手机号码"
+              :disabled="isdisabled"
+            ></Input>
           </FormItem>
           <FormItem label="公司税号" prop="companyNo">
             <Input
+            :maxlength="30"
               v-model.trim="formValidateEnt.companyNo"
               placeholder="公司税号"
               :disabled="isdisabled"
@@ -524,6 +510,7 @@
           </div>
           <FormItem prop="receiveName" label="收款人" style="margin-bottom:20px">
             <Input
+            :maxlength="30"
               v-model.trim="formValidateEnt.receiveName"
               placeholder="收款人"
               :disabled="isdisabled"
@@ -531,7 +518,7 @@
           </FormItem>
           <FormItem prop="receiveCard" label="收款人身份证号" style="margin-bottom:10px">
             <Input
-            :maxlength="18"
+              :maxlength="18"
               v-model.trim="formValidateEnt.receiveCard"
               placeholder="收款人身份证号"
               :disabled="isdisabled"
@@ -543,6 +530,7 @@
             style="margin-bottom:20px"
           >
             <Input
+            :maxlength="30"
               v-model.trim="formValidateEnt.receiveAccount"
               placeholder="收款账号"
               :disabled="isdisabled"
@@ -567,6 +555,7 @@
           </div>
           <FormItem label="用户名称" prop="userName">
             <Input
+            :maxlength="30"
               v-model.trim="formValidateEnt.userName"
               placeholder="登陆账号用户名"
               :disabled="isdisabled"
@@ -574,6 +563,7 @@
           </FormItem>
           <FormItem label="密码" prop="password">
             <Input
+            :maxlength="30"
               v-model.trim="formValidateEnt.password"
               type="password"
               placeholder="密码"
@@ -809,44 +799,6 @@
               </FormItem>
             </div>
           </div>
-          <div v-if="false&&formValidateEnt.receiveTerminal&isdisabled">
-            <Divider />
-            <div class="other" style="margin:10px 0">
-              <strong>商户设置</strong>
-            </div>
-            <div class="setMerchant">
-              <div style="height:40px">
-                <Checkbox
-                  disabled
-                  style="margin-top:8px"
-                  v-model="formValidateEnt.receiveTerminal"
-                >商户收款</Checkbox>
-                <FormItem label="上级商户" prop style="float:right">
-                  <Input v-model="parentChannelName" placeholder="上级商户" disabled></Input>
-                </FormItem>
-              </div>
-              <Divider />
-              <Table :columns="columnsSale" :data="saleData">
-                <!-- 抽成比例 -->
-                <template slot-scope="{ row, index }" slot="businessScope">
-                  <InputNumber
-                    disabled
-                    :max="100"
-                    :min="0"
-                    v-model="row.benefitPercent"
-                    :formatter="value => `${value}%`"
-                    :parser="value => value.replace('%', '')"
-                  ></InputNumber>
-                </template>
-                <!-- 开关 -->
-                <template slot-scope="{ row, index }" slot="activityScopee">
-                  <i-switch disabled v-model="row.activityAuthority" />
-                  <span v-show="row.activityAuthority" style="color:#2d8cf0">&nbsp开通</span>
-                  <span v-show="!row.activityAuthority">&nbsp关闭</span>
-                </template>
-              </Table>
-            </div>
-          </div>
         </Form>
       </div>
       <div slot="header" id="tabHead" class="tab-head" v-if="isTab">
@@ -1013,7 +965,9 @@ export default {
     const validateCompanyNo = (rule, value, callback) => {
       if (!value) {
         return callback(new Error("输入不能为空"));
-      } else if (!/^([0-9a-zA-Z]{15}|[0-9a-zA-Z]{18}|[0-9a-zA-Z]{20})$/.test(value)) {
+      } else if (
+        !/^([0-9a-zA-Z]{15}|[0-9a-zA-Z]{18}|[0-9a-zA-Z]{20})$/.test(value)
+      ) {
         callback(new Error("公司税号格式错误"));
       } else {
         callback();
