@@ -134,6 +134,24 @@
                     :duration="duration"
                   ></count-to>
                 </span>
+                <span>
+                  待审核：
+                  <count-to
+                    :startVal="startVal"
+                    :endVal="headInfoData.machineNumsVo.auditMachine"
+                    :decimals="isZero"
+                    :duration="duration"
+                  ></count-to>
+                </span>
+                <span>
+                  审核不通过：
+                  <count-to
+                    :startVal="startVal"
+                    :endVal="headInfoData.machineNumsVo.noPassMachine"
+                    :decimals="isZero"
+                    :duration="duration"
+                  ></count-to>
+                </span>
               </div>
               <div class="icon">
                 <img :src="require('../../../assets/images/equipment_icon.png')" />

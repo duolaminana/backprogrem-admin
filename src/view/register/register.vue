@@ -1,17 +1,13 @@
-<style lang="less">
-@import "./register.less";
-</style>
-
 <template>
   <div class="register">
     <div class="register_bg"></div>
     <!-- logo -->
     <div class="logo">
-      <img src="../../assets/images/huanqiuzhineng.png" alt />
+      <img src="@/assets/images/huanqiuzhineng.png" alt />
     </div>
     <!-- phone -->
     <div class="phone">
-      <img src="../../assets/images/phone.png" alt />
+      <img src="@/assets/images/phone.png" alt />
       <div class="text">
         <span>服务热线</span>
         <p>0755-23596613</p>
@@ -62,6 +58,7 @@
 </template>
 
 <script>
+import "./register.less";
 import registerPerson from "_c/register-person";
 import registerEnterprise from "_c/register-enterprise";
 export default {

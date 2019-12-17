@@ -69,7 +69,7 @@
           <Page :total="total" show-elevator :current='pageNum' @on-change='pageChange' :page-size='pageSize' @on-page-size-change='sizeChange'  show-sizer/>
         </div>
         <!-- 新增弹框的模态框 -->
-        <Modal v-model="newlyAdded" width="700" :title="showNewlyType=='xz'?'新增信息管理':'编辑信息管理'"  :mask-closable='false'>
+        <Modal v-model="newlyAdded" width="740" :title="showNewlyType=='xz'?'新增信息管理':'编辑信息管理'"  :mask-closable='false'>
           <Form ref="formValidate" class='newAddModal' :model="formValidate" :rules="ruleValidate" :label-width="120" inline>
             <FormItem label="设备类型" prop="remark" v-if='showNewlyType=="sh"'>
               <Input v-model.trim="formValidate.remark" :disabled='showNewlyType=="ck"||showNewlyType=="sh"||showNewlyType=="bj"' placeholder="请输入机型"/>
@@ -84,6 +84,7 @@
             </FormItem>
             <FormItem label="IMEI" prop="machineImei" >
               <Input v-model.trim="formValidate.machineImei" :disabled='showNewlyType=="ck"||showNewlyType=="sh"' placeholder="请输入机器串号"/>
+              <p class='ivu-form-item-error-tip'>'IMEI'为特殊选填项（有的话必须填）</p>
             </FormItem>
             <FormItem label="硬件指令版本"  prop="hardwareVersion">
               <Select v-model="formValidate.hardwareVersion" placeholder="硬件指令版本" clearable>
@@ -91,7 +92,7 @@
               </Select>
             </FormItem>
             <FormItem label="设备识别码">
-              <Input v-model.trim="formValidate.headingCode" :disabled='showNewlyType=="ck"||showNewlyType=="sh"' placeholder="请输入摄像头编码"/>
+              <Input v-model.trim="formValidate.headingCode" :disabled='showNewlyType=="ck"||showNewlyType=="sh"' placeholder="请输入设备识别码"/>
             </FormItem>
             <FormItem label="摄像头编码">
               <Input v-model.trim="formValidate.cameraCode" :disabled='showNewlyType=="ck"||showNewlyType=="sh"' placeholder="请输入摄像头编码"/>
@@ -118,7 +119,7 @@
               <Input v-model.trim="formValidate.screenNo" :disabled='showNewlyType=="ck"||showNewlyType=="sh"' placeholder="屏幕编码"/>
             </FormItem>
             <FormItem label="屏幕类型">
-              <Select v-model="formValidate.screenType" :disabled='showNewlyType=="ck"||showNewlyType=="sh"'  style="width:160px">
+              <Select v-model="formValidate.screenType" :disabled='showNewlyType=="ck"||showNewlyType=="sh"'>
                   <Option v-for="item in screenTypeList" :value="item.value" :key="item.value">{{ item.label }}</Option>
               </Select>
             </FormItem>
@@ -379,6 +380,7 @@ export default {
   },
   data(){
     return{
+      recursionData:{},
       machineStatus:null,
       statusList:[
         {value:0,label:'待审核'},
@@ -422,7 +424,7 @@ export default {
         },
         {
           title: '手机号',
-          key: 'operatorName',
+          key: 'phone',
           align: 'center',
           width: 127,
           tooltip:true
@@ -1134,8 +1136,27 @@ export default {
       this.transferNewlyAdded = false
     },
     tableClick(row,index){
-      console.log(row)
       this.tableRowData = row;
+      const id = row.channelId;
+      const treeData = this.$refs.channelTree.treeData;
+      this.recursion(treeData,id)
+      const cId = this.recursionData.id;
+      let nodes = document.querySelectorAll('.tree a');
+      nodes.forEach((v,i)=>{
+        nodes[i].classList.remove('curSelectedNode')
+      })
+      let node = document.querySelector('.tree a[title="'+cId+'"]')
+      node.classList.add('curSelectedNode')
+    },
+    recursion(ary,value,){
+      ary.find(v=>{
+        if(value == v.id){
+          this.recursionData = v
+          return true
+        }else{
+          if(v.children)this.recursion(v.children,value)
+        }
+      })
     },
     async showNewlyAdded(type,index,row){
       await this.initialization('formValidate');
@@ -1339,6 +1360,7 @@ export default {
         this.tableRowData = null;
         this.pageNum = 1;
         this.getPageDatas(value.id);
+        console.log(value)
       }
     },
     pageChange(value){
@@ -1438,7 +1460,7 @@ export default {
   }
   .newAddModal{
     /deep/ .ivu-select , /deep/.ivu-input-wrapper{
-      width:160px
+      width:200px
     } 
   }
   .lookDetails{

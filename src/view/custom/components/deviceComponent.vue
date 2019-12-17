@@ -12,8 +12,8 @@
     </div>
     <Divider />
     <!-- <Input v-model="stock"  placeholder="最大库存" style="width:100px" clearable class='marginRight'/> -->
-    行：<InputNumber :max="maxLayerNo"  :min="1" placeholder="行"  v-model="layerNo"  style="margin-right:40px"></InputNumber>
-    列：<InputNumber :max="maxColumnNo" :min="1"   placeholder="列"  v-model="columnNo"  style="margin-right:10px"></InputNumber>
+    行：<InputNumber :max="maxLayerNo"  :min="1" placeholder="行"  v-model="layerNo"  style="margin-right:10px"></InputNumber>
+    列：<InputNumber :max="maxColumnNo" :min="1"   placeholder="列"  v-model="columnNo"  style="margin-right:40px"></InputNumber>
     <Button type="primary" size="large" @click='generate' :disabled='isKong>0' >生成货道</Button>
     <Button type="primary" size="large" @click='reset'>复位货道</Button>
     <Button type="error" size="large" @click='deleteRow' style="float:right;" :disabled='listData.length==0' >删除行</Button>
@@ -23,6 +23,7 @@
       <div class='rowBefore'>
         <Button type="error" icon="md-remove" @click='deleteClomun(i)' :disabled='listData[i].AddMachineTypeRoadDto.length==0'></Button>
         <Button type="primary" icon="md-add" @click='addClomun(i)' :disabled='listData[i].AddMachineTypeRoadDto.length>=maxColumnNo'></Button>
+      {{maxColumnNo}}
       </div>
       <Card class='row' :padding='6' :bordered='false'  :key='v+i'>
         <Card class='item' :class='{"itemAction":value.roadStatus==2}'  v-for='(value,index) in v.AddMachineTypeRoadDto' :key='value+index' :id='"box"+i+""+index' :ref='"box"+i+""+index' v-show='value.roadStatus!=3'  style='width:160px;'>
@@ -180,8 +181,8 @@ export default {
       priceTemplatePageNum:1,
       priceTemplateDatas:[],
       listData:[],
-      columnNo:this.query.maxLayer,
-      layerNo:this.query.maxClomun,
+      columnNo:this.query.maxClomun,
+      layerNo:this.query.maxLayer,
       maxLayerNo:this.query.maxLayer,
       maxColumnNo:this.query.maxClomun,
       modal:null,

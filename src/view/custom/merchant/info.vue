@@ -156,7 +156,7 @@
           <FormItem label="渠道名称" prop="channelName">
             <Input
               v-model.trim="formValidatePre.channelName"
-              placeholder="渠道名称"
+              placeholder="请输入渠道名称"
               :disabled="isdisabled"
             ></Input>
           </FormItem>
@@ -164,7 +164,7 @@
             <Input
               :maxlength="30"
               v-model.trim="formValidatePre.name"
-              placeholder="真实姓名"
+              placeholder="请输入真实姓名"
               :disabled="isdisabled"
             ></Input>
           </FormItem>
@@ -172,20 +172,22 @@
             <Input
               :maxlength="11"
               v-model.trim="formValidatePre.phone"
-              placeholder="手机号码"
+              placeholder="请输入手机号码"
               :disabled="isdisabled"
+              @on-blur="checkPhone"
             ></Input>
           </FormItem>
           <FormItem label="身份证号码" prop="card">
             <Input
               :maxlength="18"
               v-model.trim="formValidatePre.card"
-              placeholder="身份证号码"
+              placeholder="请输入身份证号"
               :disabled="isdisabled"
             ></Input>
           </FormItem>
           <FormItem label="区域" class="NewareaNames" prop="NewareaNames">
             <Cascader
+            placeholder="请选择所在区域"
               :disabled="isdisabled"
               style="width: 220px"
               :data="cityData"
@@ -196,10 +198,11 @@
             ></Cascader>
           </FormItem>
           <FormItem label="详细地址" prop="address">
-            <Input v-model.trim="formValidatePre.address" placeholder="详细地址" :disabled="isdisabled"></Input>
+            <Input v-model.trim="formValidatePre.address" placeholder="请输入详细地址" :disabled="isdisabled"></Input>
           </FormItem>
           <FormItem prop="sale" label="销售范围" style="margin-bottom:20px">
             <Select
+            placeholder="请选择销售范围"
               :disabled="isdisabled"
               v-model="formValidatePre.sale"
               multiple
@@ -227,13 +230,18 @@
             </RadioGroup>-->
           </div>
           <FormItem prop="name" label="收款人" style="margin-bottom:20px">
-            <Input :maxlength="30" v-model.trim="formValidatePre.name" placeholder="收款人" :disabled="isdisabled"></Input>
+            <Input
+              :maxlength="30"
+              v-model.trim="formValidatePre.name"
+              placeholder="请输入收款人姓名"
+              :disabled="isdisabled"
+            ></Input>
           </FormItem>
           <FormItem prop="card" label="收款人身份证号码" style="margin-bottom:10px">
             <Input
               :maxlength="18"
               v-model.trim="formValidatePre.card"
-              placeholder="收款人身份证号码"
+              placeholder="请输入收款人18位身份证号码"
               :disabled="isdisabled"
             ></Input>
           </FormItem>
@@ -245,7 +253,7 @@
             <Input
               :maxlength="30"
               v-model.trim="formValidatePre.receiveAccount"
-              placeholder="收款账号"
+              placeholder="请输入收款人收款账号"
               :disabled="isdisabled"
               @on-blur="getBankPre"
             ></Input>
@@ -258,7 +266,7 @@
           >
             <Input
               v-model.trim="formValidatePre.receiveBank"
-              placeholder="开户行"
+              placeholder="请输入开户行名称"
               :disabled="isdisabled"
             ></Input>
           </FormItem>
@@ -270,8 +278,9 @@
             <Input
               :maxlength="30"
               v-model.trim="formValidatePre.userName"
-              placeholder="登陆账号用户名"
+              placeholder="小于20个字符"
               :disabled="isdisabled"
+              @on-blur="checkUserName"
             ></Input>
           </FormItem>
           <FormItem label="密码" prop="password">
@@ -279,7 +288,7 @@
               :maxlength="30"
               v-model.trim="formValidatePre.password"
               type="password"
-              placeholder="密码"
+              placeholder="大于6小于20个字符"
               :disabled="isdisabled"
             ></Input>
           </FormItem>
@@ -443,31 +452,38 @@
           <FormItem label="公司名称" prop="channelName">
             <Input
               v-model.trim="formValidateEnt.channelName"
-              placeholder="公司名称"
+              placeholder="请输入公司名称"
               :disabled="isdisabled"
             ></Input>
           </FormItem>
           <FormItem label="法人姓名" prop="name">
-            <Input :maxlength="30" v-model.trim="formValidateEnt.name" placeholder="法人姓名" :disabled="isdisabled"></Input>
+            <Input
+              :maxlength="30"
+              v-model.trim="formValidateEnt.name"
+              placeholder="请输入法人姓名"
+              :disabled="isdisabled"
+            ></Input>
           </FormItem>
           <FormItem label="手机号码" prop="phone">
             <Input
               :maxlength="11"
               v-model.trim="formValidateEnt.phone"
-              placeholder="手机号码"
+              placeholder="请输入手机号码"
               :disabled="isdisabled"
+              @on-blur="checkPhone"
             ></Input>
           </FormItem>
           <FormItem label="公司税号" prop="companyNo">
             <Input
-            :maxlength="30"
+              :maxlength="30"
               v-model.trim="formValidateEnt.companyNo"
-              placeholder="公司税号"
+              placeholder="税号由15位.18位或20位组成"
               :disabled="isdisabled"
             ></Input>
           </FormItem>
           <FormItem label="区域" class="NewareaNames" prop="NewareaNames">
             <Cascader
+            placeholder="请选择所在区域"
               :disabled="isdisabled"
               style="width: 220px"
               :data="cityData"
@@ -478,10 +494,11 @@
             ></Cascader>
           </FormItem>
           <FormItem label="详细地址" prop="address">
-            <Input v-model.trim="formValidateEnt.address" placeholder="详细地址" :disabled="isdisabled"></Input>
+            <Input v-model.trim="formValidateEnt.address" placeholder="请输入详细地址" :disabled="isdisabled"></Input>
           </FormItem>
           <FormItem prop="sale" label="销售范围" style="margin-bottom:20px">
             <Select
+            placeholder="请选择销售范围"
               :disabled="isdisabled"
               v-model="formValidateEnt.sale"
               multiple
@@ -510,9 +527,9 @@
           </div>
           <FormItem prop="receiveName" label="收款人" style="margin-bottom:20px">
             <Input
-            :maxlength="30"
+              :maxlength="30"
               v-model.trim="formValidateEnt.receiveName"
-              placeholder="收款人"
+              placeholder="请输入收款人姓名"
               :disabled="isdisabled"
             ></Input>
           </FormItem>
@@ -520,7 +537,7 @@
             <Input
               :maxlength="18"
               v-model.trim="formValidateEnt.receiveCard"
-              placeholder="收款人身份证号"
+              placeholder="请输入收款人18位身份证号码"
               :disabled="isdisabled"
             ></Input>
           </FormItem>
@@ -530,9 +547,9 @@
             style="margin-bottom:20px"
           >
             <Input
-            :maxlength="30"
+              :maxlength="30"
               v-model.trim="formValidateEnt.receiveAccount"
-              placeholder="收款账号"
+              placeholder="请输入收款人收款账号"
               :disabled="isdisabled"
               @on-blur="getBankEnt"
             ></Input>
@@ -545,7 +562,7 @@
           >
             <Input
               v-model.trim="formValidateEnt.receiveBank"
-              placeholder="开户行"
+              placeholder="请输入开户行名称"
               :disabled="isdisabled"
             ></Input>
           </FormItem>
@@ -555,18 +572,19 @@
           </div>
           <FormItem label="用户名称" prop="userName">
             <Input
-            :maxlength="30"
+              :maxlength="30"
               v-model.trim="formValidateEnt.userName"
-              placeholder="登陆账号用户名"
+              placeholder="小于20个字符"
               :disabled="isdisabled"
+              @on-blur="checkUserName"
             ></Input>
           </FormItem>
           <FormItem label="密码" prop="password">
             <Input
-            :maxlength="30"
+              :maxlength="30"
               v-model.trim="formValidateEnt.password"
               type="password"
-              placeholder="密码"
+              placeholder="字母+数字组合,大于6小于20个字符"
               :disabled="isdisabled"
             ></Input>
           </FormItem>
@@ -909,7 +927,8 @@ import {
   searchQRcodeByChannelId,
   searchMerchantCategory,
   searchBank,
-  searchMerchantCategorySale
+  searchMerchantCategorySale,
+  getFastCheck
 } from "@/api/http";
 import { cityData } from "@/api/cityData.js";
 import deleteComponent from "@/view/custom/components/deleteComponent";
@@ -983,6 +1002,8 @@ export default {
       }
     };
     return {
+      checkType: null, //1用户名2手机号
+      checkParam: null,
       loading: false,
       businessStr: "",
       strPre: "", //定义变量对比个人注册编辑数据
@@ -1397,6 +1418,17 @@ export default {
     };
   },
   methods: {
+    checkPhone(event) {
+      this.checkType = 2;
+      this.checkParam = event.target.value;
+      this.searchFastCheck();
+    },
+    checkUserName(event) {
+      this.checkType = 1;
+      this.checkParam = event.target.value;
+      this.searchFastCheck();
+    },
+
     // 去设置收钱码
     toSet() {
       this.isQRShow = true;
@@ -2037,6 +2069,26 @@ export default {
             this.auditType = 2;
           } else if (array.includes(1)) {
             this.auditType = 1;
+          }
+        }
+      });
+    },
+    // 检查校验
+    searchFastCheck() {
+      getFastCheck(this.checkParam, this.checkType).then(res => {
+        if (res.data.code == 200) {
+          if (!res.data.result) {
+            if (this.checkType == 1) {
+              this.$Message.error("用户名已存在，请重新输入");
+              this.tabIndex == 1
+                ? (this.formValidatePre.userName = null)
+                : (this.formValidateEnt.userName = null);
+            } else if (this.checkType == 2) {
+              this.$Message.error("电话号码已存在，请重新输入");
+              this.tabIndex == 1
+                ? (this.formValidatePre.phone = null)
+                : (this.formValidateEnt.phone = null);
+            }
           }
         }
       });

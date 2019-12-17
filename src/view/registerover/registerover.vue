@@ -2,7 +2,7 @@
   <div class="registerover">
     <div class="content">
       <div class="imagecomtent">
-        <img src="../../assets/images/registerover.png" alt />
+        <img src="@/assets/images/registerover.png" alt />
         <div>注册完成</div>
       </div>
       <div class="text">待审核，我们会在3个工作日内给您返回审核结果，请留意您的来电信息，感谢您的加入！</div>

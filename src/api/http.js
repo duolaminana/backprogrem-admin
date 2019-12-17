@@ -458,6 +458,18 @@ export const searchTreeData = channelId => {
     method: "post"
   });
 };
+// 根据id查询渠道树
+export const getFastCheck = (checkParam, checkType) => {
+  return axios.request({
+    url: "/system/channelApply/fastCheck",
+    params: {
+      checkParam,
+      checkType
+    },
+    method: "get"
+  });
+};
+
 // -------------------------------------------------库存监控和补货模块--------------------------------------------------------------
 // 查询商品库存(明细)
 export const searchStockControl = info => {
@@ -484,11 +496,13 @@ export const searchStock = info => {
   });
 };
 // 根据渠道id查询线路名称列表
-export const searchRouteList = channelId => {
+export const searchRouteList = (channelId, managerRoute, userId) => {
   return axios.request({
     url: "/position/route/queryRouteNameByChannelId",
     params: {
-      channelId
+      channelId,
+      managerRoute,
+      userId
     },
     method: "get"
   });
@@ -764,6 +778,23 @@ export const seeReceiveTerminal = (chooseChannelId, loginChannelId) => {
   });
 };
 
+// 根据用户查询线路树
+export const searchTreeByUser = info => {
+  return axios.request({
+    url: "/position/route/queryRouteTreeByUser",
+    data: info,
+    method: "post"
+  });
+};
+
+// 退款
+export const refundOrder = info => {
+  return axios.request({
+    url: "/order/refundOrder/saveRefundOrder",
+    data: info,
+    method: "post"
+  });
+};
 //-------------------------------------------------会员模块--------------------------------------------------------------
 //新增会员
 

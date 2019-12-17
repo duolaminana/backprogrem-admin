@@ -24,7 +24,8 @@ export default {
       setting: {
         data: {
           key: {
-            name: "title"
+            name: "title",
+            title: "id"
           }
         },
         ivew: {
@@ -42,6 +43,7 @@ export default {
   },
   methods: {
     pick(event, treeId, treeNode) {
+      console.log(event)
       this.$emit("pickTree", treeNode);
     }
   }

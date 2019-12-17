@@ -26,7 +26,7 @@ export default {
   name: 'GIS',
   data () {
     return {
-      channelId:'',
+      channelId:this.$store.state.user.channelId,
       dataList:[
         // {imgNum:1,longitude:114.08595,laytitude:22.547},
         // {imgNum:2,longitude:120.412618,laytitude:36.382612},
@@ -45,8 +45,13 @@ export default {
       }
     },
     getAllGISByChannelId(){
-      let url = `/machineInfo/queryAllGISByChannelId?channelId=${this.channelId}`;
-      return netWorkDevice(url,null,'get').then(res=>{
+      const data = {
+        channelId:this.channelId,
+        managerRoute:this.$store.state.user.userVo.managerRoute,
+        userId:this.$store.state.user.userVo.id,
+        type:this.$store.state.user.userVo.type
+      }
+      return netWorkDevice('/machineInfo/queryAllGISByChannelId',data).then(res=>{
         this.dataList = res.result;
       })
     }

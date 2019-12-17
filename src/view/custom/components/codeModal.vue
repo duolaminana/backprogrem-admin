@@ -10,7 +10,7 @@
       <div class="content">
         <div class="weixin-pay">
           <div class="title">
-            <img src="../../../assets/images/weixin.jpg" alt />
+            <img src="@/assets/images/weixin.jpg" alt />
             <span>微信支付配置</span>
             <Button
               v-if="((!idWX&&formValidateWX.auditType!=1)||formValidateWX.configStat==2)"
@@ -83,7 +83,7 @@
         </div>
         <div class="zhifubao-pay">
           <div class="title">
-            <img src="../../../assets/images/zhifubao.jpg" alt />
+            <img src="@/assets/images/zhifubao.jpg" alt />
             <span>支付宝配置</span>
             <Button
               v-if="((!idZFB&&formValidateZFB.auditType!=1)||formValidateZFB.configStat==2)"

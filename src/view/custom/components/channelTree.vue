@@ -42,6 +42,7 @@ export default {
         this.pageNumTree = res.result.pageNum;
         this.totalTree = res.result.total;
         this.treeData = res.result.list;
+        this.treeData[0].isHover=true;
       })
     }
   },

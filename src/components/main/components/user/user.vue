@@ -70,7 +70,7 @@
     <Modal
       v-model="showPswd"
       width="600"
-      title="修改秘密"
+      title="修改密码"
       :mask-closable="false"
     >
       <Form ref="formValidate" :model="formValidate" :rules="ruleValidate" :label-width="120">
@@ -141,11 +141,11 @@ export default {
       },
       ruleValidate: {
         oldPassword: [
-           { required: true, validator: validatePassword, trigger: "blur" },
+          { required: true, validator: validatePassword, trigger: "blur" },
           {  min: 6,max: 20, message: "密码长度6-20个字符", trigger: "blur" }
         ],
         newPassword: [
-           { required: true, validator: validatePassword, trigger: "blur" },
+          { required: true, validator: validatePassword, trigger: "blur" },
           {  min: 6,max: 20, message: "密码长度6-20个字符", trigger: "blur" }
         ]
       },
@@ -249,11 +249,11 @@ export default {
             this.$Message.success('设置成功');
             this.showLogo = false;
           }else{
-            this.$Message.success('设置失败');
+            this.$Message.error('设置失败');
           }
         })
       }else{
-        this.$Message.success('请先上传图片');
+        this.$Message.error('请先上传图片');
       }
       
     },
@@ -263,8 +263,8 @@ export default {
     },
     setLogo(){
       this.showLogo = true;
-      this.bigImgUrl=require('../../../../assets/images/add_img.png')
-      this.smallImgUrl=require('../../../../assets/images/add_img.png')
+      this.bigImgUrl = null;
+      this.smallImgUrl = null
     },
     logout () {
       this.handleLogOut().then(() => {

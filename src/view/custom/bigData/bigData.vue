@@ -269,12 +269,14 @@ export default {
     dateChange(value){
       this.getFindCompanySales();
       this.getFindProductSales();
+      this.getProfits()
     },
     selectChange(value){
       if(!value){
         this.selectValue = 0;
       }
       this.getFindProductSales();
+      this.getProfits()
     },
     timeBtn(type){
       let time
@@ -313,11 +315,13 @@ export default {
       time = time.join('-');
       this.getFindCompanySales();
       this.getFindProductSales();
+      this.getProfits()
     },
     tabNav(value){
       this.index = value;
       this.getFindCompanySales();
       this.getFindProductSales();
+      this.getProfits();
     },
     getFindAllCount(){
       const url = `/product/findAllCount`;
@@ -377,7 +381,20 @@ export default {
       const url = `/machinePosition/queryPlat`
       return netWorkDevice(url,null,'get').then(res=>{
         this.mapList = res.result.list;
-        this.mapData = res.result
+      })
+    },
+    getProfits(){
+      let time;
+      if(this.index==1){
+        time =  format(this.dateValue, "YYYY-MM-DD");
+      }else if(this.index==2){
+        time =  format(this.dateValue, "YYYY-MM");
+      }else{
+        time =  format(this.dateValue, "YYYY");
+      }
+      const url = `/order/querySalesAndProfits?createTime=${time}&&dateType=${this.index}&&categoryId=${this.selectValue}`
+      netWorkOrder(url,null,'get').then(res=>{
+        this.mapData = res.result;
       })
     },
   },
@@ -389,6 +406,7 @@ export default {
     this.getFindProductSales();
     this.getRange();
     this.getMapData();
+    this.getProfits()
   }
 }
 </script>
@@ -478,7 +496,7 @@ export default {
       position: absolute;
       top:15px;
       left: 40px;
-      z-index: 999;
+      z-index: 1;
       font-size: 18px;
       >span{
         font-size: 24px;

@@ -66,7 +66,7 @@
       <div class="content">
         <div class="weixin-pay">
           <div class="title">
-            <img src="../../../assets/images/weixin.jpg" alt />
+            <img src="@/assets/images/weixin.jpg" alt />
             <span>微信支付配置</span>
           </div>
           <div>
@@ -144,7 +144,7 @@
       <div class="content">
         <div class="zhifubao-pay">
           <div class="title">
-            <img src="../../../assets/images/zhifubao.jpg" alt />
+            <img src="@/assets/images/zhifubao.jpg" alt />
             <span>支付宝配置</span>
           </div>
           <div>

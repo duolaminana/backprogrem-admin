@@ -1,97 +1,94 @@
-<style lang="less" scoped>
-#register-per {
-  .ivu-input-wrapper {
-    width: 250px !important;
-  }
-  .ivu-btn {
-    margin-right: 10px;
-  }
-  .ivu-table-wrapper {
-    margin-top: 20px;
-  }
-  .ivu-table-cell {
-    padding-left: 0px;
-    padding-right: 0px;
-  }
-  .ivu-page {
-    text-align: center;
-    margin-top: 10px;
-  }
-  .ivu-cascader {
-    width: 250px;
-  }
-  .receivablesInfo {
-    display: inline-block;
-    margin-right: 20px;
-  }
-  .foot {
-    height: 160px;
-    margin: 10px 0;
-    .check-text {
-      color: rgb(134, 134, 134);
-      font-size: 10px;
-    }
-    .attestation {
-      float: left;
-      width: 100%;
-    }
-    .ivu-form-item-content {
-      margin-left: 0px !important;
-      line-height: 20px;
-    }
-  }
-  .submitBotton {
-    width: 660px;
-    margin-top: 40px;
-    /deep/ .ivu-form-item-content {
-      margin-left: 0 !important;
-    }
-  }
-  .card_image {
-    text-align: center;
-    width: 120px;
-    height: 100px;
-    margin-top: 10px;
-    margin-right: 10px;
-    /deep/ .ivu-form-item-content {
-      margin-left: 0px !important;
-      line-height: 24px;
-    }
-    /deep/ .ivu-form-item-error-tip {
-      margin-left: 16%;
-    }
-    /deep/.ivu-upload-list-file-finish {
-      display: none;
-    }
-    /deep/.ivu-upload-list-file-finish {
-      display: none;
-    }
-    #exampleImg {
-    background: url("../../assets/images/example.png") no-repeat 0px 0px;
-    width: 662px;
-    height: 317px;
-    position: absolute;
-    bottom: 20px;
-    z-index: 22;
-    border: 2px solid green;
-    display: none;
-  }
-  .example:hover #exampleImg {
-    display: block;
-  }
-  }
-  .card {
-    .ivu-form-item-label {
-      margin-top: -5px;
-    }
-  }
-  .cascader {
-    /deep/.ivu-input-wrapper-default {
-      width: 250px;
-    }
-  }
-}
-</style>
+// <style lang="less" scoped>
+// #register-per {
+//   .ivu-input-wrapper {
+//     width: 250px !important;
+//   }
+//   .ivu-btn {
+//     margin-right: 10px;
+//   }
+//   .ivu-table-wrapper {
+//     margin-top: 20px;
+//   }
+//   .ivu-table-cell {
+//     padding-left: 0px;
+//     padding-right: 0px;
+//   }
+//   .ivu-page {
+//     text-align: center;
+//     margin-top: 10px;
+//   }
+//   .ivu-cascader {
+//     width: 250px;
+//   }
+//   .receivablesInfo {
+//     display: inline-block;
+//     margin-right: 20px;
+//   }
+//   .foot {
+//     height: 160px;
+//     margin: 10px 0;
+//     .check-text {
+//       color: rgb(134, 134, 134);
+//       font-size: 10px;
+//     }
+//     .attestation {
+//       float: left;
+//       width: 100%;
+//     }
+//     .ivu-form-item-content {
+//       margin-left: 0px !important;
+//       line-height: 20px;
+//     }
+//   }
+//   .submitBotton {
+//     width: 660px;
+//     margin-top: 40px;
+//     /deep/ .ivu-form-item-content {
+//       margin-left: 0 !important;
+//     }
+//   }
+//   .card_image {
+//     text-align: center;
+//     width: 120px;
+//     height: 100px;
+//     margin-top: 10px;
+//     margin-right: 10px;
+//     /deep/ .ivu-form-item-content {
+//       margin-left: 0px !important;
+//       line-height: 24px;
+//     }
+//     /deep/ .ivu-form-item-error-tip {
+//       margin-left: 16%;
+//     }
+//     /deep/.ivu-upload-list-file-finish {
+//       display: none;
+//     }
+//     #exampleImg {
+//       background: url("../../assets/images/example.png") no-repeat 0px 0px;
+//       width: 662px;
+//       height: 317px;
+//       position: absolute;
+//       bottom: 20px;
+//       z-index: 22;
+//       border: 2px solid green;
+//       display: none;
+//     }
+//     .example:hover #exampleImg {
+//       display: block;
+//     }
+//   }
+//   .card {
+//     .ivu-form-item-label {
+//       margin-top: -5px;
+//     }
+//   }
+//   .cascader {
+//     /deep/.ivu-input-wrapper-default {
+//       width: 250px;
+//     }
+//   }
+// }
+// </style>
 
 <template>
   <div id="register-per">
@@ -106,20 +103,26 @@
       <div style="margin-bottom:10px">
         <strong>个人信息</strong>
       </div>
-      <FormItem prop="channelName" label="商户名称" style="margin-bottom:20px">
-        <Input v-model.trim="form.channelName" placeholder="请输入商户名称"></Input>
+      <FormItem prop="channelName" label="渠道名称" style="margin-bottom:20px">
+        <Input v-model.trim="form.channelName" placeholder="请输入渠道名称"></Input>
       </FormItem>
       <FormItem prop="name" label="真实姓名" style="margin-bottom:20px">
         <Input :maxlength="30" v-model.trim="form.name" placeholder="请输入真实姓名"></Input>
       </FormItem>
       <FormItem prop="phone" label="手机号码" style="margin-bottom:20px">
-        <Input :maxlength="11" v-model.trim="form.phone" placeholder="请输入手机号码"></Input>
+        <Input
+          :maxlength="11"
+          v-model.trim="form.phone"
+          placeholder="请输入手机号码"
+          @on-blur="checkPhone"
+        ></Input>
       </FormItem>
       <FormItem prop="card" label="身份证号" style="margin-bottom:20px">
         <Input :maxlength="18" v-model.trim="form.card" placeholder="请输入身份证号"></Input>
       </FormItem>
       <FormItem prop="NewareaNames" label="所在区域" style="margin-bottom:20px;width:325px">
         <Cascader
+        placeholder="请选择所在区域"
           class="cascader"
           :data="cityData"
           v-model="form.NewareaNames"
@@ -132,7 +135,7 @@
         <Input v-model.trim="form.address" placeholder="请输入详细地址"></Input>
       </FormItem>
       <FormItem prop="sale" label="销售范围" style="margin-bottom:20px">
-        <Select v-model="form.sale" multiple style="width:585px" @on-change="saleChange">
+        <Select placeholder="请选择销售范围" v-model="form.sale" multiple style="width:585px" @on-change="saleChange">
           <Option v-for="item in saleList" :label="item.label" :value="item.value" :key="item.id"></Option>
         </Select>
       </FormItem>
@@ -148,17 +151,22 @@
         </RadioGroup>-->
       </div>
       <FormItem prop="name" label="收款人" style="margin-bottom:20px">
-        <Input :maxlength="30" v-model.trim="form.name" placeholder="请输入收款人"></Input>
+        <Input :maxlength="30" v-model.trim="form.name" placeholder="请输入收款人姓名"></Input>
       </FormItem>
       <FormItem prop="card" class="card" label="收款人身份证号码" style="margin-bottom:10px">
-        <Input :maxlength="18" v-model.trim="form.card" placeholder="请输入收款人身份证号码"></Input>
+        <Input :maxlength="18" v-model.trim="form.card" placeholder="请输入收款人18位身份证号码"></Input>
       </FormItem>
       <FormItem
         prop="receiveAccount"
         :label="this.isReceiveType==2?'收款账号':'支付宝账号'"
         style="margin-bottom:20px"
       >
-        <Input :maxlength="30" v-model="form.receiveAccount" placeholder="请输入收款账号" @on-blur="getBank"></Input>
+        <Input
+          :maxlength="30"
+          v-model="form.receiveAccount"
+          placeholder="请输入收款人收款账号"
+          @on-blur="getBank"
+        ></Input>
       </FormItem>
       <FormItem
         prop="receiveBank"
@@ -166,16 +174,26 @@
         v-show="this.isReceiveType=='2'?true:false "
         style="margin-bottom:20px"
       >
-        <Input v-model.trim="form.receiveBank" placeholder="请输入开户行"></Input>
+        <Input v-model.trim="form.receiveBank" placeholder="请输入开户行名称"></Input>
       </FormItem>
       <div style="margin-bottom:10px">
         <strong>用户信息</strong>
       </div>
       <FormItem prop="userName" label="用户名称" style="margin-bottom:20px">
-        <Input :maxlength="30" v-model.trim="form.userName" placeholder="请输入登陆用户名称"></Input>
+        <Input
+          :maxlength="30"
+          v-model.trim="form.userName"
+          placeholder="小于20个字符"
+          @on-blur="checkUserName"
+        ></Input>
       </FormItem>
       <FormItem prop="password" label="密码" style="margin-bottom:20px">
-        <Input :maxlength="30" v-model.trim="form.password" :type="pswd?'text':'password'" placeholder="请输入密码">
+        <Input
+          :maxlength="30"
+          v-model.trim="form.password"
+          :type="pswd?'text':'password'"
+          placeholder="字母+数字组合,大于6小于20个字符"
+        >
           <Icon @click.native="pswd=!pswd" :type="pswd?'md-eye-off':'md-eye'" slot="suffix" />
         </Input>
       </FormItem>
@@ -206,9 +224,9 @@
                   <Icon type="md-add" size="50" style="color: #3399ff"></Icon>
                   <p>手持身份证正面</p>
                   <a class="example">
-                        查看示例
-                        <div id="exampleImg" style="left:0px"></div>
-                      </a>
+                    查看示例
+                    <div id="exampleImg" style="left:0px"></div>
+                  </a>
                 </div>
               </Upload>
             </template>
@@ -236,9 +254,9 @@
                   <Icon type="md-add" size="50" style="color: #3399ff"></Icon>
                   <p>手持身份证反面</p>
                   <a class="example">
-                        查看示例
-                        <div id="exampleImg" style="left:-130px"></div>
-                      </a>
+                    查看示例
+                    <div id="exampleImg" style="left:-130px"></div>
+                  </a>
                 </div>
               </Upload>
             </template>
@@ -279,7 +297,13 @@
 </template>
 <script>
 import { cityData } from "@/api/cityData.js";
-import { productType, searchBank, addChannelApply, Upload } from "@/api/http";
+import {
+  productType,
+  searchBank,
+  addChannelApply,
+  Upload,
+  getFastCheck
+} from "@/api/http";
 export default {
   name: "registerPperson",
   props: {
@@ -348,6 +372,8 @@ export default {
     };
 
     return {
+      checkType: null, //1用户名2手机号
+      checkParam: null,
       pswd: false, //密码显示方式
       isReceiveType: "2", //全局收款方式变量
       saleList: [], //销售范围
@@ -455,6 +481,16 @@ export default {
     };
   },
   methods: {
+    checkPhone(event) {
+      this.checkType = 2;
+      this.checkParam = event.target.value;
+      this.searchFastCheck();
+    },
+    checkUserName(event) {
+      this.checkType = 1;
+      this.checkParam = event.target.value;
+      this.searchFastCheck();
+    },
     // 用户级联选择器
     selectChange(value) {
       this.form.areaIds = value;
@@ -555,6 +591,22 @@ export default {
       searchBank(this.form.receiveAccount).then(res => {
         if (res.data.code == 200) {
           this.form.receiveBank = res.data.result;
+        }
+      });
+    },
+    // 检查校验
+    searchFastCheck() {
+      getFastCheck(this.checkParam, this.checkType).then(res => {
+        if (res.data.code == 200) {
+          if (!res.data.result) {
+            if (this.checkType == 1) {
+              this.$Message.error("用户名已存在，请重新输入");
+              this.form.userName = null;
+            } else if (this.checkType == 2) {
+              this.$Message.error("电话号码已存在，请重新输入");
+              this.form.phone = null;
+            }
+          }
         }
       });
     }

@@ -186,7 +186,7 @@ export default {
     },
     getRouteName() {
       //根据渠道id查找线路名称列表
-      searchRouteList(this.channelId).then(res => {
+      searchRouteList(this.channelId,this.$store.state.user.userVo.managerRoute,this.userId,).then(res => {
         if (res.data.code == 200) {
           this.routeNameList = res.data.result;
         }

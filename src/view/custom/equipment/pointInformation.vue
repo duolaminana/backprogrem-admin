@@ -813,10 +813,9 @@ export default {
       })
     },
     getRouteName(){ //根据渠道id查找利益分配模板列表
-      let url = '/route/queryRouteNameByChannelId?channelId='+this.channelId;
+      let url = `/route/queryRouteNameByChannelId?channelId=${this.channelId}&&managerRoute=${this.$store.state.user.userVo.managerRoute}&&userId=${this.$store.state.user.userVo.id}`;
       netWorkDevice(url,null,'get').then(res => {
         this.routeNameList = res.result;
-        console.log(this.benefitList)
       })
     },
     getPageDatas(){

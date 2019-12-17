@@ -104,7 +104,7 @@ export default {
     right: 0;
     background-color: rgba(55, 55, 55, 0.6);
     height: 100%;
-    z-index: 1500;
+    z-index: 9999;
     .vue-cropper{
       height: 80%;
       width: 80%;

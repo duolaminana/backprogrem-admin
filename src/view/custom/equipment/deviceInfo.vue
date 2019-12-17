@@ -9,7 +9,7 @@
         <Button  @click="clickQuery" type="primary">查询</Button>
         <Button  @click='reset' type="primary">重置</Button>
         <Button v-if="channelId==$store.state.user.userVo.channelId && hasPerm('pos:dev:edit')"  type="primary" @click='showNewlyAdded("xz")' class='xzbtn' icon="md-add">新增</Button>
-        <Button v-if='channelId==$store.state.user.userVo.channelId'  type="primary" @click='transferNewlyAdded = true' :disabled='!tableRowData'>设备转移</Button>
+        <Button v-if="channelId==$store.state.user.userVo.channelId&& hasPerm('pos:dev:edit')"  type="primary" @click='transferNewlyAdded = true' :disabled='!tableRowData'>设备转移</Button>
         <Poptip placement="right" trigger='hover' >
           <Button  type="success" @click='exportTemplate'>导出模板</Button>
           <div slot="content">
@@ -95,7 +95,7 @@
         <Page :total="total" show-elevator :current='pageNum' @on-change='pageChange' :page-size='pageSize' @on-page-size-change='sizeChange'  show-sizer/>
       </div>
       <!-- 新增弹框的模态框 -->
-      <Modal v-model="newlyAdded" width="700" :title="showNewlyType=='xz'?'新增信息管理':'编辑信息管理'"  :mask-closable='false'>
+      <Modal v-model="newlyAdded" width="740" :title="showNewlyType=='xz'?'新增信息管理':'编辑信息管理'"  :mask-closable='false'>
         <Form ref="formValidate" class='newAddModal' :model="formValidate" :rules="ruleValidate" :label-width="120" inline>
           <FormItem label="设备类型" prop="remark" >
             <Input v-model.trim="formValidate.machineName" v-if='showNewlyType=="ck"&&formValidate.machineName' :disabled='showNewlyType=="ck"' placeholder="请输入机器编码"/>
@@ -106,9 +106,10 @@
           </FormItem>
           <FormItem label="IMEI"  >
             <Input v-model.trim="formValidate.machineImei" :disabled='showNewlyType=="ck"' placeholder="请输入机器串号"/>
+            <p class='ivu-form-item-error-tip'>'IMEI'为特殊选填项（有的话必须填）</p>
           </FormItem>
-          <FormItem label="设备识别码">
-            <Input v-model.trim="formValidate.headingCode" :disabled='showNewlyType=="ck"||showNewlyType=="sh"' placeholder="请输入摄像头编码"/>
+          <FormItem label="设备识别码" prop="headingCode" >
+            <Input v-model.trim="formValidate.headingCode" :disabled='showNewlyType=="ck"||showNewlyType=="sh"' placeholder="请输入设备识别码"/>
           </FormItem>
           <FormItem label="摄像头编码">
             <Input v-model.trim="formValidate.cameraCode" :disabled='showNewlyType=="ck"' placeholder="请输入摄像头编码"/>
@@ -135,7 +136,7 @@
             <Input v-model.trim="formValidate.screenNo" :disabled='showNewlyType=="ck"' placeholder="屏幕编码"/>
           </FormItem>
           <FormItem label="屏幕类型">
-            <Select v-model="formValidate.screenType" :disabled='showNewlyType=="ck"'  style="width:160px">
+            <Select v-model="formValidate.screenType" :disabled='showNewlyType=="ck"'>
                 <Option v-for="item in screenTypeList" :value="item.value" :key="item.value">{{ item.label }}</Option>
             </Select>
           </FormItem>
@@ -487,7 +488,7 @@ export default {
         },
         {
           title: '手机号',
-          key: 'operatorName',
+          key: 'phone',
           align: 'center',
           width: 127,
           tooltip:true
@@ -604,6 +605,13 @@ export default {
             trigger: "blur"
           },
           { max: 8, message: "最多8个字符", trigger: "blur" }
+        ],
+        headingCode:[
+          {
+            required: true,
+            message: "输入不能为空",
+            trigger: "blur"
+          },
         ],
       },
       showNewlyType:'xz',
@@ -1677,7 +1685,7 @@ export default {
   }
   .newAddModal{
     /deep/ .ivu-select , /deep/.ivu-input-wrapper{
-      width:160px
+      width:200px
     } 
   }
   .lookDetails{

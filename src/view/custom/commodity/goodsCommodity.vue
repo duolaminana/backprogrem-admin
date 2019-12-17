@@ -755,6 +755,7 @@ export default {
           ];
         }
         this.goodsTypesFormValidate = JSON.parse(JSON.stringify(this.treeRowData)) ;
+        this.goodsTypesFormValidate.isLimitedEdition = this.goodsTypesFormValidate.isLimitedEdition+''
         console.log(this.goodsTypesFormValidate)
       }
     },
@@ -766,6 +767,7 @@ export default {
         this.treePids = data.pids;
         this.categoryType = data.categoryType;
         this.getPageDatas();
+        console.log(this.treeRowData)
       }else{
         this.categoryId = null;
         this.pageNum = 1;
