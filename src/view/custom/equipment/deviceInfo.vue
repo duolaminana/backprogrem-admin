@@ -23,7 +23,8 @@
           <template slot-scope="{ row, index }" slot="edit">
               <Button v-if="channelId==$store.state.user.userVo.channelId&&hasPerm('pos:dev:edit')&&row.enable==0" type="success" size="small" class='marBtn' @click='enable(row,index,true)'  :disabled='row.surplusDays<0'>启用</Button>
               <Button v-if="channelId==$store.state.user.userVo.channelId&&hasPerm('pos:dev:edit')&&row.enable==1" type="error" size="small" class='marBtn' @click='enable(row,index,false)' :disabled='row.surplusDays<0'>停用</Button>
-              <Button v-if="channelId==$store.state.user.userVo.channelId&&hasPerm('pos:dev:edit')" type="primary" size="small" class='marBtn' @click='showNewlyAdded("bj",index,row)' :disabled='$store.state.user.userVo.type!=2||row.ownership!=3||row.status!=0||row.status!=2||row.surplusDays<0'>编辑</Button>
+              <Button v-if="channelId==$store.state.user.userVo.channelId&&hasPerm('pos:dev:edit')" type="primary" size="small" class='marBtn' @click='showNewlyAdded("bj",index,row)' :disabled='$store.state.user.userVo.type!=2||row.ownership!=3||row.status!=2||row.surplusDays<0'>编辑</Button>
+              <!-- {{$store.state.user.userVo.type!=2}}=={{row.ownership!=3}}=={{row.surplusDays<0}}=={{row.stock>0}} -->
               <Button v-if="channelId==$store.state.user.userVo.channelId&&hasPerm('pos:dev:edit')" type="error" size="small" class='marBtn' @click="devDelete(row,index)" :disabled='$store.state.user.userVo.type!=2||row.ownership!=3||row.surplusDays<0'>删除</Button>
           </template>
           <template slot-scope="{ row, index }" slot="info">
@@ -53,7 +54,12 @@
           <template slot-scope="{ row, index }" slot="status">
               <span v-show='row.status==0' class='orange'>待审核</span>
               <span v-show='row.status==1'  :class='row.surplusDays<0?"gray":"orange"'>待使用</span>
-              <span v-show='row.status==2'  :class='row.surplusDays<0?"gray":"green"'>审核不通过</span>
+              <Poptip placement="right" width="350" trigger='hover' >
+                <span v-show='row.status==2'  class='red'>审核不通过</span>
+                <div slot="content">
+                  {{row.remark}}
+                </div>
+              </Poptip>
               <span v-show='row.status==3'  :class='row.surplusDays<0?"gray":"green"'>点位中</span>
               <span v-show='row.status==4' class='gray'>故障中</span>
               <span v-show='row.status==5' class='gray'>维修中</span>
@@ -855,11 +861,15 @@ export default {
     },
     devDelete(row,index){
       if(row.status!=3){
-        this.modalDel=true;
-        this.delID=row.id;
-        this.delIndex=index
+        if(row.stock>0){
+          this.modalDel=true;
+          this.delID=row.id;
+          this.delIndex=index
+        }else{
+          this.$Message.error("在点位中不能被删除！");
+        }
       }else{
-        this.$Message.error("在点位中不能被删除！");
+        this.$Message.error("存在商品不能删除！");
       }
     },
     trBgColor(row,index){
@@ -1439,6 +1449,7 @@ export default {
       if(type!='xz'){
         console.log(row)
         this.formValidate = JSON.parse(JSON.stringify(row));
+        this.formValidate.status = 0;
         this.formValidate.enable = this.formValidate.enable+'';
         this.formValidate.machineType = this.formValidate.machineType+'';
       }

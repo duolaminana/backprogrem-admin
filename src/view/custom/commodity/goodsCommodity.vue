@@ -50,7 +50,12 @@
         <template slot-scope="{ row}" slot="status">
           <span v-if="row.auditStatus==1" class='blue'>待提交</span>
           <span v-if="row.auditStatus==2" class='orange'>待审核</span>
-          <span v-if="row.auditStatus==3" class='red'>审核不通过</span>
+          <Poptip placement="right" width="350" trigger='hover' >
+            <span v-if="row.auditStatus==3" class='red'>审核不通过</span>
+            <div slot="content">
+              {{row.remark}}
+            </div>
+          </Poptip>
           <span v-if="row.auditStatus==4" class='green'>审核通过</span>
         </template>
       </Table>

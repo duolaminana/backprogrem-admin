@@ -29,7 +29,7 @@
             <template slot-scope="{ row, index }" slot="position">
               <a class='lookDetails' v-if='row.positionId' :disabled='row.status!=3' @click='positionInfo(row,index,false)'>{{row.positionName}}</a>
               <a v-else-if='!row.positionId&&(row.status==1||row.status==7)' @click='positionInfo(row,index,true)' class='green' >去设定</a>
-              <a v-else class='gray'>去设定{{row.status}}</a>
+              <a v-else class='gray'>去设定</a>
             </template>
             <template slot-scope="{ row, index }" slot="network">
               <span v-show='row.networkStatus==1' class='green'>在线</span>
@@ -87,7 +87,7 @@
               <p class='ivu-form-item-error-tip'>'IMEI'为特殊选填项（有的话必须填）</p>
             </FormItem>
             <FormItem label="硬件指令版本"  prop="hardwareVersion">
-              <Select v-model="formValidate.hardwareVersion" placeholder="硬件指令版本" clearable>
+              <Select v-model="formValidate.hardwareVersion" placeholder="硬件指令版本" clearable :disabled='showNewlyType=="ck"||showNewlyType=="sh"'>
                 <Option v-for="item in hardwareVersionList" :value="item.value" :key="item.value">{{ item.label }}</Option>
               </Select>
             </FormItem>

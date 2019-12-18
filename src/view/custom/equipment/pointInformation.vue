@@ -202,6 +202,7 @@ import { netWorkDevice,netWorkGoods} from "@/api/data";
 import mapDrag from '../components/map';
 import  deleteComponent from "@/view/custom/components/deleteComponent";
 import  tableModal from "@/view/custom/components/tableModal";
+import axios from 'axios'
 export default {
   name:'pointInformation',
   components:{
@@ -771,7 +772,25 @@ export default {
       // this.$refs.map.initMap();
     },
     cityChange(value,selectedData){
-      this.formValidate.areaNames = selectedData[selectedData.length-1].__label
+      this.formValidate.areaNames = selectedData[selectedData.length-1].__label;
+      const str = this.formValidate.areaNames.replace(/\//g, "").replace(/\s/g,"");
+      let url = `https://restapi.amap.com/v3/geocode/geo?key=a63edeccaf444460aaeb254bb2a2de90&&address=${str}&&output=JSON`;
+      axios.get(url).then(res=>{
+        if(res.data.status=='1'){
+          let ary = res.data.geocodes[0].location.split(",");
+          this.formValidate.positionAddress = res.data.geocodes[0].formatted_address;
+          this.formValidate.longitude = ary[0];
+          this.formValidate.laytitude = ary[1];
+          // let data = {
+          //   address:res.data.geocodes[0].formatted_address,
+          //   position:{
+          //     lng:ary[0],
+          //     lat:ary[1]
+          //   }
+          // }
+          // console.log(data)
+        }
+      })
     },
     pageChange(value){
       this.pageNum = value;

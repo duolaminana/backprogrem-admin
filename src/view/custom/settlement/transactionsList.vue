@@ -114,9 +114,8 @@
           <span v-show="row.orderStatus==3" style="color:#19be6b">出货成功</span>
           <span v-show="row.orderStatus==6" style="color:#ff9900">部分出货成功</span>
           <span v-show="row.orderStatus==4" style="color:#ed4014">出货失败</span>
-          <span v-show="row.orderStatus==5" style="color:#ed4014">订单关闭</span>
         </template>
-        <template slot-scope="{row,index}" slot="templateName">
+        <template slot-scope="{row,index}" slot="refundAmount">
           <span style="color:#ed4014" v-show="row.refundStatus==2">{{row.refundAmount}}</span>
         </template>
         <template slot-scope="{row,index}" slot="operation">
@@ -126,28 +125,28 @@
             type="primary"
             size="small"
             @click="refund(row)"
-            v-if="hasPerm('set:tranlist:refund')&&row.refundStatus==1&&(row.orderStatus==3||row.orderStatus==4||row.orderStatus==5||row.orderStatus==6)&&(isShowOperation||((channelId==$store.state.user.channelId)&&$store.state.user.userVo.type))"
+            v-if="hasPerm('set:tranlist:refund')&&row.refundStatus==1&&(row.orderStatus==3||row.orderStatus==4||row.orderStatus==6)&&(isShowOperation||((channelId==$store.state.user.channelId)&&$store.state.user.userVo.type==2))"
           >&nbsp退款&nbsp</Button>
           <Button
             style="margin-right:10px"
             disabled
             type="primary"
             size="small"
-            v-if="hasPerm('set:tranlist:refund')&&row.refundStatus==2&&(row.orderStatus==3||row.orderStatus==4||row.orderStatus==5||row.orderStatus==6)&&(isShowOperation||((channelId==$store.state.user.channelId)&&$store.state.user.userVo.type))"
+            v-if="hasPerm('set:tranlist:refund')&&row.refundStatus==2&&(row.orderStatus==3||row.orderStatus==4||row.orderStatus==6)&&(isShowOperation||((channelId==$store.state.user.channelId)&&$store.state.user.userVo.type==2))"
           >已退款</Button>
           <Button
             style="margin-right:0px"
             type="primary"
             size="small"
             @click="clear(row)"
-            v-if="hasPerm('set:tranlist:refund')&&row.sendBack&&(row.orderStatus==4||row.orderStatus==6)&&(isShowOperation||((channelId==$store.state.user.channelId)&&$store.state.user.userVo.type))"
+            v-if="hasPerm('set:tranlist:refund')&&!row.sendBack&&(row.orderStatus==4||row.orderStatus==6)&&(isShowOperation||((channelId==$store.state.user.channelId)&&$store.state.user.userVo.type==2))"
           >&nbsp清算&nbsp</Button>
           <Button
             style="margin-right:0px"
             disabled
             type="primary"
             size="small"
-            v-if="hasPerm('set:tranlist:refund')&&row.sendBack&&(row.orderStatus==4||row.orderStatus==6)&&(isShowOperation||((channelId==$store.state.user.channelId)&&$store.state.user.userVo.type))"
+            v-if="hasPerm('set:tranlist:refund')&&row.sendBack&&(row.orderStatus==4||row.orderStatus==6)&&(isShowOperation||((channelId==$store.state.user.channelId)&&$store.state.user.userVo.type==2))"
           >已清算</Button>
         </template>
       </Table>
@@ -308,9 +307,9 @@
           type="text"
           style="border:1px solid #c6c9ce"
           size="large"
-          @click="columnsClear=false"
+          @click="isShowClear=false"
         >取消</Button>
-        <Button type="primary" size="large" @click="columnsClear=false">确定</Button>
+        <Button type="primary" size="large" @click="isShowClear=false">确定</Button>
       </div>
     </Modal>
   </div>
@@ -331,7 +330,6 @@ import {
   searchTreeByUser,
   refundOrder
 } from "@/api/http";
-import loginMessageVue from "../../../components/login-message/login-message.vue";
 export default {
   components: {
     channelTree,
@@ -620,7 +618,7 @@ export default {
           title: "利润抽成总金额(元)",
           slot: "commissionPrice",
           align: "center",
-          minWidth: 80,
+          minWidth: 60,
           tooltip: true
         },
         {
@@ -641,14 +639,14 @@ export default {
           title: "收款方",
           key: "channelName",
           align: "center",
-          minWidth: 60,
+          minWidth: 100,
           tooltip: true
         },
         {
           title: "交易时间",
           key: "createDate",
           align: "center",
-          minWidth: 60,
+          minWidth: 100,
           tooltip: true
         },
         {
@@ -683,7 +681,7 @@ export default {
           title: "退款时间",
           align: "center",
           key: "refundDate",
-          minWidth: 60,
+          minWidth: 80,
           tooltip: true
         }
       ],
@@ -833,7 +831,7 @@ export default {
         .reduce((pre, cur) => {
           return pre + cur;
         }, 0);
-      let aaa = this.dataTableMore
+      let value2 = this.dataTableMore
         .map((v, i) => {
           if (v.productNumber != v.productProduce) {
             if (v.activityPrice) {
@@ -844,11 +842,9 @@ export default {
           }
         })
         .reduce((pre, cur) => {
-          return pre + cur;
+          return pre + cur||0;
         }, 0);
-      const res =
-        value > this.payAmount ? this.payAmount : this.once ? aaa : value;
-      return res;
+      return value > this.payAmount ? this.payAmount : this.once ? value2 : value;
     },
     startOptions: function() {
       //开始时间的限制，不能选择结束时间之后的时间
@@ -911,6 +907,7 @@ export default {
   methods: {
     popperShow() {
       this.getSearchTreeByUser();
+      this.routes=[];
     },
     popperHide() {
       let ary = [];
@@ -1050,13 +1047,14 @@ export default {
     // 退款点击事件
     refund(row) {
       console.log(row);
+      this.refundReason=null
       this.once = true;
       this.channelId = row.channelId;
       this.orderNoMore = row.orderNo;
-      this.isShowRefund = true;
       this.couponAmount = row.couponAmount;
       this.payAmount = row.payAmount;
       this.getOrderMore();
+      this.isShowRefund = true;
     },
     refundModalConfirm() {
       this.isShowRefund = false;
@@ -1080,10 +1078,10 @@ export default {
       console.log(row);
       this.channelId = row.channelId;
       this.orderNoMore = row.orderNo;
-      this.isShowClear = true;
       this.couponAmount = row.couponAmount;
       this.payAmount = row.payAmount;
       this.getOrderMore();
+      this.isShowClear = true;
     },
     searchOrder() {
       this.pageNum = 1;

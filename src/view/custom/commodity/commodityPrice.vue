@@ -10,7 +10,7 @@
         <Button  v-if="hasPerm('pro:price:edit')"  type="primary" @click='showNewlyAdded("xz")' class='xzbtn' icon="md-add">新增</Button>
         <Table border ref="selection" :columns="columns" :data="datas">
           <template slot-scope="{ row, index }" slot="templateName">
-              <Poptip placement="right" width="350" trigger='hover' @on-popper-show='popperShow(row)' >
+              <Poptip placement="right" width="380" trigger='hover' @on-popper-show='popperShow(row)' >
                 <Icon type="ios-paper" color='#2d8cf0' size='20' style="margin-left:5px;"/>
                 <div slot="content">
                   <template v-if='priceTemplateDetailVos.length>0'>

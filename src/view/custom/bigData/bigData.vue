@@ -380,7 +380,7 @@ export default {
     getMapData(){
       const url = `/machinePosition/queryPlat`
       return netWorkDevice(url,null,'get').then(res=>{
-        this.mapList = res.result.list;
+        this.mapList = res.result;
       })
     },
     getProfits(){
@@ -392,12 +392,12 @@ export default {
       }else{
         time =  format(this.dateValue, "YYYY");
       }
-      const url = `/order/querySalesAndProfits?createTime=${time}&&dateType=${this.index}&&categoryId=${this.selectValue}`
+      const url = `/order/querySalesAndProfits?createTime=${time}&&dateType=${this.index}&&categoryId=${this.selectValue}&&channelId=${this.channelId}`
       netWorkOrder(url,null,'get').then(res=>{
-        this.mapData = res.result;
+        this.mapData = res.result?res.result:{sales:0, profits:0}
       })
     },
-  },
+  }, 
   mounted(){
     this.getFindAllCount();
     this.getFindAllMerchantCount();

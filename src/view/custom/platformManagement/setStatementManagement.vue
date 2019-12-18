@@ -70,7 +70,7 @@
       />
     </div>
     <!-- 结算详情弹框的模态框 -->
-    <Modal v-model="isShow" :mask-closable="false" :title="'结算详情('+deductAccount+')'" width="1500">
+    <Modal v-model="isShow" :mask-closable="false" :title="'结算详情('+deductAccount+')'" width="1600">
       <Table
         class="setMore"
         :columns="columnsMore"
@@ -260,7 +260,7 @@ export default {
           title: "订单编号",
           key: "orderNo",
           align: "center",
-          minWidth: 80,
+          minWidth: 180,
           tooltip: true
         },
         {
@@ -274,14 +274,14 @@ export default {
           title: "设备编码",
           key: "memberCard",
           align: "center",
-          minWidth: 70,
+          minWidth: 80,
           tooltip: true
         },
         {
           title: "商品名称",
           key: "productName",
           align: "center",
-          minWidth: 70,
+          minWidth: 100,
           tooltip: true
         },
         {
@@ -323,7 +323,7 @@ export default {
           title: "交易时间",
           key: "dealDate",
           align: "center",
-          minWidth: 70,
+          minWidth: 120,
           tooltip: true
         },
         {
@@ -354,7 +354,7 @@ export default {
           title: "利润百分比",
           key: "profitPercent",
           align: "center",
-          minWidth: 70,
+          minWidth: 60,
           tooltip: true,
           render: (h, param) => {
             return h("div", param.row.profitPercent + "%");
@@ -365,7 +365,7 @@ export default {
           title: "待结算金额(元)",
           key: "benefitPrice",
           align: "center",
-          minWidth: 60,
+          minWidth: 80,
           tooltip: true,
           className: "more"
         }

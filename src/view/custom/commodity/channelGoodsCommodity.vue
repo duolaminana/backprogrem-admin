@@ -30,7 +30,12 @@
               <span v-show='row.auditStatus==4&&row.status' class='green'>上架</span>
               <span v-show='row.auditStatus==4&&!row.status' class='gray'>下架</span>
               <span v-show='row.auditStatus==2' class='orange'>待审核</span>
-              <span v-show='row.auditStatus==3' class='red'>未通过</span>
+              <Poptip placement="right" width="350" trigger='hover'>
+                <span v-show='row.auditStatus==3' class='red'>未通过</span>
+                <div slot="content">
+                  {{row.remark}}
+                </div>
+              </Poptip>
           </template>
         </Table>
         <Page :total="total" show-elevator :current='pageNum' @on-change='pageChange' :page-size='pageSize' @on-page-size-change='sizeChange'  show-sizer/>
