@@ -62,6 +62,7 @@
       <Button type="primary" @click="reset" v-if="hasPerm('set:tranlist:seeback')">重置</Button>
       <Button type="primary" @click="exportTable" v-if="hasPerm('set:tranlist:seeback')">导出</Button>
       <Table
+        @on-row-click="rowClick"
         highlight-row
         :columns="columns"
         ref="table"
@@ -113,28 +114,28 @@
         <template slot-scope="{row,index}" slot="operation">
           <!-- 退款按钮 -->
           <Button
-            style="margin-right:10px"
+            style="margin-right:0px"
             type="primary"
             size="small"
             @click="refund(row)"
             v-if="hasPerm('set:tranlist:refund')&&row.refundStatus==1&&(row.orderStatus==3||row.orderStatus==4||row.orderStatus==6)&&(isShowOperation||((channelId==$store.state.user.channelId)&&$store.state.user.userVo.type))"
           >&nbsp退款&nbsp</Button>
           <Button
-            style="margin-right:10px"
+            style="margin-right:0px"
             disabled
             type="primary"
             size="small"
             v-if="hasPerm('set:tranlist:refund')&&row.refundStatus==2&&(row.orderStatus==3||row.orderStatus==4||row.orderStatus==6)&&(isShowOperation||((channelId==$store.state.user.channelId)&&$store.state.user.userVo.type))"
           >已退款</Button>
           <Button
-            style="margin-right:0px"
+            style="margin-right:0px;margin-left:10px"
             type="primary"
             size="small"
             @click="clear(row)"
             v-if="hasPerm('set:tranlist:refund')&&row.sendBack&&(row.orderStatus==4||row.orderStatus==6)&&(isShowOperation||((channelId==$store.state.user.channelId)&&$store.state.user.userVo.type))"
           >&nbsp清算&nbsp</Button>
           <Button
-            style="margin-right:0px"
+            style="margin-right:0px;margin-left:10px"
             disabled
             type="primary"
             size="small"
@@ -333,6 +334,7 @@ export default {
 
   data() {
     return {
+      // recursionData: {},
       refundReason: null,
       isShowClear: false,
       columnsClear: [
@@ -897,14 +899,36 @@ export default {
     }
   },
   methods: {
+    rowClick(value, index) {
+      const id = value.channelId;
+      const treeData = this.$refs.channelTree.treeData;
+      this.recursion(treeData, id);
+      let nodes = document.querySelectorAll(".tree a");
+      nodes.forEach((v, i) => {
+        nodes[i].classList.remove("curSelectedNode");
+      });
+      let node = document.querySelector(
+        '.tree a[title="' + this.recursionData.id + '"]'
+      );
+      node.classList.add("curSelectedNode");
+    },
+    recursion(ary, value) {
+      ary.find(v => {
+        if (value == v.id) {
+          this.recursionData = v;
+          return true;
+        } else {
+          if (v.children) this.recursion(v.children, value);
+        }
+      });
+    },
     popperShow() {
       this.getSearchTreeByUser();
-      this.routes=[];
+      this.routes = [];
     },
     popperHide() {
       let ary = [];
       this.$refs.treeData.getCheckedNodes().forEach(item => {
-        console.log(item);
         this.routes.push({
           routeId: item.id,
           routeType: item.routeType
@@ -915,12 +939,6 @@ export default {
     },
     countChange(index, row) {
       this.once = false;
-      console.log(index);
-      console.log(
-        this.dataTableMore[index],
-        row,
-        this.dataTableMore[index].productNumber
-      );
       if (row.refundNumber > row.productNumber) {
         row.refundNumber = row.productNumber;
         this.dataTableMore[index].refundNumber = row.productNumber;
@@ -1000,6 +1018,16 @@ export default {
         this.channelId = value.id;
         this.getOrder();
         this.getReceiveTerminal();
+        const treeData = this.$refs.channelTree.treeData;
+        this.recursion(treeData, this.channelId);
+        let nodes = document.querySelectorAll(".tree a");
+        nodes.forEach((v, i) => {
+          nodes[i].classList.remove("curSelectedNode");
+        });
+        let node = document.querySelector(
+          '.tree a[title="' + this.recursionData.id + '"]'
+        );
+        node.classList.add("curSelectedNode");
       }
     },
     // 用户重置按钮
@@ -1017,7 +1045,7 @@ export default {
       this.pageSize = 15;
       this.total = null;
       this.getOrder(); // 重新获取数据
-     this.getSearchTreeByUser();
+      this.getSearchTreeByUser();
     },
     // 页码改变时触发
     pageChange(value) {
@@ -1048,22 +1076,53 @@ export default {
       this.getOrderMore();
     },
     refundModalConfirm() {
-      this.isShowRefund = false;
-      let data = {
-        refundDetailList: this.dataTableMore,
-        channelId: this.channelId,
-        operator: this.$store.state.user.userId,
-        operatorName: this.$store.state.user.userName,
-        orderNo: this.orderNoMore,
-        refundAmount: this.refundAmount,
-        refundStatus: 3,
-        refundType: 1,
-        refundReason: this.refundReason
-      };
-      refundOrder(data).then(res => {
-        this.isShowRefund = false;
-        this.$Message.info("退款成功");
+      let array = [];
+      this.dataTableMore.forEach(item => {
+        if (item.productNumber != item.productProduce) {
+          if (item.refundNumber == 0) {
+            array.push(item.refundNumber);
+          }
+        }
       });
+      if (array.length) {
+        this.$Message.error("退货数量有误,请修改!");
+      } else {
+        if (!this.refundAmount) {
+          this.$Message.error("请修改退款金额");
+        } else {
+          let list = [];
+          this.dataTableMore.forEach(item => {
+            list.push({
+              activityPrice: item.activityPrice,
+              actualPrice: item.actualPrice,
+              buyPrice: item.buyPrice,
+              channelId: item.channelId,
+              couponAquire: item.couponAquire,
+              detailNo: item.detailNo,
+              integralAquire: item.integralAquire,
+              productCode: item.productCode,
+              productName: item.productName,
+              refundNumber: item.refundNumber,
+              salePrice: item.salePrice
+            });
+          });
+          let data = {
+            refundDetailList: list,
+            channelId: this.channelId,
+            operator: this.$store.state.user.userId,
+            operatorName: this.$store.state.user.userName,
+            orderNo: this.orderNoMore,
+            refundAmount: this.refundAmount,
+            refundStatus: 3,
+            refundType: 1,
+            refundReason: this.refundReason
+          };
+          refundOrder(data).then(res => {
+            this.isShowRefund = false;
+            this.$Message.info("退款成功");
+          });
+        }
+      }
     },
     clear(row) {
       console.log(row);
@@ -1249,8 +1308,6 @@ export default {
     margin-top: 10px;
   }
   .leftBox {
-    min-width: 250px;
-    min-height: 900px;
     float: left;
     margin-right: 20px;
   }

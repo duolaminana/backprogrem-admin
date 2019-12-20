@@ -673,11 +673,12 @@ export const searchAccountByAccountId = accountId => {
   });
 };
 // 根据账号id查询关联设备信息
-export const searchMachineByAccountId = accountId => {
+export const searchMachineByAccountId = (accountId,channelId) => {
   return axios.request({
     url: "/position/benefitMachine/queryByAccountId",
     params: {
-      accountId
+      accountId,
+      channelId
     },
     method: "get"
   });

@@ -14,12 +14,12 @@
     <!-- <Input v-model="stock"  placeholder="最大库存" style="width:100px" clearable class='marginRight'/> -->
     <Button type="primary" size="large" @click='generate'  :disabled='showNewlyType=="bj"'>生成货道</Button>
     <Button type="error" size="large" @click='deleteRow' style="float:right;" :disabled='listData.length==0' >删除行</Button>
-    <Button type="primary" size="large" @click='addRow'  style="margin-right:20px;float:right;" :disabled='listData.length>=maxLayerNo'>添加行</Button>
+    <Button type="primary" size="large" @click='addRow'  style="margin-right:20px;float:right;" :disabled='listData.length>=layerNo'>添加行</Button>
     <Card class='box' :padding='6'>
       <template v-for='(v,i) in listData'>
       <div class='rowBefore'>
         <Button type="error" icon="md-remove" @click='deleteClomun(i)':disabled='listData[i].AddMachineTypeRoadDto.length==0' ></Button>
-        <Button type="primary" icon="md-add" @click='addClomun(i)' :disabled='listData[i].AddMachineTypeRoadDto.length>=maxColumnNo' ></Button>
+        <Button type="primary" icon="md-add" @click='addClomun(i)' :disabled='listData[i].AddMachineTypeRoadDto.length>=columnNo' ></Button>
       </div>
       <Card class='row' :padding='6' :bordered='false'  :key='v+i'>
         <Card class='item' :class='{"itemAction":value.roadStatus==2}'  v-for='(value,index) in v.AddMachineTypeRoadDto' :key='value+index' :id='"box"+i+""+index' :ref='"box"+i+""+index' v-show='value.roadStatus!=3'  style='width:160px;'>
@@ -190,7 +190,7 @@ export default {
       console.log(previous)
       let data = {};
       data.id = null;
-      data.roadNo = previous.roadNo+1||(i+1-1)*this.columnNo+1;
+      data.roadNo = parseInt(previous.roadNo)+1||(i+1-1)*this.columnNo+1;
       data.roadNo = null;
       data.columnNo = previous.columnNo+1||1;
       data.layerNo = previous.layerNo||i+1;
@@ -388,23 +388,25 @@ export default {
     generate(){
       // this.modal = null;
       this.listData = [];
-      for(let i=1;i<=this.layerNo;i++){
-        let AddMachineTypeRoadDto = [];
-        for(let j=1;j<=this.columnNo;j++){
-          let data = {};
-          data.roadNo = (i-1)*this.columnNo+j;
-          data.columnNo = j;
-          data.layerNo = i;
-          data.roadType = this.roadType;
-          data.roadStatus = 1;
-          data.merged = false;
-          data.rowData = {};
-          data.goodsShow = false;
-          data.channelId = this.$store.state.user.channelId;
-          AddMachineTypeRoadDto = [...AddMachineTypeRoadDto,data]
+      setTimeout(()=>{
+        for(let i=1;i<=this.layerNo;i++){
+          let AddMachineTypeRoadDto = [];
+          for(let j=1;j<=this.columnNo;j++){
+            let data = {};
+            data.roadNo = (i-1)*this.columnNo+j;
+            data.columnNo = j;
+            data.layerNo = i;
+            data.roadType = this.roadType;
+            data.roadStatus = 1;
+            data.merged = false;
+            data.rowData = {};
+            data.goodsShow = false;
+            data.channelId = this.$store.state.user.channelId;
+            AddMachineTypeRoadDto = [...AddMachineTypeRoadDto,data]
+          }
+          this.listData = [...this.listData,{AddMachineTypeRoadDto}];
         }
-        this.listData = [...this.listData,{AddMachineTypeRoadDto}];
-      }
+      },100)
     },
     toBack(){
       this.modal = null;

@@ -278,7 +278,9 @@ export default {
     },
     handleClick (name) {
       switch (name) {
-        case 'logout': this.logout()
+        case 'logout':
+          this.$store.commit('setRoutersList', [])
+          this.logout()
           break
         case 'password': this.setPassword()
           break
@@ -288,7 +290,6 @@ export default {
     }
   },
   mounted(){
-    console.log(this.$store.state.user)
   }
 }
 </script>

@@ -3,7 +3,7 @@
     <div class="leftBox">
       <div
         class="QRcode"
-        v-if="$store.state.user.merchant.receiveTerminal==2&&$store.state.user.userVo.type==2"
+        v-if="$store.state.user.merchant.receiveTerminal==2&&$store.state.user.userVo.type==2&&isShowArrow"
       >
         <p>设备收钱码配置</p>
         <div class="btn">
@@ -47,7 +47,7 @@
         </div>
       </div>
       <!-- 渠道树 -->
-      <channel-tree @clickTreeRow="clickTreeRow" ref="channelTree"></channel-tree>
+      <channel-tree @clickTreeRow="clickTreeRow" @leftArrow="leftArrow"  ref="channelTree"></channel-tree>
     </div>
     <div class="rightDiv">
       <Input v-model="channelName" style="margin-right:10px" placeholder="请输入商户名称" clearable />
@@ -1002,6 +1002,7 @@ export default {
       }
     };
     return {
+      isShowArrow:true,
       checkType: null, //1用户名2手机号
       checkParam: null,
       loading: false,
@@ -1418,6 +1419,9 @@ export default {
     };
   },
   methods: {
+    leftArrow(value){
+      this.isShowArrow=value
+    },
     checkPhone(event) {
       this.checkType = 2;
       this.checkParam = event.target.value;
@@ -2120,12 +2124,11 @@ export default {
 <style lang="less" scoped>
 .channelMerchants {
   .leftBox {
-    min-width: 250px;
-    min-height: 900px;
     float: left;
     margin-right: 20px;
     .QRcode {
-      width: 80%;
+      margin: 0 auto;
+      width: 172px;
       border: 1px solid #c6c9ce;
       padding: 15px 10px 0 10px;
       p {
@@ -2133,7 +2136,7 @@ export default {
         font-size: 14px;
       }
       .btn {
-        margin: 5px 40px;
+        margin: 5px 23px;
       }
       .span {
         text-align: center;
@@ -2173,13 +2176,6 @@ u-divider-horizontal {
   margin-top: 10px;
 }
 
-// .uploadImg {
-//   width: 50px;
-//   height: 50px;
-//   border-radius: 2px;
-//   margin-right: 10px;
-//   vertical-align: bottom;
-// }
 .NewareaNames {
   /deep/ .ivu-form-item-content {
     width: 225px;

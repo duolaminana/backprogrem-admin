@@ -66,7 +66,7 @@ export default {
       formValidate: {},
       newlyAdded: false,
       channelId: this.$store.state.user.channelId, //渠道id
-      pageSize: 15, //页容量
+      pageSize: 10, //页容量
       pageNum: 1, //页码
       total: null,
       productCode: null,
@@ -75,7 +75,7 @@ export default {
       type: this.$store.state.user.userVo.type, //用户类型
       userId: this.$store.state.user.userVo.id, //用户id
       pageNumAll: 1, //商品总库存页码
-      pageSizeAll: 15, //商品总库存页容量
+      pageSizeAll: 10, //商品总库存页容量
       totalAll: null,
       stockDatas: [],
       stockColumns: [

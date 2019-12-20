@@ -1,7 +1,7 @@
 <template>
   <div class="register">
-    <div class="register_bg"></div>
-    <!-- logo -->
+    <div class="register_bg">
+       <!-- logo -->
     <div class="logo">
       <img src="@/assets/images/huanqiuzhineng.png" alt />
     </div>
@@ -13,6 +13,8 @@
         <p>0755-23596613</p>
       </div>
     </div>
+    </div>
+   
     <!-- 注册框 -->
     <div class="register-con">
       <Card icon="reg-in" dis-hover>

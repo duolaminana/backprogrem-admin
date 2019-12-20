@@ -19,6 +19,7 @@ export default {
 }
 html,body{
   .size;
+  min-width: 1200px;
   overflow: hidden;
   margin: 0;
   padding: 0;

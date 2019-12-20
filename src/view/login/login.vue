@@ -4,19 +4,21 @@
 
 <template>
   <div class="login">
-    <div class="login_bg"></div>
-    <!-- logo -->
-    <div class="logo">
-      <img src="../../assets/images/huanqiuzhineng.png" alt />
-    </div>
-    <!-- phone -->
-    <div class="phone">
-      <img src="../../assets/images/phone.png" alt />
-      <div class="text">
-        <span>服务热线</span>
-        <p>0755-23596613</p>
+    <div class="login_bg">
+      <!-- logo -->
+      <div class="logo">
+        <img src="../../assets/images/huanqiuzhineng.png" alt />
+      </div>
+      <!-- phone -->
+      <div class="phone">
+        <img src="../../assets/images/phone.png" alt />
+        <div class="text">
+          <span>服务热线</span>
+          <p>0755-23596613</p>
+        </div>
       </div>
     </div>
+
     <!-- 登陆框 -->
     <div class="login-con">
       <Card icon="log-in">
@@ -164,7 +166,7 @@ export default {
     setCookie(key, value, is) {
       if (is) {
         var cipherText = CryptoJS.AES.encrypt(
-          value+"",
+          value + "",
           "secretkey123"
         ).toString();
         Cookies.set(key, cipherText, { expires: 7 });

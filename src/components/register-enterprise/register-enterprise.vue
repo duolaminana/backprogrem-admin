@@ -26,7 +26,6 @@
   }
   .foot {
     height: 160px;
-    margin: 10px 0;
     .check-text {
       color: rgb(134, 134, 134);
       font-size: 10px;
@@ -58,7 +57,7 @@
       line-height: 24px;
     }
     /deep/ .ivu-form-item-error-tip {
-      margin-left: 16%;
+      margin-left: 25%;
     }
     /deep/.ivu-upload-list-file-finish {
       display: none;

@@ -1,6 +1,7 @@
 <template>
   <div>
-    <!-- 按钮 -->
+    <template v-if="hasPerm('pro:goods:edit')" >
+      <!-- 按钮 -->
       <Button type="primary" icon="md-add" @click='showModal(true,"xz",false)'>新增子分类</Button>
       <Button style="margin-left: 10px" icon="md-add" @click='showModal(true,"xz",true);isTop=true'>添加顶部分类</Button>
       <!-- 下拉菜单 -->
@@ -16,6 +17,7 @@
         </DropdownMenu>
       </Dropdown>
       <!-- 警告 -->
+    </template>
       <Alert style="margin-top: 20px" show-icon>当前选择：{{treeRowData.title?treeRowData.title:''}}</Alert>
       <!-- 搜索 -->
       <Input

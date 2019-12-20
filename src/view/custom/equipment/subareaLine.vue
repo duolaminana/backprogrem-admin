@@ -24,7 +24,7 @@
         <Table border ref="selection" :columns="columns" :data="datas">
           <template slot-scope="{ row, index }"  slot="edit">
               <Button v-if="channelId==$store.state.user.userVo.channelId && hasPerm('pos:sub:edit') " type="primary" size="small" @click='showNewlyAdded("bj",index,row)' class='marBtn' >编辑</Button>
-              <Button v-if="channelId==$store.state.user.userVo.channelId && hasPerm('pos:sub:edit') " type="error" size="small" @click="modalDel=true;delID=row.id;delIndex=index">删除</Button>
+              <Button v-if="channelId==$store.state.user.userVo.channelId && hasPerm('pos:sub:edit') " type="error" size="small" @click="modalDel=true;delID=row.id;delIndex=index;delRouteType=row.routeType">删除</Button>
           </template>
           <template slot-scope="{ row, index }"  slot="routeType" >
               <!-- <span v-show='row.routeType==1' class='blue'>分区</span> -->
@@ -93,6 +93,7 @@ export default {
       channelValue:[],
       channelList:[],
       routeType:null,
+      delRouteType:null,
       routeTypeList:[
         {value:'1',label:'分区'},
         {value:'2',label:'线路'},
@@ -206,7 +207,7 @@ export default {
     },
     del(){
       this.modal_loading = true;
-      let url = '/route/deleteRoute?id='+this.delID
+      let url = `/route/deleteRoute?id=${this.delID}&&routeType=${this.delRouteType}`
       netWorkDevice(url,null,'delete').then(res => {
         this.modal_loading = false;
         this.modalDel = false;
@@ -245,7 +246,7 @@ export default {
               return false
             }
             let data = {
-              routeName,
+              routeName:routeType==1?routeName:routeName+'(线路)',
               remark,
               routeType,
               pid:this.pickTreeData?this.pickTreeData.id:-1,

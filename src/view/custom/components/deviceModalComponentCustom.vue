@@ -259,24 +259,26 @@ export default {
     generate(){
       if(this.layerNo&&this.columnNo){
         this.listData = [];
-        for(let i=1;i<=this.layerNo;i++){
-          let AddMachineTypeRoadDto = [];
-          for(let j=1;j<=this.columnNo;j++){
-            let data = {};
-            // data.roadNo = (i-1)*this.columnNo+j;
-            data.roadNo = null;
-            data.columnNo = j;
-            data.layerNo = i;
-            data.roadType = this.roadType;
-            data.roadStatus = 1;
-            data.merged = false;
-            data.rowData = {};
-            data.goodsShow = false;
-            data.channelId = this.$store.state.user.channelId;
-            AddMachineTypeRoadDto = [...AddMachineTypeRoadDto,data]
+         setTimeout(()=>{
+            for(let i=1;i<=this.layerNo;i++){
+            let AddMachineTypeRoadDto = [];
+            for(let j=1;j<=this.columnNo;j++){
+              let data = {};
+              // data.roadNo = (i-1)*this.columnNo+j;
+              data.roadNo = null;
+              data.columnNo = j;
+              data.layerNo = i;
+              data.roadType = this.roadType;
+              data.roadStatus = 1;
+              data.merged = false;
+              data.rowData = {};
+              data.goodsShow = false;
+              data.channelId = this.$store.state.user.channelId;
+              AddMachineTypeRoadDto = [...AddMachineTypeRoadDto,data]
+            }
+            this.listData = [...this.listData,{AddMachineTypeRoadDto}];
           }
-          this.listData = [...this.listData,{AddMachineTypeRoadDto}];
-        }
+        },100)
       }else{
         this.$Message.error('请选输入行和列！');
       }

@@ -183,7 +183,7 @@
       </div>
     </div>
     <div class='content'>
-      <p class='nums'>销售额<span>{{mapData.sales}}</span>元&nbsp&nbsp&nbsp&nbsp&nbsp利润额<span>{{mapData.profits}}</span>元</p>
+      <p class='nums'>销售额<span>{{mapData.sales||0}}</span>元&nbsp&nbsp&nbsp&nbsp&nbsp利润额<span>{{mapData.profits||0}}</span>元</p>
       <big-data-map 
         :dataList = 'mapList'
       ></big-data-map>

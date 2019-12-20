@@ -309,15 +309,19 @@ export default {
     // 获取tree组件的选中子节点
     getNodes() {
       let ary = this.$refs.treeData.getCheckedAndIndeterminateNodes();
-      const pidsStr = ary.map(i => i.id).join(",");
-      permissionToRole({ pids: pidsStr, roleId: this.roleId }).then(res => {
-        if (res.data.code == 200) {
-          this.purviewFormVisible = false;
-          this.$Message.info("权限更新成功！！！！");
-          // 重新渲染页面
-          this.getRole();
-        }
-      });
+      if(ary.length){
+        const pidsStr = ary.map(i => i.id).join(",");
+        permissionToRole({ pids: pidsStr, roleId: this.roleId }).then(res => {
+          if (res.data.code == 200) {
+            this.purviewFormVisible = false;
+            this.$Message.info("权限更新成功！！！！");
+            // 重新渲染页面
+            this.getRole();
+          }
+        });
+      }else{
+        this.$Message.error("请给该角色选择权限！");
+      }
     },
 
     // 新增点击事件

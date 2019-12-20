@@ -2,7 +2,7 @@
   <div id="loginMessage">
     <Form ref="loginMessage" :model="form" :rules="rules" @keydown.enter.native="handleSubmit">
       <FormItem prop="phone" style="margin-top:20px">
-        <Input v-model="form.phone" placeholder="请输入手机号码">
+        <Input :maxlength="11" v-model="form.phone" placeholder="请输入手机号码">
           <Icon :size="16" type="ios-call" slot="prefix" />
         </Input>
       </FormItem>

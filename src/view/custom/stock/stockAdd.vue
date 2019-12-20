@@ -152,7 +152,7 @@ export default {
       positionName: null, //点位名称
       routeId: null, //线路id
       productName: null,
-      pageSize: 15,
+      pageSize: 10,
       pageNum: 1,
       total: null
     };

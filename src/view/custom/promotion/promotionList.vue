@@ -918,6 +918,7 @@ export default {
   },
   mounted() {
     this.getActivity();
+    
     // this.getActivity().then(() => {
     //   this.countDown();
     // });
@@ -986,8 +987,6 @@ export default {
     margin-bottom: 0px;
   }
   .leftBox {
-    min-width: 250px;
-    min-height: 780px;
     float: left;
     margin-right: 20px;
   }

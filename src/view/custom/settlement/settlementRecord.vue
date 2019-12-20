@@ -86,7 +86,7 @@
       />
     </div>
     <!-- 结算详情弹框的模态框 -->
-    <Modal v-model="isShow" :mask-closable="false" :title="'结算详情('+deductAccount+')'" width="1500">
+    <Modal v-model="isShow" :mask-closable="false" :title="'结算详情('+deductAccount+')'" width="1700">
       <Table
         class="setMore"
         :columns="columnsMore"
@@ -103,6 +103,9 @@
         </template>
         <template slot-scope="{row,index}" slot="cardNo">
           <span>{{row.cardNo|cardNo}}</span>
+        </template>
+        <template slot-scope="{row,index}" slot="flowType">
+          <span>{{row.flowType|flowTypeText}}</span>
         </template>
       </Table>
       <Page
@@ -371,7 +374,7 @@ export default {
           title: "本金(元)",
           slot: "primayCapital",
           align: "center",
-          minWidth: 60,
+          minWidth: 80,
           tooltip: true,
           className: "more"
         },
@@ -416,6 +419,13 @@ export default {
           align: "center",
           minWidth: 100,
           tooltip: true
+        },
+        {
+          title: "资金流动类型",
+          slot: "flowType",
+          align: "center",
+          minWidth: 80,
+          tooltip: true,
         }
       ],
       dataTableMore: [], //结算详情数据
@@ -488,6 +498,16 @@ export default {
     },
     cardNo(value) {
       return `${value.substring(0, 3)}****${value.substring(value.length - 4)}`;
+    },
+    flowTypeText(num) {
+      switch (num) {
+        case 1:
+          return "正常交易";
+          break;
+        case 2:
+          return "退款";
+          break;
+      }
     }
   },
   methods: {
@@ -542,6 +562,7 @@ export default {
     contactEquipment(row) {
       this.isShowEquipment = true;
       this.accountId = row.accountId;
+      this.channelId = row.channelId;
       this.getMachine();
     },
     // 查看收款人信息
@@ -655,7 +676,7 @@ export default {
     },
     // 获取关联设备详情
     getMachine() {
-      searchMachineByAccountId(this.accountId).then(res => {
+      searchMachineByAccountId(this.accountId,this.channelId).then(res => {
         if (res.data.code == 200) {
           this.dataTableEquipment = res.data.result;
         }
@@ -709,8 +730,8 @@ export default {
     margin-top: 10px;
   }
   .leftBox {
-    min-width: 250px;
-    min-height: 900px;
+    // min-width: 250px;
+    // min-height: 900px;
     float: left;
     margin-right: 20px;
   }

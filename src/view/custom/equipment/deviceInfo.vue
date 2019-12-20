@@ -85,7 +85,7 @@
           </template>
           <template slot-scope="{ row, index }" slot="setHumidity">
             <template v-if='row.temperatureHumidityStatus'>
-              <a v-if='row.machineHumidness&&row.machineTemperature' class='lookDetails' :disabled="row.surplusDays<0||channelId!=$store.state.user.userVo.channelId"  @click='setHun(row,index,false)'>{{row.machineTemperature}}℃/{{row.machineHumidness}}%</a>
+              <a v-if='row.machineHumidness&&row.machineTemperature' class='lookDetails' :disabled="row.surplusDays<0||channelId!=$store.state.user.userVo.channelId||!hasPerm('pos:dev:edit')"  @click='setHun(row,index,false)'>{{row.machineTemperature}}℃/{{row.machineHumidness}}%</a>
               <a v-else class='green lookDetails' :disabled="row.surplusDays<0||channelId!=$store.state.user.userVo.channelId" @click='setHun(row,index,true)'>去设定</a>
             </template>
             <span v-else>——</span>
@@ -861,15 +861,15 @@ export default {
     },
     devDelete(row,index){
       if(row.status!=3){
-        if(row.stock>0){
+        if(row.stock==null||row.stock>0){
           this.modalDel=true;
           this.delID=row.id;
           this.delIndex=index
         }else{
-          this.$Message.error("在点位中不能被删除！");
+          this.$Message.error("存在商品不能删除！");
         }
       }else{
-        this.$Message.error("存在商品不能删除！");
+        this.$Message.error("在点位中不能被删除！");
       }
     },
     trBgColor(row,index){

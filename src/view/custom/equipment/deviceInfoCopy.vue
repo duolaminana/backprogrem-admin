@@ -496,6 +496,7 @@ export default {
       hardwareVersionList:[
         {value:1,label:'第一代'},
         {value:2,label:'第二代'},
+        {value:3,label:'药机指令'},
       ],
       priceTemplate:null,
       rowData:null, //行信息
@@ -1360,6 +1361,13 @@ export default {
         this.tableRowData = null;
         this.pageNum = 1;
         this.getPageDatas(value.id);
+        const cId = value.id;
+        let nodes = document.querySelectorAll('.tree a');
+        nodes.forEach((v,i)=>{
+          nodes[i].classList.remove('curSelectedNode')
+        })
+        let node = document.querySelector('.tree a[title="'+cId+'"]')
+        node.classList.add('curSelectedNode')
         console.log(value)
       }
     },

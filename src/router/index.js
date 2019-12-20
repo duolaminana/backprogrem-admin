@@ -55,20 +55,24 @@ function refreshRoute() {
     userId: store.state.user.userVo.id
   }
   netWorkHttp('/permission/queryUserMenuOrPermission', data).then(res => {
-    let data = res.result
-    const routers = getMenuByRouter(data)
-    const originRouteNames = router.options.routes.map(r => r.name)
-    // // 需要解决重复加入问题
-    if (
-      routers &&
-      routers.length &&
-      originRouteNames.indexOf(routers[0].name) < 0
-    ) {
-      data = [home, ...data]
-      const AsyncRouter = filterAsyncRouter(data)
-      router.addRoutes(AsyncRouter)
-      store.commit('setRoutersList', AsyncRouter)
-      router.addRoutes([{ path: '*', redirect: '/404' }])
+    if(res.result.length){
+      let data = res.result
+      const routers = getMenuByRouter(data)
+      const originRouteNames = router.options.routes.map(r => r.name)
+      // // 需要解决重复加入问题
+      if (
+        routers &&
+        routers.length &&
+        originRouteNames.indexOf(routers[0].name) < 0
+      ) {
+        data = [home, ...data]
+        const AsyncRouter = filterAsyncRouter(data)
+        router.addRoutes(AsyncRouter)
+        store.commit('setRoutersList', AsyncRouter)
+        router.addRoutes([{ path: '*', redirect: '/404' }])
+      }
+    }else{
+      // console.log(this.$router)
     }
   })
 }

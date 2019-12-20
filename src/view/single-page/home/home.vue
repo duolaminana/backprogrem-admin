@@ -253,6 +253,7 @@ import { ChartPie } from "_c/charts";
 import { netWorkOrder } from "@/api/data";
 import countTo from "vue-count-to";
 import { searchQRcodeByChannelId } from "@/api/http";
+import { setInterval } from 'timers';
 export default {
   components: {
     ChartPie,
@@ -262,6 +263,7 @@ export default {
   name: "home",
   data() {
     return {
+      timing:null,
       QRcodeList: [],
       pieDataList: [],
       xAxisData: [],
@@ -333,13 +335,27 @@ export default {
           this.QRcodeList = res.data.result;
         }
       });
+    },
+    repeat(){
+      this.getHeadInfo();
     }
   },
-  mounted() {
-    this.getHeadInfo();
+  mounted(){
     this.getSalesVolumeReport();
     this.getPieReport();
     this.getQRcodeByChannelId();
+  },
+  beforeRouteEnter(to,from,next){
+    next(vm=>{
+      vm.repeat();
+      vm.timing =  window.setInterval(()=>{
+        vm.repeat()
+      },600000)
+    })
+  },
+  beforeRouteLeave(to, from, next) {
+    clearInterval(this.timing);
+    next();
   }
 };
 </script>
