@@ -180,7 +180,7 @@ export default {
       isShowAccount: false, //结算账户弹框显示方式
       totalMore: null, // 页码数
       pageNumMore: 1, // 页码
-      pageSizeMore: 15, // 页容量
+      pageSizeMore: 10, // 页容量
       orderNo: null, //订单号
       clearingId: null, //结算主表id
       isShow: false, //结算详情弹框显示方式
@@ -723,6 +723,7 @@ export default {
     margin-top: 10px;
   }
   .leftBox {
+    min-height: 900px;
     float: left;
     margin-right: 20px;
   }

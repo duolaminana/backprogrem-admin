@@ -165,6 +165,7 @@
         <div class="head">
           <div class="textHead">
             <strong>销售额统计</strong>
+            <Icon @click='getHeadInfo' type="md-refresh"  style="cursor: pointer;margin-left:15px;"/>
           </div>
           <div id="tabHead" class="tab-head">
             <ul>
@@ -344,6 +345,7 @@ export default {
     this.getSalesVolumeReport();
     this.getPieReport();
     this.getQRcodeByChannelId();
+    console.log(this.$store)
   },
   beforeRouteEnter(to,from,next){
     next(vm=>{

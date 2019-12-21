@@ -445,7 +445,7 @@ export default {
   margin-top: 10px;
 }
 .leftBox {
-  min-width: 250px;
+  // min-width: 250px;
   min-height: 780px;
   float: left;
   margin-right: 20px;

@@ -6,8 +6,8 @@
         <!-- 需要放在菜单上面的内容，如Logo，写在side-menu标签内部，如下 -->
         <div class="logo-con">
           <!-- <img v-show="!collapsed" :src="maxLogo" key="max-logo" style='margin-left:25px' /> -->
-          <img v-show="!collapsed" :src="maxLogo" key="max-logo" />
-          <img v-show="collapsed" :src="minLogo" key="min-logo" />
+          <img v-show="!collapsed" :src="$store.state.user.merchant.logoAddress||maxLogo" key="max-logo" />
+          <img v-show="collapsed" :src="$store.state.user.merchant.badgeAddress||minLogo" key="min-logo" />
         </div>
       </side-menu>
     </Sider>
@@ -55,7 +55,7 @@ import { mapMutations, mapActions, mapGetters } from 'vuex'
 import { getNewTagList, routeEqual } from '@/libs/util'
 import routers from '@/router/routers'
 import minLogo from '@/assets/images/logo-min.png'
-import maxLogo from '@/assets/images/logo.png'
+import maxLogo from '@/assets/images/huanqiuzhineng.png'
 import './main.less'
 export default {
   name: 'Main',
@@ -72,8 +72,8 @@ export default {
   data () {
     return {
       collapsed: false, //是否收缩显示
-      minLogo:this.$store.state.user.merchant.badgeAddress?this.$store.state.user.merchant.badgeAddress:minLogo,
-      maxLogo:this.$store.state.user.merchant.logoAddress?this.$store.state.user.merchant.logoAddress:maxLogo,
+      minLogo,
+      maxLogo,
       isFullscreen: false
     }
   },
@@ -197,7 +197,7 @@ export default {
       })
     }
     // 获取未读消息条数
-    this.getUnreadMessageCount()
+    this.getUnreadMessageCount();
   }
 }
 </script>

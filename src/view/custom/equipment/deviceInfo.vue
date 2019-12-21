@@ -1667,7 +1667,7 @@ export default {
       box-shadow:0px 0px 0px #fff;
     }
     .leftBox {
-      min-width: 250px;
+      // min-width: 250px;
       min-height: 900px;
       float: left;
       margin-right: 20px;

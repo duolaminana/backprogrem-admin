@@ -4,7 +4,7 @@ import qs from "qs";
 // 上传文件地址
 // 图片上传
 export const Upload =
-  "http://vendor-platform-test.sun-hyt.com/system/file/uploadFile";
+  "https://vendor-platform-test.sun-hyt.com/system/file/uploadFile";
 
 // ---------------------------------------角色模块--------------------------------------------
 

@@ -1187,7 +1187,7 @@ export default {
 </script>
 <style lang="less" scoped>
 .leftBox {
-  min-width: 250px;
+  // min-width: 250px;
   min-height: 900px;
   float: left;
   margin-right: 20px;

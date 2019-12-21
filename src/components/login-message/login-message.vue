@@ -35,42 +35,35 @@
 import { getsmsCode } from "@/api/user";
 export default {
   name: "LoginMessage",
-  props: {
-    phoneRules: {
-      type: Array,
-      default: () => {
-        return [
-          { required: true, message: "手机号码不能为空", trigger: "blur" }
-        ];
-      }
-    },
-    smsCodeRules: {
-      type: Array,
-      default: () => {
-        return [
-          { required: true, message: "短信验证码不能为空", trigger: "blur" }
-        ];
-      }
-    }
-  },
   data() {
+    const validatePhone = (rule, value, callback) => {
+      if (!value) {
+        return callback(new Error("输入不能为空"));
+      } else if (!/^1[3456789]\d{9}$/.test(value)) {
+        callback(new Error("电话号码格式错误"));
+      } else {
+        callback();
+      }
+    };
     return {
       form: {
         phone: "",
         smsCode: ""
       },
+      rules:{
+        phone: [{ required: true, validator: validatePhone, trigger: "blur" }],
+        smsCode: [
+          {
+            required: true,
+            message: "输入不能为空",
+            trigger: "blur"
+          }
+        ]
+      },
       content: "发送验证码", // 按钮里显示的内容
       totalTime: 60, // 记录具体倒计时时间
       canClick: true // 添加canClick
     };
-  },
-  computed: {
-    rules() {
-      return {
-        phone: this.phoneRules,
-        smsCode: this.smsCodeRules
-      };
-    }
   },
   methods: {
     handleSubmit() {
@@ -106,12 +99,6 @@ export default {
 };
 </script>
 <style lang="less" scoped>
-// .disabled {
-//   background-color: #57a3f3;
-//   border-color: #ddd;
-//   color: #57a3f3;
-//   cursor: not-allowed; // 鼠标变化
-// }
 .sms {
   text-align: right;
   .smsCode {

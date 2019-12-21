@@ -142,7 +142,7 @@ class HttpRequest {
             }
         }else{
           console.log('失败')
-          console.log(error.config)
+          console.log(error)
         }
         return Promise.reject(error)
       }

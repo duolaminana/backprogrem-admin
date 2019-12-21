@@ -27,8 +27,8 @@
               <a class='lookDetails' @click='showNewlyAdded("ck",index,row)'>查看详情</a>
             </template>
             <template slot-scope="{ row, index }" slot="position">
-              <a class='lookDetails' v-if='row.positionId' :disabled='row.status!=3' @click='positionInfo(row,index,false)'>{{row.positionName}}</a>
-              <a v-else-if='!row.positionId&&(row.status==1||row.status==7)' @click='positionInfo(row,index,true)' class='green' >去设定</a>
+              <a class='lookDetails' :disabled="row.status!=3||channelId!=$store.state.user.userVo.channelId" v-if='row.positionId'@click='positionInfo(row,index,false)'>{{row.positionName}}</a>
+              <a :disabled='channelId!=$store.state.user.userVo.channelId' v-else-if='!row.positionId&&(row.status==1||row.status==7)' @click='positionInfo(row,index,true)' class='green' >去设定</a>
               <a v-else class='gray'>去设定</a>
             </template>
             <template slot-scope="{ row, index }" slot="network">
@@ -1439,7 +1439,7 @@ export default {
       box-shadow:0px 0px 0px #fff;
     }
     .leftBox {
-      min-width: 250px;
+      // min-width: 250px;
       min-height: 900px;
       float: left;
       margin-right: 20px;

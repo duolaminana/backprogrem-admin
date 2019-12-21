@@ -987,6 +987,7 @@ export default {
     margin-bottom: 0px;
   }
   .leftBox {
+    min-height: 780px;
     float: left;
     margin-right: 20px;
   }

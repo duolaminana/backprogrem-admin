@@ -919,7 +919,7 @@ export default {
     height: 33px;
   }
   .leftBox {
-    min-width: 250px;
+    // min-width: 250px;
     max-width: 320px;
     min-height: 900px;
     float: left;

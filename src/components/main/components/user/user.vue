@@ -280,6 +280,8 @@ export default {
       switch (name) {
         case 'logout':
           this.$store.commit('setRoutersList', [])
+          this.$store.commit('setMerchant', {})
+          console.log(this.$store)
           this.logout()
           break
         case 'password': this.setPassword()

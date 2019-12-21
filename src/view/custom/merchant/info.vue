@@ -153,10 +153,10 @@
           <div style="margin-bottom:10px">
             <strong>基础信息</strong>
           </div>
-          <FormItem label="渠道名称" prop="channelName">
+          <FormItem label="商户名称" prop="channelName">
             <Input
               v-model.trim="formValidatePre.channelName"
-              placeholder="请输入渠道名称"
+              placeholder="请输入商户名称"
               :disabled="isdisabled"
             ></Input>
           </FormItem>
@@ -181,7 +181,7 @@
             <Input
               :maxlength="18"
               v-model.trim="formValidatePre.card"
-              placeholder="请输入身份证号"
+              placeholder="请输入收款人18位身份证号码"
               :disabled="isdisabled"
             ></Input>
           </FormItem>
@@ -237,7 +237,7 @@
               :disabled="isdisabled"
             ></Input>
           </FormItem>
-          <FormItem prop="card" label="收款人身份证号码" style="margin-bottom:10px">
+          <FormItem prop="card" label="收款人身份证号" style="margin-bottom:10px">
             <Input
               :maxlength="18"
               v-model.trim="formValidatePre.card"
@@ -475,7 +475,7 @@
           </FormItem>
           <FormItem label="公司税号" prop="companyNo">
             <Input
-              :maxlength="30"
+              :maxlength="20"
               v-model.trim="formValidateEnt.companyNo"
               placeholder="税号由15位.18位或20位组成"
               :disabled="isdisabled"
@@ -1425,12 +1425,16 @@ export default {
     checkPhone(event) {
       this.checkType = 2;
       this.checkParam = event.target.value;
-      this.searchFastCheck();
+      if(this.modalTitle == "新增【商户】"){
+        this.searchFastCheck();
+      }
     },
     checkUserName(event) {
       this.checkType = 1;
       this.checkParam = event.target.value;
-      this.searchFastCheck();
+      if(this.modalTitle == "新增【商户】"){
+        this.searchFastCheck();
+      }
     },
 
     // 去设置收钱码

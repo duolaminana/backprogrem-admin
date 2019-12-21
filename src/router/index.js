@@ -72,7 +72,9 @@ function refreshRoute() {
         router.addRoutes([{ path: '*', redirect: '/404' }])
       }
     }else{
-      // console.log(this.$router)
+      router.push({
+        name: 'error_500'
+      })
     }
   })
 }

@@ -103,8 +103,8 @@
       <div style="margin-bottom:10px">
         <strong>个人信息</strong>
       </div>
-      <FormItem prop="channelName" label="渠道名称" style="margin-bottom:20px">
-        <Input v-model.trim="form.channelName" placeholder="请输入渠道名称"></Input>
+      <FormItem prop="channelName" label="商户名称" style="margin-bottom:20px">
+        <Input v-model.trim="form.channelName" placeholder="请输入商户名称"></Input>
       </FormItem>
       <FormItem prop="name" label="真实姓名" style="margin-bottom:20px">
         <Input :maxlength="30" v-model.trim="form.name" placeholder="请输入真实姓名"></Input>

@@ -118,28 +118,28 @@
             type="primary"
             size="small"
             @click="refund(row)"
-            v-if="hasPerm('set:tranlist:refund')&&row.refundStatus==1&&(row.orderStatus==3||row.orderStatus==4||row.orderStatus==6)&&(isShowOperation||((channelId==$store.state.user.channelId)&&$store.state.user.userVo.type))"
+            v-if="hasPerm('set:tranlist:refundback')&&row.refundStatus==1&&(row.orderStatus==2||row.orderStatus==3||row.orderStatus==4||row.orderStatus==6)&&(isShowOperation||((channelId==$store.state.user.channelId)&&$store.state.user.userVo.type))"
           >&nbsp退款&nbsp</Button>
           <Button
             style="margin-right:0px"
             disabled
             type="primary"
             size="small"
-            v-if="hasPerm('set:tranlist:refund')&&row.refundStatus==2&&(row.orderStatus==3||row.orderStatus==4||row.orderStatus==6)&&(isShowOperation||((channelId==$store.state.user.channelId)&&$store.state.user.userVo.type))"
+            v-if="hasPerm('set:tranlist:refundback')&&row.refundStatus==2&&(row.orderStatus==2||row.orderStatus==3||row.orderStatus==4||row.orderStatus==6)&&(isShowOperation||((channelId==$store.state.user.channelId)&&$store.state.user.userVo.type))"
           >已退款</Button>
           <Button
             style="margin-right:0px;margin-left:10px"
             type="primary"
             size="small"
             @click="clear(row)"
-            v-if="hasPerm('set:tranlist:refund')&&row.sendBack&&(row.orderStatus==4||row.orderStatus==6)&&(isShowOperation||((channelId==$store.state.user.channelId)&&$store.state.user.userVo.type))"
+            v-if="hasPerm('set:tranlist:refundback')&&(row.sendBack==3||row.sendBack==1)&&(row.orderStatus==2||row.orderStatus==4||row.orderStatus==6)&&(isShowOperation||((channelId==$store.state.user.channelId)&&$store.state.user.userVo.type==2))"
           >&nbsp清算&nbsp</Button>
           <Button
             style="margin-right:0px;margin-left:10px"
             disabled
             type="primary"
             size="small"
-            v-if="hasPerm('set:tranlist:refund')&&row.sendBack&&(row.orderStatus==4||row.orderStatus==6)&&(isShowOperation||((channelId==$store.state.user.channelId)&&$store.state.user.userVo.type))"
+            v-if="hasPerm('set:tranlist:refundback')&&row.refundStatus==1&&row.sendBack==2&&(row.orderStatus==2||row.orderStatus==4||row.orderStatus==6)&&(isShowOperation||((channelId==$store.state.user.channelId)&&$store.state.user.userVo.type==2))"
           >已清算</Button>
         </template>
       </Table>
@@ -251,7 +251,7 @@
           size="large"
           @click="isShowRefund=false"
         >取消</Button>
-        <Button type="primary" size="large" @click="refundModalConfirm">确定</Button>
+        <Button type="primary" size="large" :loading="loading" @click="refundModalConfirm">确定</Button>
       </div>
     </Modal>
     <!-- 清算页面 -->
@@ -280,7 +280,10 @@
           <span v-if="row.activityPrice>0">{{row.productNumber*row.activityPrice}}</span>
           <span v-else>{{row.productNumber*row.actualPrice}}</span>
         </template>
-        <template slot-scope="{row,index}" slot="clearNum">{{row.productNumber-row.productProduce}}</template>
+        <template
+          slot-scope="{row,index}"
+          slot="clearNum"
+        >{{row.productNumber-row.productProduce-row.refundNumber}}</template>
       </Table>
       <div class="textDiv">
         <div class="leftReason">
@@ -334,7 +337,7 @@ export default {
 
   data() {
     return {
-      // recursionData: {},
+      loading: false,
       refundReason: null,
       isShowClear: false,
       columnsClear: [
@@ -361,6 +364,13 @@ export default {
         {
           title: "出货数量",
           key: "productProduce",
+          align: "center",
+          minWidth: 60,
+          tooltip: true
+        },
+        {
+          title: "退款数量",
+          key: "refundNumber",
           align: "center",
           minWidth: 60,
           tooltip: true
@@ -813,7 +823,7 @@ export default {
           }
         })
         .reduce((pre, cur) => {
-          return pre + cur;
+          return pre + cur || 0;
         }, 0);
       return value > this.payAmount ? this.payAmount : value;
     },
@@ -942,6 +952,8 @@ export default {
       if (row.refundNumber > row.productNumber) {
         row.refundNumber = row.productNumber;
         this.dataTableMore[index].refundNumber = row.productNumber;
+      } else {
+        this.dataTableMore[index].refundNumber = row.refundNumber;
       }
     },
     add(row, index) {
@@ -1066,6 +1078,7 @@ export default {
     // 退款点击事件
     refund(row) {
       console.log(row);
+      this.loading = false;
       this.refundReason = null;
       this.once = true;
       this.channelId = row.channelId;
@@ -1090,6 +1103,7 @@ export default {
         if (!this.refundAmount) {
           this.$Message.error("请修改退款金额");
         } else {
+          this.loading = true;
           let list = [];
           this.dataTableMore.forEach(item => {
             list.push({
@@ -1117,10 +1131,22 @@ export default {
             refundType: 1,
             refundReason: this.refundReason
           };
-          refundOrder(data).then(res => {
-            this.isShowRefund = false;
-            this.$Message.info("退款成功");
-          });
+          refundOrder(data)
+            .then(res => {
+              if (res.data.code == 200) {
+                this.loading = false;
+                this.isShowRefund = false;
+                this.$Message.info("退款成功");
+                this.getOrder();
+              } else {
+                this.loading = false;
+                this.$Message.error(res.data.message);
+              }
+            })
+            .catch(err => {
+              this.loading = false;
+              this.$Message.error(res.data.message);
+            });
         }
       }
     },

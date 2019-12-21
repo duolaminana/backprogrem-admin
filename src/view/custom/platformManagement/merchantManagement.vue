@@ -32,7 +32,7 @@
             type="primary"
             size="small"
             v-if="hasPerm('sys:merchantinfoMang:check')&&(row.auditStatus==4||row.auditStatus==3||row.auditStatus==2)"
-            @click="checkModal(row)"
+            @click="checkModal(row,'bj')"
             :disabled="row.auditStatus==2"
           >编辑</Button>
 
@@ -40,7 +40,7 @@
             type="success"
             size="small"
             style="margin-right: 0px"
-            @click="checkModal(row)"
+            @click="checkModal(row,'sh')"
             v-if="hasPerm('sys:merchantinfoMang:check')&&row.auditStatus==2"
           >&nbsp&nbsp审核&nbsp&nbsp</Button>
 
@@ -487,6 +487,13 @@
       <div slot="footer">
         <Button type="text" size="large" @click="cancel">取消</Button>
         <!-- 企业注册按钮 -->
+        <Button
+          v-show="tabIndex==2&&modalTitle=='编辑【商户】'"
+          type="primary"
+          size="large"
+          :loading="loading"
+          @click="checkPass('formValidateEnt')"
+        >确定</Button>
         <Poptip
           confirm
           placement="right"
@@ -504,7 +511,7 @@
             ></Input>
           </div>
           <Button
-            v-if="(formValidateEnt.auditStatus!=1&&tabIndex==2)"
+            v-if="(formValidateEnt.auditStatus!=1&&tabIndex==2&&modalTitle=='审核【商户】')"
             type="text"
             style="border:1px solid #c6c9ce"
             size="large"
@@ -512,13 +519,20 @@
           >审核不通过</Button>
         </Poptip>
         <Button
-          v-if="(formValidateEnt.auditStatus!=1&&tabIndex==2)"
+          v-if="(formValidateEnt.auditStatus!=1&&tabIndex==2&&modalTitle=='审核【商户】')"
           type="primary"
           size="large"
           :loading="loading"
           @click="checkPass('formValidateEnt')"
         >审核通过</Button>
         <!-- 个人注册按钮 -->
+        <Button
+          v-show="tabIndex==1&&modalTitle=='编辑【商户】'"
+          type="primary"
+          size="large"
+          :loading="loading"
+          @click="checkPass('formValidatePre')"
+        >确定</Button>
         <Poptip
           confirm
           placement="right"
@@ -536,7 +550,7 @@
             ></Input>
           </div>
           <Button
-            v-if="(formValidatePre.auditStatus!=1&&tabIndex==1)"
+            v-if="(formValidatePre.auditStatus!=1&&tabIndex==1&&modalTitle=='审核【商户】')"
             type="text"
             style="border:1px solid #c6c9ce"
             size="large"
@@ -544,7 +558,7 @@
           >审核不通过</Button>
         </Poptip>
         <Button
-          v-if="(formValidatePre.auditStatus!=1&&tabIndex==1)"
+          v-if="(formValidatePre.auditStatus!=1&&tabIndex==1&&modalTitle=='审核【商户】')"
           type="primary"
           size="large"
           :loading="loading"
@@ -998,7 +1012,7 @@ export default {
     },
 
     // 审核点击事件
-    async checkModal(row) {
+    async checkModal(row,type) {
       console.log(row);
       await this.getTreeData(); //获取渠道树信息
       // this.saleArray = [];
@@ -1006,7 +1020,7 @@ export default {
         ? (this.parentChannelName = row.channelName)
         : (this.parentChannelName = row.parentChannelName);
       row.channelId == null ? (this.isSpan = false) : (this.isSpan = true);
-      this.modalTitle = "审核【商户】";
+      type=="sh"?this.modalTitle = "审核【商户】":this.modalTitle="编辑【商户】";
       this.getProductType();
       this.isShow = true;
       let array = row.areaIds.split(",");
@@ -1088,9 +1102,9 @@ export default {
             if (res.data.code == 200) {
               this.isShow = false;
               this.loading = false;
-              this.$Message.info("审核通过");
               this.channelId = this.$store.state.user.channelId;
               this.getMerchant(); // 重新获取数据
+              this.title=="审核【商户】"?this.$Message.info("审核通过"):this.$Message.info("修改成功");
             } else {
               this.loading = false;
               this.$Message.error(res.data.message);
@@ -1116,9 +1130,9 @@ export default {
             if (res.data.code == 200) {
               this.isShow = false;
               this.loading = false;
-              this.$Message.info("审核通过");
               this.channelId = this.$store.state.user.channelId;
               this.getMerchant(); // 重新获取数据
+              this.title=="审核【商户】"?this.$Message.info("审核通过"):this.$Message.info("修改成功");
             } else {
               this.loading = false;
               this.$Message.error(res.data.message);

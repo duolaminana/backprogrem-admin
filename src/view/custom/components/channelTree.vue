@@ -75,7 +75,7 @@ export default {
   .backArrow {
     position: absolute;
     top: 0;
-    right: 0;
+    right: -20px;
     font-size: 18px;
   }
   .forwardArrow {

@@ -62,7 +62,7 @@
       ></delete-component>
     </div>
     <!-- 微信弹框的模态框 -->
-    <Modal v-model="isShowWX" :mask-closable="false" title="收款账户审核" width="450">
+    <Modal v-model="isShowWX" :mask-closable="false" :title="modalTitleWX" width="450">
       <div class="content">
         <div class="weixin-pay">
           <div class="title">
@@ -140,7 +140,7 @@
       </div>
     </Modal>
     <!-- 支付宝弹框的模态框 -->
-    <Modal v-model="isShowZFB" :mask-closable="false" title="收款账户审核" width="450">
+    <Modal v-model="isShowZFB" :mask-closable="false" :title="modalTitleZFB" width="450">
       <div class="content">
         <div class="zhifubao-pay">
           <div class="title">
@@ -224,6 +224,8 @@ export default {
   name: "QRcode",
   data() {
     return {
+      modalTitleZFB:null,
+      modalTitleWX:null,
       isSee: false,
       loading: false,
       loadingNo: false,
@@ -454,15 +456,19 @@ export default {
         ? (this.formValidateWX = JSON.parse(JSON.stringify(row)))
         : (this.formValidateZFB = JSON.parse(JSON.stringify(row)));
       row.payType == 1 ? (this.isShowWX = true) : (this.isShowZFB = true);
+      row.payType == 1 ? (this.modalTitleWX="查看【商户收钱码】") : (this.modalTitleZFB="查看【商户收钱码】");
     },
     // 审核点击事件
     checkModal(row) {
       console.log(row);
+      // this.modalTitleZFB="审核【商户收钱码】";
+      // this.modalTitleWX="审核【商户收钱码】";
       this.isSee = false;
       row.payType == 1
         ? (this.formValidateWX = JSON.parse(JSON.stringify(row)))
         : (this.formValidateZFB = JSON.parse(JSON.stringify(row)));
       row.payType == 1 ? (this.isShowWX = true) : (this.isShowZFB = true);
+      row.payType == 1 ? (this.modalTitleWX="审核【商户收钱码】") : (this.modalTitleZFB="审核【商户收钱码】");
       row.payType == 1 ? (this.tabIndex = 1) : (this.tabIndex = 2);
       row.payType == 1
         ? (this.formValidateWX.remark = "")

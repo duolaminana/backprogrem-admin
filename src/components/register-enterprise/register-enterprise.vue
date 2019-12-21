@@ -117,7 +117,7 @@
         ></Input>
       </FormItem>
       <FormItem prop="companyNo" label="公司税号" style="margin-bottom:20px">
-        <Input :maxlength="30" v-model.trim="form.companyNo" placeholder="税号由15位.18位或20位组成"></Input>
+        <Input :maxlength="20" v-model.trim="form.companyNo" placeholder="税号由15位.18位或20位组成"></Input>
       </FormItem>
       <FormItem prop="NewareaNames" label="所在区域" style="margin-bottom:20px;width:325px">
         <Cascader
