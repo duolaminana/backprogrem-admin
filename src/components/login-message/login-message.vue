@@ -50,7 +50,7 @@ export default {
         phone: "",
         smsCode: ""
       },
-      rules:{
+      rules: {
         phone: [{ required: true, validator: validatePhone, trigger: "blur" }],
         smsCode: [
           {
@@ -62,7 +62,8 @@ export default {
       },
       content: "发送验证码", // 按钮里显示的内容
       totalTime: 60, // 记录具体倒计时时间
-      canClick: true // 添加canClick
+      canClick: true, // 添加canClick
+      clock:null
     };
   },
   methods: {
@@ -79,21 +80,27 @@ export default {
 
     countDown() {
       getsmsCode(this.form.phone).then(res => {
-        console.log(res);
-      });
-      if (!this.canClick) return;
-      this.canClick = false;
-      this.content = this.totalTime + "s后重新发送";
-      let clock = window.setInterval(() => {
-        this.totalTime--;
-        this.content = this.totalTime + "s后重新发送";
-        if (this.totalTime < 0) {
-          window.clearInterval(clock);
-          this.content = "重新发送验证码";
-          this.totalTime = 60;
-          this.canClick = true; // 这里重新开启
+        if (res.data.code == 200) {
+          if (!this.canClick) return;
+          this.canClick = false;
+          this.content = this.totalTime + "s后重新发送";
+          this.clock = window.setInterval(() => {
+            this.totalTime--;
+            this.content = this.totalTime + "s后重新发送";
+            if (this.totalTime < 0) {
+              window.clearInterval(this.clock);
+              this.content = "重新发送验证码";
+              this.totalTime = 60;
+              this.canClick = true; // 这里重新开启
+            }
+          }, 1000);
         }
-      }, 1000);
+      });
+    },
+    clearTimeID(){
+      window.clearInterval(this.clock);
+      this.content="发送验证码";
+      this.canClick=true;
     }
   }
 };

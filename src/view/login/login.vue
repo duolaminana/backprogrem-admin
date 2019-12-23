@@ -22,8 +22,8 @@
     <!-- 登陆框 -->
     <div class="login-con">
       <Card icon="log-in">
-        <Tabs value="name1" @on-click="tabsChange">
-          <TabPane label="密码登陆" name="name1">
+        <Tabs @on-click="tabsChange">
+          <TabPane label="密码登录" name="name1">
             <div class="form-con">
               <login-form
                 ref="loginForm"
@@ -38,7 +38,7 @@
               </div>
             </div>
           </TabPane>
-          <TabPane label="短信登陆" name="name2">
+          <TabPane label="短信登录" name="name2">
             <div class="form-con">
               <login-message ref="loginMessage" @on-message-valid="handleMessageSubmit"></login-message>
               <div class="login-tip">
@@ -102,7 +102,7 @@ export default {
       channelId: null, //渠道id
       userId: null, //用户id
       userType: null, //用户类型
-      auditStatus: "" //审核状态
+      auditStatus: "", //审核状态
     };
   },
   methods: {
@@ -219,6 +219,7 @@ export default {
     tabsChange() {
       this.$refs.loginForm.$refs.loginForm.resetFields();
       this.$refs.loginMessage.$refs.loginMessage.resetFields();
+      this.$refs.loginMessage.clearTimeID();
     }
   }
 };
