@@ -444,12 +444,6 @@ export default {
   text-align: center;
   margin-top: 10px;
 }
-.leftBox {
-  // min-width: 250px;
-  min-height: 780px;
-  float: left;
-  margin-right: 20px;
-}
 .purviewForm {
   /deep/ .ivu-modal-body {
     padding: 20px 32px;

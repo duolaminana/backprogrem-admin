@@ -125,28 +125,28 @@
         <template slot-scope="{row,index}" slot="operation">
           <!-- 退款按钮 -->
           <Button
-            style="margin-right:0px"
+            style="margin-right:0px;float:left;margin-left:10px"
             type="primary"
             size="small"
             @click="refund(row)"
             v-if="hasPerm('set:tranlist:refund')&&row.refundStatus==1&&(row.orderStatus==2||row.orderStatus==3||row.orderStatus==4||row.orderStatus==6)&&(isShowOperation||((channelId==$store.state.user.channelId)&&$store.state.user.userVo.type==2))"
           >&nbsp退款&nbsp</Button>
           <Button
-            style="margin-right:0px"
+            style="margin-right:0px;float:left;margin-left:10px"
             disabled
             type="primary"
             size="small"
             v-if="hasPerm('set:tranlist:refund')&&row.refundStatus==2&&(row.orderStatus==2||row.orderStatus==3||row.orderStatus==4||row.orderStatus==6)&&(isShowOperation||((channelId==$store.state.user.channelId)&&$store.state.user.userVo.type==2))"
           >已退款</Button>
           <Button
-            style="margin-right:0px;margin-left:10px"
+            style="margin-left:10px;float:left;"
             type="primary"
             size="small"
             @click="clear(row)"
             v-if="hasPerm('set:tranlist:refund')&&(row.sendBack==3||row.sendBack==1)&&(row.orderStatus==2||row.orderStatus==4||row.orderStatus==6)&&(isShowOperation||((channelId==$store.state.user.channelId)&&$store.state.user.userVo.type==2))"
           >&nbsp清算&nbsp</Button>
           <Button
-            style="margin-right:0px;margin-left:10px"
+            style="margin-left:10px;float:left;"
             disabled
             type="primary"
             size="small"
@@ -293,7 +293,8 @@
         <template
           slot-scope="{row,index}"
           slot="clearNum"
-        >{{row.productNumber-row.productProduce-row.refundNumber}}</template>
+        >
+        {{row.productNumber-row.productProduce-row.refundNumber|clearNumText}}</template>
       </Table>
       <div class="textDiv">
         <div class="leftReason">
@@ -682,7 +683,7 @@ export default {
           title: "操作",
           align: "center",
           slot: "operation",
-          minWidth: 120,
+          minWidth: 140,
           tooltip: true
         },
         {
@@ -826,16 +827,22 @@ export default {
         .map((v, i) => {
           if (v.productNumber != v.productProduce) {
             if (v.activityPrice) {
-              return (v.productNumber - v.productProduce) * v.activityPrice;
+              return (
+                (v.productNumber - v.productProduce - v.refundNumber) *
+                v.activityPrice
+              );
             } else {
-              return (v.productNumber - v.productProduce) * v.actualPrice;
+              return (
+                (v.productNumber - v.productProduce - v.refundNumber) *
+                v.actualPrice
+              );
             }
           }
         })
         .reduce((pre, cur) => {
           return pre + cur || 0;
         }, 0);
-      return value > this.payAmount ? this.payAmount : value;
+      return value < 0 ? 0 : value> this.payAmount? this.payAmount : value;
     },
     refundAmount() {
       let value = this.dataTableMore
@@ -921,6 +928,15 @@ export default {
         realVal = "——";
       }
       return realVal;
+    },
+    clearNumText(num) {
+      let realVal = "";
+      if (num >= 0) {
+        realVal = num;
+      } else {
+        realVal = 0;
+      }
+      return realVal;
     }
   },
   methods: {
@@ -964,11 +980,6 @@ export default {
     },
     countChange(index, row) {
       this.once = false;
-      console.log(
-        row.refundNumber,
-        row.productNumber,
-        row.refundNumber > row.productNumber
-      );
       if (row.refundNumber > row.productNumber) {
         row.refundNumber = row.productNumber;
         this.dataTableMore[index].refundNumber = row.productNumber;
@@ -978,7 +989,6 @@ export default {
     },
     add(row, index) {
       this.once = false;
-      console.log(row);
       if (row.refundNumber >= row.productNumber) {
         row.refundNumber = row.productNumber;
       } else {

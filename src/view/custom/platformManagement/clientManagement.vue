@@ -140,7 +140,7 @@ export default {
         },
         {
           title: "返利金额(元)",
-          key: "orderProfit",
+          key: "remainingProfit",
           align: "center",
           tooltip: true
         },

@@ -26,7 +26,7 @@
           >&nbsp&nbsp审核&nbsp&nbsp</Button>
 
           <Button size="small" v-if="row.auditType==2||row.auditType==3" disabled>已审核</Button>
-          <Button type="primary" size="small" style="margin-right: 0px" @click="seeResult(row)">查看</Button>
+          <Button type="primary" size="small" :disabled="row.auditType==1" style="margin-right: 0px" @click="seeResult(row)">查看</Button>
 
           <!-- 删除按钮 -->
           <Button
@@ -619,6 +619,7 @@ export default {
 <style lang="less" scoped>
 .QRcode {
   .leftBox {
+    min-height: 900px;
     float: left;
     margin-right: 20px;
   }

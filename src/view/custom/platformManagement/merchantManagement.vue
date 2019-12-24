@@ -1302,6 +1302,7 @@ export default {
 <style lang="less" scoped>
 .channelMerchants {
   .leftBox {
+    min-height: 900px;
     float: left;
     margin-right: 20px;
   }

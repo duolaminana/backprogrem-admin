@@ -65,6 +65,7 @@
             @click="toOpenModal(row)"
           >去开启</a>
           <Button
+          style="margin-right:0px"
             type="primary"
             v-if="row.openDoor==1&&hasPerm('sys:user:edit')"
             size="small"

@@ -47,7 +47,7 @@
         </div>
       </div>
       <!-- 渠道树 -->
-      <channel-tree @clickTreeRow="clickTreeRow" @leftArrow="leftArrow"  ref="channelTree"></channel-tree>
+      <channel-tree @clickTreeRow="clickTreeRow" @leftArrow="leftArrow" ref="channelTree"></channel-tree>
     </div>
     <div class="rightDiv">
       <Input v-model="channelName" style="margin-right:10px" placeholder="请输入商户名称" clearable />
@@ -80,6 +80,7 @@
         <template slot-scope="{ row, index }" slot="operation">
           <!-- 按钮 -->
           <Button
+            style="margin-right:0px;float:left;margin-left:10px"
             type="success"
             size="small"
             @click="changeAuditStatus(row)"
@@ -87,6 +88,7 @@
           >提交</Button>
 
           <Button
+            style="margin-right:0px;float:left;margin-left:10px"
             type="success"
             size="small"
             @click="seeReason(row)"
@@ -95,7 +97,7 @@
 
           <!-- 编辑按钮 -->
           <Button
-            style="margin-right:0px"
+            style="margin-right:0px;float:left;margin-left:10px"
             type="primary"
             size="small"
             @click="editModal(row)"
@@ -104,7 +106,7 @@
 
           <!-- 删除按钮 -->
           <Button
-            style="margin-right:0px;margin-left:10px"
+            style="margin-right:0px;float:left;margin-left:10px"
             type="error"
             size="small"
             @click="modalDel=true;delID=row.id;delIndex=index"
@@ -187,7 +189,7 @@
           </FormItem>
           <FormItem label="区域" class="NewareaNames" prop="NewareaNames">
             <Cascader
-            placeholder="请选择所在区域"
+              placeholder="请选择所在区域"
               :disabled="isdisabled"
               style="width: 220px"
               :data="cityData"
@@ -198,11 +200,15 @@
             ></Cascader>
           </FormItem>
           <FormItem label="详细地址" prop="address">
-            <Input v-model.trim="formValidatePre.address" placeholder="请输入详细地址" :disabled="isdisabled"></Input>
+            <Input
+              v-model.trim="formValidatePre.address"
+              placeholder="请输入详细地址"
+              :disabled="isdisabled"
+            ></Input>
           </FormItem>
           <FormItem prop="sale" label="销售范围" style="margin-bottom:20px">
             <Select
-            placeholder="请选择销售范围"
+              placeholder="请选择销售范围"
               :disabled="isdisabled"
               v-model="formValidatePre.sale"
               multiple
@@ -483,7 +489,7 @@
           </FormItem>
           <FormItem label="区域" class="NewareaNames" prop="NewareaNames">
             <Cascader
-            placeholder="请选择所在区域"
+              placeholder="请选择所在区域"
               :disabled="isdisabled"
               style="width: 220px"
               :data="cityData"
@@ -494,11 +500,15 @@
             ></Cascader>
           </FormItem>
           <FormItem label="详细地址" prop="address">
-            <Input v-model.trim="formValidateEnt.address" placeholder="请输入详细地址" :disabled="isdisabled"></Input>
+            <Input
+              v-model.trim="formValidateEnt.address"
+              placeholder="请输入详细地址"
+              :disabled="isdisabled"
+            ></Input>
           </FormItem>
           <FormItem prop="sale" label="销售范围" style="margin-bottom:20px">
             <Select
-            placeholder="请选择销售范围"
+              placeholder="请选择销售范围"
               :disabled="isdisabled"
               v-model="formValidateEnt.sale"
               multiple
@@ -1002,7 +1012,7 @@ export default {
       }
     };
     return {
-      isShowArrow:true,
+      isShowArrow: true,
       checkType: null, //1用户名2手机号
       checkParam: null,
       loading: false,
@@ -1419,20 +1429,20 @@ export default {
     };
   },
   methods: {
-    leftArrow(value){
-      this.isShowArrow=value
+    leftArrow(value) {
+      this.isShowArrow = value;
     },
     checkPhone(event) {
       this.checkType = 2;
       this.checkParam = event.target.value;
-      if(this.modalTitle == "新增【商户】"){
+      if (this.modalTitle == "新增【商户】") {
         this.searchFastCheck();
       }
     },
     checkUserName(event) {
       this.checkType = 1;
       this.checkParam = event.target.value;
-      if(this.modalTitle == "新增【商户】"){
+      if (this.modalTitle == "新增【商户】") {
         this.searchFastCheck();
       }
     },
@@ -2128,6 +2138,7 @@ export default {
 <style lang="less" scoped>
 .channelMerchants {
   .leftBox {
+    min-height: 900px;
     float: left;
     margin-right: 20px;
     .QRcode {
