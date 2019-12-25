@@ -72,6 +72,15 @@ export default [
     component: () => import('@/view/registerover/registerover.vue')
   },
   {
+    path: '/helpDocument',
+    name: 'helpDocument',
+    meta: {
+      title: '帮助文档',
+      hideInMenu: true
+    },
+    component: () => import('@/view/custom/helpDocument/helpDocument.vue')
+  },
+  {
     path: '/401',
     name: 'error_401',
     meta: {

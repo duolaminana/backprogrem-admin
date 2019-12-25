@@ -135,6 +135,15 @@
                   ></count-to>
                 </span>
                 <span>
+                  待使用：
+                  <count-to
+                    :startVal="startVal"
+                    :endVal="headInfoData.machineNumsVo.waitNum"
+                    :decimals="isZero"
+                    :duration="duration"
+                  ></count-to>
+                </span>
+                <span>
                   待审核：
                   <count-to
                     :startVal="startVal"

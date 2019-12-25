@@ -28,7 +28,7 @@
             </p>
             <div style="text-align: center">
               <Input v-model='value.roadNo' placeholder="货道编码"></Input>
-              <p style="padding-left:45px;font-size:14px;margin-top:30px;">货道编码</p>
+              <p style="padding-left:0px;font-size:14px;margin-top:30px;">货道编码</p>
             </div>
           </div>
         </Card>

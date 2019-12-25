@@ -941,6 +941,7 @@ export default {
               operator:this.operator,
               operatorName:this.operatorName,
               channelId:this.channelId,
+              auditStatus,
             };
             netWorkGoods("/product/productModified",data).then(res => {
               if (res.result) {

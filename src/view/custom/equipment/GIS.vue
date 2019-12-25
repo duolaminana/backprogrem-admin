@@ -1,6 +1,9 @@
 <template>
 	<div class="gis">
     <Card>
+      <channel-tree id='tree' @clickTreeRow="clickTreeRow" ></channel-tree>
+    </Card>
+    <Card>
       <big-data-map 
       ref='gis'
       :isColor='true' 
@@ -8,9 +11,6 @@
       :dataList = 'dataList'
       >
       </big-data-map>
-    </Card>
-    <Card>
-      <channel-tree id='tree' @clickTreeRow="clickTreeRow"></channel-tree>
     </Card>
   </div>
 </template>
@@ -72,16 +72,15 @@ export default {
       height: 700px;
     }
     >div.ivu-card:first-of-type{
-      float: left;
-      width: 75%;
+      float: right;
+      z-index: 1;
+      overflow-y: auto;
+    }
+    >div.ivu-card:last-of-type{
       /deep/.ivu-card-body{
         padding:0;
         height:100%;
       }
-    }
-    >div.ivu-card:last-of-type{
-      float: right;
-      width: 24%;
     }
   }
 </style>

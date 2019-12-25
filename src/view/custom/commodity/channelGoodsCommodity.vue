@@ -644,13 +644,14 @@ export default {
       };
       this.categoryIdValue = [];
       if(type=='bj'){
+        console.log(this.formValidate.categoryId)
         this.formValidate = JSON.parse(JSON.stringify(this.datas[index]));
-        console.log(this.datas[index])
         if(this.formValidate.status=='true'){
           this.formValidate.status = true;
         }else if(this.formValidate.status=='false'){
           this.formValidate.status = false;
         }
+        if(!this.rangeList.length)this.getChannelList();
       }
       this.newlyAdded=true
     },

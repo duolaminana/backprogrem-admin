@@ -4,7 +4,7 @@
       <Button type="primary" size="large" class='keep' icon='md-albums' @click='keep'>保存</Button>
       <Button type="primary" size="large" @click='toBack' style="float:left;margin-right:30px;">返回</Button>
       <Input v-model="templateName"  placeholder="模板名称"  clearable class='marginRight'/>
-      <Select v-show='showNewlyType=="xz"' @on-change='deviceChange' v-model="modal" class='marginRight' :clearable='true' placeholder="机器名称选择">
+      <Select v-show='showNewlyType=="xz"' @on-change='deviceChange' v-model="modal" class='marginRight' :clearable='true' placeholder="设备类型选择">
           <Option v-for="item in equipmentList" :value="item.value" :key="item.value">{{ item.label }}</Option>
       </Select>
     </div>
@@ -271,7 +271,7 @@ export default {
         })
       })
       if(this.showNewlyType=='xz'){
-        if(this.listData.length&&this.templateName){
+        if(this.listData.length&&this.templateName&&this.modal){
           this.$Spin.show()
           let data = {
             channelId:this.channelId,
@@ -290,7 +290,7 @@ export default {
             this.$Spin.hide()
           })
         }else{
-          this.$Message.error('请输入模板名称且生成模板！')
+          this.$Message.error('请输入模板名称生成模板,且选择设备类型！')
         }
       }else{
         if(this.templateName){

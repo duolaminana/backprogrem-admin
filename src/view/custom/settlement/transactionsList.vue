@@ -380,7 +380,7 @@ export default {
           tooltip: true
         },
         {
-          title: "退款数量",
+          title: "退货数量",
           key: "refundNumber",
           align: "center",
           minWidth: 60,
@@ -394,7 +394,7 @@ export default {
           tooltip: true
         },
         {
-          title: "实际售价(元)",
+          title: "销售价格(元)",
           key: "actualPrice",
           align: "center",
           minWidth: 60,
@@ -408,7 +408,7 @@ export default {
           tooltip: true
         },
         {
-          title: "实收金额(元)",
+          title: "销售金额(元)",
           slot: "productPrice",
           align: "center",
           minWidth: 80,
@@ -504,7 +504,7 @@ export default {
           tooltip: true
         },
         {
-          title: "实际售价(元)",
+          title: "销售价格(元)",
           key: "actualPrice",
           align: "center",
           minWidth: 60,
@@ -518,14 +518,14 @@ export default {
           tooltip: true
         },
         {
-          title: "实收金额(元)",
+          title: "销售金额(元)",
           slot: "productPrice",
           align: "center",
           minWidth: 80,
           tooltip: true
         },
         {
-          title: "退款数量",
+          title: "退货数量",
           align: "center",
           slot: "refundNum",
           minWidth: 120,
@@ -662,7 +662,7 @@ export default {
           title: "交易时间",
           key: "createDate",
           align: "center",
-          minWidth: 100,
+          minWidth: 120,
           tooltip: true
         },
         {

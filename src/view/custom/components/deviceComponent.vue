@@ -23,7 +23,6 @@
       <div class='rowBefore'>
         <Button type="error" icon="md-remove" @click='deleteClomun(i)' :disabled='listData[i].AddMachineTypeRoadDto.length==0'></Button>
         <Button type="primary" icon="md-add" @click='addClomun(i)' :disabled='listData[i].AddMachineTypeRoadDto.length>=columnNo'></Button>
-      {{maxColumnNo}}
       </div>
       <Card class='row' :padding='6' :bordered='false'  :key='v+i'>
         <Card class='item' :class='{"itemAction":value.roadStatus==2}'  v-for='(value,index) in v.AddMachineTypeRoadDto' :key='value+index' :id='"box"+i+""+index' :ref='"box"+i+""+index' v-show='value.roadStatus!=3'  style='width:160px;'>

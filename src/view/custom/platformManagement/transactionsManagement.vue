@@ -118,28 +118,28 @@
             type="primary"
             size="small"
             @click="refund(row)"
-            v-if="hasPerm('set:tranlist:refundback')&&row.refundStatus==1&&(row.orderStatus==2||row.orderStatus==3||row.orderStatus==4||row.orderStatus==6)&&(isShowOperation||((channelId==$store.state.user.channelId)&&$store.state.user.userVo.type))"
+            v-if="hasPerm('set:tranlist:refundback')&&row.refundStatus==1&&(row.orderStatus==2||row.orderStatus==3||row.orderStatus==4||row.orderStatus==6)"
           >&nbsp退款&nbsp</Button>
           <Button
             style="margin-right:0px;float:left;margin-left:10px"
             disabled
             type="primary"
             size="small"
-            v-if="hasPerm('set:tranlist:refundback')&&row.refundStatus==2&&(row.orderStatus==2||row.orderStatus==3||row.orderStatus==4||row.orderStatus==6)&&(isShowOperation||((channelId==$store.state.user.channelId)&&$store.state.user.userVo.type))"
+            v-if="hasPerm('set:tranlist:refundback')&&row.refundStatus==2&&(row.orderStatus==2||row.orderStatus==3||row.orderStatus==4||row.orderStatus==6)"
           >已退款</Button>
           <Button
             style="margin-left:10px;float:left;"
             type="primary"
             size="small"
             @click="clear(row)"
-            v-if="hasPerm('set:tranlist:refundback')&&(row.sendBack==3||row.sendBack==1)&&(row.orderStatus==2||row.orderStatus==4||row.orderStatus==6)&&(isShowOperation||((channelId==$store.state.user.channelId)&&$store.state.user.userVo.type==2))"
+            v-if="hasPerm('set:tranlist:refundback')&&(row.sendBack==3||row.sendBack==1)&&(row.orderStatus==2||row.orderStatus==4||row.orderStatus==6)"
           >&nbsp清算&nbsp</Button>
           <Button
             style="margin-left:10px;float:left;"
             disabled
             type="primary"
             size="small"
-            v-if="hasPerm('set:tranlist:refundback')&&row.refundStatus==1&&row.sendBack==2&&(row.orderStatus==2||row.orderStatus==4||row.orderStatus==6)&&(isShowOperation||((channelId==$store.state.user.channelId)&&$store.state.user.userVo.type==2))"
+            v-if="hasPerm('set:tranlist:refundback')&&row.refundStatus==1&&row.sendBack==2&&(row.orderStatus==2||row.orderStatus==4||row.orderStatus==6)"
           >已清算</Button>
         </template>
       </Table>
@@ -283,7 +283,7 @@
         <template
           slot-scope="{row,index}"
           slot="clearNum"
-        >{{row.productNumber-row.productProduce-row.refundNumber}}</template>
+        >{{row.productNumber-row.productProduce-row.refundNumber|clearNumText}}</template>
       </Table>
       <div class="textDiv">
         <div class="leftReason">
@@ -323,7 +323,6 @@ import {
   searchBenefitMachine,
   getOrderExcle,
   deleteOrder,
-  seeReceiveTerminal,
   searchTreeByUser,
   refundOrder
 } from "@/api/http";
@@ -383,7 +382,7 @@ export default {
           tooltip: true
         },
         {
-          title: "实际售价(元)",
+          title: "销售价格(元)",
           key: "actualPrice",
           align: "center",
           minWidth: 60,
@@ -397,7 +396,7 @@ export default {
           tooltip: true
         },
         {
-          title: "实收金额(元)",
+          title: "销售金额(元)",
           slot: "productPrice",
           align: "center",
           minWidth: 80,
@@ -493,7 +492,7 @@ export default {
           tooltip: true
         },
         {
-          title: "实际售价(元)",
+          title: "销售价格(元)",
           key: "actualPrice",
           align: "center",
           minWidth: 60,
@@ -507,7 +506,7 @@ export default {
           tooltip: true
         },
         {
-          title: "实收金额(元)",
+          title: "销售金额(元)",
           slot: "productPrice",
           align: "center",
           minWidth: 80,
@@ -521,7 +520,6 @@ export default {
           tooltip: true
         }
       ],
-      isShowOperation: false,
       orderNoList: [], //订单字符串数组
       benefitId: null, //利益分配id
       interestNewlyAdded: false,
@@ -816,16 +814,22 @@ export default {
         .map((v, i) => {
           if (v.productNumber != v.productProduce) {
             if (v.activityPrice) {
-              return (v.productNumber - v.productProduce) * v.activityPrice;
+              return (
+                (v.productNumber - v.productProduce - v.refundNumber) *
+                v.activityPrice
+              );
             } else {
-              return (v.productNumber - v.productProduce) * v.actualPrice;
+              return (
+                (v.productNumber - v.productProduce - v.refundNumber) *
+                v.actualPrice
+              );
             }
           }
         })
         .reduce((pre, cur) => {
           return pre + cur || 0;
         }, 0);
-      return value > this.payAmount ? this.payAmount : value;
+      return value < 0 ? 0 : value> this.payAmount? this.payAmount : value;
     },
     refundAmount() {
       let value = this.dataTableMore
@@ -836,7 +840,7 @@ export default {
         .reduce((pre, cur) => {
           return pre + cur;
         }, 0);
-      let aaa = this.dataTableMore
+      let value2 = this.dataTableMore
         .map((v, i) => {
           if (v.productNumber != v.productProduce) {
             if (v.activityPrice) {
@@ -847,11 +851,13 @@ export default {
           }
         })
         .reduce((pre, cur) => {
-          return pre + cur;
+          return pre + cur || 0;
         }, 0);
-      const res =
-        value > this.payAmount ? this.payAmount : this.once ? aaa : value;
-      return res;
+      return value > this.payAmount
+        ? this.payAmount
+        : this.once
+        ? value2
+        : value;
     },
     startOptions: function() {
       //开始时间的限制，不能选择结束时间之后的时间
@@ -904,6 +910,15 @@ export default {
         realVal = parseFloat(value).toFixed(2);
       } else {
         realVal = "——";
+      }
+      return realVal;
+    },
+    clearNumText(num) {
+      let realVal = "";
+      if (num >= 0) {
+        realVal = num;
+      } else {
+        realVal = 0;
       }
       return realVal;
     }
@@ -1029,7 +1044,6 @@ export default {
       if (value) {
         this.channelId = value.id;
         this.getOrder();
-        this.getReceiveTerminal();
         const treeData = this.$refs.channelTree.treeData;
         this.recursion(treeData, this.channelId);
         let nodes = document.querySelectorAll(".tree a");
@@ -1278,15 +1292,6 @@ export default {
         document.body.removeChild(elink);
       });
     },
-    getReceiveTerminal() {
-      seeReceiveTerminal(this.channelId, this.$store.state.user.channelId).then(
-        res => {
-          if (res.data.code == 200) {
-            this.isShowOperation = res.data.result;
-          }
-        }
-      );
-    },
     getSearchTreeByUser() {
       let data = {
         channelId: this.channelId,
@@ -1307,7 +1312,6 @@ export default {
     var date2 = new Date(date1);
     this.startDate = date2.setDate(date1.getDate() - 30);
     this.getOrder();
-    this.getReceiveTerminal();
     this.getSearchTreeByUser();
   }
 };

@@ -14,7 +14,7 @@
     </Dropdown>
     <Modal
       v-model="showLogo"
-      title="上传logo"
+      title="更换logo"
     >
       <p style='margin-bottom:20px'>点击上传logo <span>(上传图片的大小不能超过100Kb)</span></p>
       <Upload

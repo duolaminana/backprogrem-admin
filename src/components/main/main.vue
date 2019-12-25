@@ -20,7 +20,7 @@
           <!-- 错误日志 在config/index.js中设置 可以删除掉 -->
           <!-- <error-store v-if="$config.plugin['error-store'] && $config.plugin['error-store'].showInHeader" :has-read="hasReadErrorPage" :count="errorCount"></error-store> -->
           <div  style="margin-right: 10px;height: 64px;line-height:82px;">
-            <img :src="require('../../assets/images/help_icon.png')" title='帮助文档'/>
+            <img @click='helpDocument' style='cursor: pointer;' :src="require('../../assets/images/help_icon.png')" title='帮助文档'/>
           </div>
           <fullscreen v-model="isFullscreen" style="margin-right: 10px;"/>
         </header-bar>
@@ -120,6 +120,11 @@ export default {
       'handleLogin',
       'getUnreadMessageCount'
     ]),
+    helpDocument(){
+      this.$router.push({
+        name:'helpDocument'
+      })
+    },
     // 页面跳转
     turnToPage (route) {
       let { name, params, query } = {}

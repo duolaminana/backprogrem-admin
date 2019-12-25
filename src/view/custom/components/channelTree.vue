@@ -75,13 +75,14 @@ export default {
   .backArrow {
     position: absolute;
     top: 0;
-    right: -20px;
+    right: -15px;
     font-size: 18px;
+    cursor: pointer;
   }
   .forwardArrow {
     position: absolute;
     top: 0;
-    left: 0;
+    left:0px;
     font-size: 18px;
   }
 }

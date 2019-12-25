@@ -68,7 +68,7 @@
           <!-- 再次结算 -->
           <Button
             style="margin-right:0px"
-            v-if="hasPerm('set:rec:setmoreback')&&row.clearingStatus==3&&isShowOperation"
+            v-if="hasPerm('set:rec:setmoreback')&&row.clearingStatus==3"
             type="primary"
             size="small"
             @click="setMore(row)"
@@ -157,7 +157,6 @@ import {
   searchMachineByAccountId,
   getSettlementExcle,
   searchBenefitAccount,
-  seeReceiveTerminal
 } from "@/api/http";
 export default {
   components: {
@@ -168,7 +167,6 @@ export default {
 
   data() {
     return {
-      isShowOperation: false,
       accountList: [],
       deductAccount: null,
       createDate: "",
@@ -517,7 +515,6 @@ export default {
         this.channelId = value.id;
         this.getSettlementOver();
         this.getBenefitAccount();
-        this.getReceiveTerminal();
       }
     },
     // 用户重置按钮
@@ -684,15 +681,6 @@ export default {
         }
       });
     },
-    getReceiveTerminal() {
-      seeReceiveTerminal(this.channelId, this.$store.state.user.channelId).then(
-        res => {
-          if (res.data.code == 200) {
-            this.isShowOperation = res.data.result;
-          }
-        }
-      );
-    }
   },
 
   mounted() {

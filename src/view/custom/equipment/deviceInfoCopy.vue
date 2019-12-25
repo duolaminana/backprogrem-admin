@@ -1046,7 +1046,7 @@ export default {
         this.$Message.success("操作成功");
       })
     },
-    examine({id,annualFee,shMachineType,categoryId,hardwareVersion},isPass,name){
+    examine({id,annualFee,shMachineType,categoryId,hardwareVersion,machineCode},isPass,name){
       if(isPass){
         console.log(id,annualFee,shMachineType,categoryId,hardwareVersion)
         this.$refs[name].validate(valid => {
@@ -1058,6 +1058,7 @@ export default {
               hardwareVersion,
               machineType:shMachineType,
               status:7,
+              machineCode,
               channelId:this.channelId
             };
             netWorkDevice("/machineInfo/audit", data).then(res => {
