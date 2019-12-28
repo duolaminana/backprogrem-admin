@@ -266,7 +266,7 @@ export default {
           title: "订单编号",
           key: "orderNo",
           align: "center",
-          minWidth: 180,
+          minWidth: 160,
           tooltip: true
         },
         {
@@ -294,28 +294,28 @@ export default {
           title: "商品进价",
           key: "buyPrice",
           align: "center",
-          minWidth: 70,
+          minWidth: 50,
           tooltip: true
         },
         {
           title: "实际售价",
           key: "actualPrice",
           align: "center",
-          minWidth: 70,
+          minWidth: 50,
           tooltip: true
         },
         {
           title: "活动售价",
           key: "activityPrice",
           align: "center",
-          minWidth: 70,
+          minWidth: 50,
           tooltip: true
         },
         {
           title: "购买数量",
           key: "productNumber",
           align: "center",
-          minWidth: 70,
+          minWidth: 50,
           tooltip: true
         },
         {
@@ -329,7 +329,7 @@ export default {
           title: "交易时间",
           key: "dealDate",
           align: "center",
-          minWidth: 100,
+          minWidth: 160,
           tooltip: true
         },
         {

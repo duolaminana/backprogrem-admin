@@ -91,8 +91,8 @@
             <span v-else>——</span>
           </template>
           <template slot-scope="{ row, index }" slot="newHumidity">
-            <template v-if='row.currentTtemperature&&row.currentHumidness'>
-              <span :class='row.humidnessStatus?"green":"red"'>{{row.currentTtemperature}}℃/</span><span :class='row.temperatureStatus?"green":"red"'>{{row.currentHumidness}}%</span>
+            <template v-if='(row.currentTemperature||row.currentTemperature==0)||(row.currentHumidness||row.currentHumidness==0)'>
+              <span v-if='row.currentTemperature||row.currentTemperature==0' :class='row.temperatureStatus?"green":"red"'>{{row.currentTemperature}}℃/</span><span v-if='row.currentHumidness||row.currentHumidness==0' :class='row.temperatureStatus?"green":"red"'>{{row.currentHumidness}}%</span>
             </template>
             <span v-else>——</span>
           </template>
@@ -1202,6 +1202,9 @@ export default {
             this.query.list = [];
             this.getselectList(row);
           }
+          if(!this.query.isHasStock){
+            this.getselectList(row);
+          }
           if( this.query.list.length){
             this.query.list.forEach((v,i)=>{
               v.AddMachineTypeRoadDto.forEach((val,index)=>{
@@ -1639,6 +1642,9 @@ export default {
     this.getPageDatas();
     this.getEquipment();
     this.getBenefitData();
+    // [1,117].map(v=>{
+    //   console.log(document.querySelector())
+    // })
   }
 }
 </script>

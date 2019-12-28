@@ -118,8 +118,8 @@ export default {
       priceTemplatePageNum:1,
       priceTemplateDatas:[],
       listData:this.query.list||[],
-      columnNo:1,
-      layerNo:1,
+      columnNo:this.query.maxClomun,
+      layerNo:this.query.maxLayer,
       maxColumnNo:this.query.maxClomun,
       maxLayerNo:this.query.maxLayer,
       modal:null,
@@ -141,6 +141,8 @@ export default {
         netWorkDevice(url,null,'get').then(res => {
           this.maxColumnNo = res.result.maxClomun;
           this.maxLayerNo = res.result.maxLayer;
+          this.columnNo = res.result.maxClomun;
+          this.layerNo = res.result.maxLayer;
           this.listData = res.result.list;
           this.listData.forEach((v,i)=>{
             v.AddMachineTypeRoadDto.forEach((val,index)=>{
@@ -168,8 +170,8 @@ export default {
       }else{
         this.maxLayerNo = this.query.maxLayer;
         this.maxColumnNo = this.query.maxClomun;
-        this.columnNo = 1;
-        this.layerNo = 1;
+        this.columnNo = this.query.maxClomun;
+        this.layerNo = this.query.maxLayer;
         this.listData = [];
       }
     },
@@ -669,7 +671,7 @@ export default {
     margin:0 auto;
     margin-top:10px;
     >img{
-      width: auto;
+      width: 120px;
       height: 120px;
       margin:0 auto;
       display:block;

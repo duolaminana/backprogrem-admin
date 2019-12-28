@@ -117,7 +117,7 @@
         <template slot-scope="{ row, index }" slot="status">
           <span v-show="row.auditStatus==1" style="color:#2d8cf0">待提交</span>
           <span v-show="row.auditStatus==2" style="color:#ffbd72">待审核</span>
-          <Tooltip :content="row.remark" placement="top">
+          <Tooltip max-width="200" :content="row.remark" placement="top">
             <!-- <div slot="content">{{row.remark}}</div> -->
             <span v-show="row.auditStatus==3" style="color:#ed4014">审核失败</span>
           </Tooltip>
@@ -280,19 +280,31 @@
           <div style="margin:10px 0">
             <strong>用户信息</strong>
           </div>
-          <FormItem label="用户名称" prop="userName">
+          <FormItem label="用户名称" prop="userNameNew">
             <Input
               :maxlength="30"
-              v-model.trim="formValidatePre.userName"
+              v-model.trim="formValidatePre.userNameNew"
               placeholder="小于20个字符"
               :disabled="isdisabled"
               @on-blur="checkUserName"
             ></Input>
+            <Input
+              v-if="isTab"
+              v-model="formValidatePre.userName"
+              type="text"
+              style="opacity: 0;position: absolute"
+            ></Input>
           </FormItem>
-          <FormItem label="密码" prop="password">
+          <FormItem label="密码" prop="passwordNew">
+            <Input
+              v-if="isTab"
+              v-model="formValidatePre.password"
+              type="password"
+              style="opacity: 0;position: absolute"
+            ></Input>
             <Input
               :maxlength="30"
-              v-model.trim="formValidatePre.password"
+              v-model.trim="formValidatePre.passwordNew"
               type="password"
               placeholder="大于6小于20个字符"
               :disabled="isdisabled"
@@ -580,19 +592,31 @@
           <div style="margin:10px 0">
             <strong>用户信息</strong>
           </div>
-          <FormItem label="用户名称" prop="userName">
+          <FormItem label="用户名称" prop="userNameNew">
             <Input
               :maxlength="30"
-              v-model.trim="formValidateEnt.userName"
+              v-model.trim="formValidateEnt.userNameNew"
               placeholder="小于20个字符"
               :disabled="isdisabled"
               @on-blur="checkUserName"
             ></Input>
+            <Input
+              v-if="isTab"
+              v-model="formValidateEnt.userName"
+              type="text"
+              style="opacity: 0;position: absolute"
+            ></Input>
           </FormItem>
-          <FormItem label="密码" prop="password">
+          <FormItem label="密码" prop="passwordNew">
+            <Input
+              v-if="isTab"
+              v-model="formValidateEnt.password"
+              type="password"
+              style="opacity: 0;position: absolute"
+            ></Input>
             <Input
               :maxlength="30"
-              v-model.trim="formValidateEnt.password"
+              v-model.trim="formValidateEnt.passwordNew"
               type="password"
               placeholder="字母+数字组合,大于6小于20个字符"
               :disabled="isdisabled"
@@ -857,14 +881,14 @@
           type="text"
           style="border:1px solid #c6c9ce"
           size="large"
-          @click="cancel"
+          @click="cancel('formValidateEnt')"
         >取消</Button>
         <Button
           v-show="tabIndex==2&&isSeeReason"
           type="text"
           style="border:1px solid"
           size="large"
-          @click="closeModal"
+          @click="closeModal('formValidateEnt')"
         >关闭</Button>
         <Button
           v-show="tabIndex==2&&!isSeeReason"
@@ -880,14 +904,14 @@
           type="text"
           style="border:1px solid #c6c9ce"
           size="large"
-          @click="cancel"
+          @click="cancel('formValidatePre')"
         >取消</Button>
         <Button
           v-show="tabIndex==1&&isSeeReason"
           style="border:1px solid"
           type="text"
           size="large"
-          @click="closeModal"
+          @click="closeModal('formValidatePre')"
         >关闭</Button>
         <Button
           v-show="tabIndex==1&&!isSeeReason"
@@ -1012,6 +1036,7 @@ export default {
       }
     };
     return {
+      saleChannelId:null,
       isShowArrow: true,
       checkType: null, //1用户名2手机号
       checkParam: null,
@@ -1115,17 +1140,19 @@ export default {
           this.$store.state.user.channelId +
           ",", //父渠道pids
         password: null, // 密码
+        passwordNew: null, // 密码
         phone: null, // 手机
         remark: "", // 备注
         updateDate: null, // 修改时间
-        userName: null // 用户名
+        userName: null, // 用户名
+        userNameNew: null // 用户名
       },
       ruleValidatePre: {
-        userName: [
+        userNameNew: [
           { required: true, validator: validateUserName, trigger: "blur" },
           { max: 20, message: "长度最多是20个字符", trigger: "blur" }
         ],
-        password: [
+        passwordNew: [
           { required: true, validator: validatePassword, trigger: "blur" },
           { min: 6, max: 20, message: "密码长度6-20个字符", trigger: "blur" }
         ],
@@ -1221,17 +1248,19 @@ export default {
           this.$store.state.user.channelId +
           ",", //父渠道pids
         password: null, // 密码
+        passwordNew: null, // 密码
         phone: null, // 手机
         remark: "", // 备注
         updateDate: null, // 修改时间
-        userName: null // 用户名
+        userName: null, // 用户名
+        userNameNew: null // 用户名
       },
       ruleValidateEnt: {
-        userName: [
+        userNameNew: [
           { required: true, validator: validateUserName, trigger: "blur" },
           { max: 20, message: "长度最多是20个字符", trigger: "blur" }
         ],
-        password: [
+        passwordNew: [
           { required: true, validator: validatePassword, trigger: "blur" },
           { min: 6, max: 20, message: "密码长度6-20个字符", trigger: "blur" }
         ],
@@ -1638,26 +1667,23 @@ export default {
     close() {
       this.isShow = false;
       this.loading = false;
-      this.channelId = this.$store.state.user.channelId;
       this.$refs.formValidatePre.resetFields();
       this.$refs.formValidateEnt.resetFields();
     },
     // 取消按钮
-    cancel() {
+    cancel(name) {
       this.isShow = false;
       this.isQRShow = false;
       this.loading = false;
       this.$Message.info("取消操作");
-      this.$refs.formValidatePre.resetFields();
-      this.$refs.formValidateEnt.resetFields();
-      this.channelId = this.$store.state.user.channelId;
+      this.$refs[name].resetFields();
     },
 
     // 关闭按钮
-    closeModal() {
+    closeModal(name) {
       this.isShow = false;
       this.loading = false;
-      this.channelId = this.$store.state.user.channelId;
+      this.$refs[name].resetFields();
     },
     // 提交的点击事件
     changeAuditStatus(row) {
@@ -1700,12 +1726,12 @@ export default {
     // 新增点击事件
     addModal() {
       // this.isReceiveType = "2";
+      this.$Spin.show();
       this.isSeeReason = false;
       this.isEnterprise = true;
       this.isPerson = true;
       this.isdisabled = false;
       this.modalTitle = "新增【商户】";
-      this.isShow = true;
       this.isTab = true;
       this.tabIndex = 2;
       this.isregester = true;
@@ -1746,10 +1772,12 @@ export default {
           this.$store.state.user.channelId +
           ",", //父渠道pids
         password: null, // 密码
+        passwordNew: null, // 密码
         phone: null, // 手机
         remark: "", // 备注
         updateDate: null, // 修改时间
-        userName: null // 用户名
+        userName: null, // 用户名
+        userNameNew: null // 用户名
       };
       // 企业模态框表单数据
       this.formValidateEnt = {
@@ -1785,11 +1813,21 @@ export default {
           this.$store.state.user.channelId +
           ",", //父渠道pids
         password: null, // 密码
+        passwordNew: null, // 密码
         phone: null, // 手机
         remark: "", // 备注
         updateDate: null, // 修改时间
-        userName: null // 用户名
+        userName: null, // 用户名
+        userNameNew: null // 用户名
       };
+      setTimeout(() => {
+        this.$refs.formValidatePre.resetFields();
+        this.$refs.formValidateEnt.resetFields();
+        this.isShow = true;
+      }, 1800);
+      setTimeout(() => {
+        this.$Spin.hide();
+      }, 2000);
     },
     // 编辑，查看显示方式
     showType(row) {
@@ -1797,24 +1835,11 @@ export default {
       this.isShow = true;
       this.isTab = false;
       this.isregester = true;
-      // row.receiveType == 1
-      //   ? (this.isReceiveType = "1")
-      //   : (this.isReceiveType = "2");
-      // let array = row.areaIds.split(",");
       let array2 = [];
-      // 字符串数组 转数字数组
-      // array.forEach(function(data, index) {
-      //   array2[index] = parseInt(data);
-      // });
       row.areaIds.split(",").forEach(item => {
         array2.push(parseInt(item));
       });
-      // let arr = row.businessScope.split(",");
       let arr2 = [];
-      // 字符串数组 转数字数组
-      // arr.forEach(function(data, index) {
-      //   arr2[index] = parseInt(data);
-      // });
       row.businessScope.split(",").forEach(item => {
         arr2.push(parseInt(item));
       });
@@ -1823,6 +1848,8 @@ export default {
         this.isEnterprise = false;
         this.tabIndex = 1;
         this.formValidatePre = JSON.parse(JSON.stringify(row));
+        this.formValidatePre.userNameNew = this.formValidatePre.userName;
+        this.formValidatePre.passwordNew = this.formValidatePre.password;
         this.formValidatePre.NewareaNames = array2;
         this.formValidatePre.sale = arr2;
         this.strPre = JSON.stringify(this.formValidatePre);
@@ -1831,6 +1858,8 @@ export default {
         this.isEnterprise = true;
         this.tabIndex = 2;
         this.formValidateEnt = JSON.parse(JSON.stringify(row));
+        this.formValidateEnt.userNameNew = this.formValidateEnt.userName;
+        this.formValidateEnt.passwordNew = this.formValidateEnt.password;
         this.formValidateEnt.NewareaNames = array2;
         this.formValidateEnt.sale = arr2;
         this.strEnt = JSON.stringify(this.formValidateEnt);
@@ -1860,7 +1889,7 @@ export default {
         row.receiveTerminal == 1
           ? (this.formValidatePre.receiveTerminal = false)
           : (this.formValidatePre.receiveTerminal = true);
-        this.channelId = row.channelId;
+        this.saleChannelId = row.channelId;
         this.businessStr = row.businessScope;
         await this.getMerchantCategorySale();
         // }
@@ -1868,7 +1897,7 @@ export default {
         row.receiveTerminal == 1
           ? (this.formValidateEnt.receiveTerminal = false)
           : (this.formValidateEnt.receiveTerminal = true);
-        this.channelId = row.channelId;
+        this.saleChannelId = row.channelId;
         this.businessStr = row.businessScope;
         await this.getMerchantCategorySale();
       }
@@ -1885,6 +1914,8 @@ export default {
               // this.isReceiveType == "1"
               //   ? (this.formValidatePre.receiveType = 1)
               //   : (this.formValidatePre.receiveType = 2);
+              this.formValidatePre.userName = this.formValidatePre.userNameNew;
+              this.formValidatePre.password = this.formValidatePre.passwordNew;
               this.formValidatePre.areaNames = this.formValidatePre.NewareaNames.join(
                 ","
               );
@@ -1910,6 +1941,8 @@ export default {
               // this.isReceiveType == "1"
               //   ? (this.formValidateEnt.receiveType = 1)
               //   : (this.formValidateEnt.receiveType = 2);
+              this.formValidateEnt.userName = this.formValidateEnt.userNameNew;
+              this.formValidateEnt.password = this.formValidateEnt.passwordNew;
               this.formValidateEnt.areaNames = this.formValidateEnt.NewareaNames.join(
                 ","
               );
@@ -1942,6 +1975,8 @@ export default {
                 this.isShow = false;
                 this.loading = false;
               } else {
+                this.formValidatePre.userName = this.formValidatePre.userNameNew;
+                this.formValidatePre.password = this.formValidatePre.passwordNew;
                 this.formValidatePre.auditStatus = 1;
                 this.formValidatePre.areaNames = this.formValidatePre.NewareaNames.join(
                   ","
@@ -1973,6 +2008,8 @@ export default {
                 this.isShow = false;
                 this.loading = false;
               } else {
+                this.formValidateEnt.userName = this.formValidateEnt.userNameNew;
+                this.formValidateEnt.password = this.formValidateEnt.passwordNew;
                 this.formValidateEnt.auditStatus = 1;
                 this.formValidateEnt.areaNames = this.formValidateEnt.NewareaNames.join(
                   ","
@@ -2038,7 +2075,7 @@ export default {
     },
     // 查询渠道商的业务范围
     getMerchantCategorySale() {
-      searchMerchantCategorySale(this.channelId, this.businessStr).then(res => {
+      searchMerchantCategorySale(this.saleChannelId, this.businessStr).then(res => {
         if (res.data.code == 200) {
           this.saleData = res.data.result;
           this.saleData.forEach((item, index) => {

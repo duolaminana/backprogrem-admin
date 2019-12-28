@@ -1,7 +1,7 @@
 <template>
   <div class="stockControl">
     <Row style="padding:20px">
-      <Col span="6">
+      <Col span="8">
         <Card :bordered="false" dis-hover>
           <p style="font-size:16px;margin-top:8px">总商品库存</p>
           <Table highlight-row border ref="stockData" :columns="stockColumns" :data="stockDatas">
@@ -13,15 +13,12 @@
           <Page :total="totalAll" @on-change="pageChangeAll" :page-size="pageSizeAll" simple />
         </Card>
       </Col>
-      <Col span="18">
+      <Col span="16">
         <Card :bordered="false" dis-hover>
           <div>
             <Input v-model="machineCode" style="margin-right:10px" placeholder="设备编码" clearable />
             <Input v-model="positionName" style="margin-right:10px" placeholder="点位名称" clearable />
-            <Button
-              type="primary"
-              @click="searchSearchStockControl"
-            >查询</Button>
+            <Button type="primary" @click="searchSearchStockControl">查询</Button>
             <Button type="primary" @click="reset">重置</Button>
             <Table highlight-row border ref="selection" :columns="columns" :data="datas">
               <!-- 点位信息 -->
@@ -90,14 +87,21 @@ export default {
           title: "商品名称",
           slot: "productName",
           align: "center",
+          minWidth: 100,
+          tooltip: true
+        },
+        {
+          title: "商品数量",
+          key: "productNumber",
+          align: "center",
           minWidth: 60,
           tooltip: true
         },
         {
-          title: "商品数量(盒)",
-          key: "productNumber",
+          title: "单位",
+          key: "unit",
           align: "center",
-          minWidth: 80,
+          minWidth: 20,
           tooltip: true
         }
       ],
@@ -114,18 +118,21 @@ export default {
           title: "设备类型",
           key: "machineName",
           align: "center",
+          minWidth: 100,
           tooltip: true
         },
         {
           title: "机型编码",
           key: "machineCode",
           align: "center",
+          minWidth: 80,
           tooltip: true
         },
         {
           title: "点位信息",
           slot: "positionName",
           align: "center",
+          minWidth: 60,
           tooltip: true
         },
 
@@ -133,14 +140,24 @@ export default {
           title: "商品名称",
           key: "productName",
           align: "center",
+          minWidth: 80,
           tooltip: true
         },
         {
-          title: "商品数量(盒)",
+          title: "商品数量",
           key: "productNumber",
           align: "center",
+          minWidth: 40,
+          tooltip: true
+        },
+        {
+          title: "单位",
+          key: "dictUnitName",
+          align: "center",
+          minWidth: 20,
           tooltip: true
         }
+
       ]
     };
   },
@@ -188,7 +205,7 @@ export default {
       let data = {
         channelId: this.channelId,
         machineCode: this.machineCode,
-        managerRoute:this.$store.state.user.userVo.managerRoute,
+        managerRoute: this.$store.state.user.userVo.managerRoute,
         pageNum: this.pageNum,
         pageSize: this.pageSize,
         positionName: this.positionName,
@@ -208,7 +225,7 @@ export default {
       let data = {
         channelId: this.channelId,
         machineCode: this.machineCode,
-        managerRoute:this.$store.state.user.userVo.managerRoute,
+        managerRoute: this.$store.state.user.userVo.managerRoute,
         pageNum: this.pageNumAll,
         pageSize: this.pageSizeAll,
         type: this.type,

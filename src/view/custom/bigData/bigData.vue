@@ -232,7 +232,7 @@ export default {
       decimals:2, //显示的小数位数
       isZero:0,
       startVal:0, //起始值
-      colorList:['#40A4F9', '#15D0FF', '#FB7E33', '#FFDB15', '#28D59D', '#F66F95'],
+      colorList:['#40A4F9', '#15D0FF', '#FB7E33', '#FFDB15', '#28D59D', '#F66F95','#3080E8','#B47EED','#E7B72F','#78C654'],
       pieData:[
         // {name: "芙蓉王（硬红带细支）", value: 1},
         // {name: "软白沙", value: 3}, 

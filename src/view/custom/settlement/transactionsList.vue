@@ -125,28 +125,28 @@
         <template slot-scope="{row,index}" slot="operation">
           <!-- 退款按钮 -->
           <Button
-            style="margin-right:0px;float:left;margin-left:10px"
+            style="float:left"
             type="primary"
             size="small"
             @click="refund(row)"
             v-if="hasPerm('set:tranlist:refund')&&row.refundStatus==1&&(row.orderStatus==2||row.orderStatus==3||row.orderStatus==4||row.orderStatus==6)&&(isShowOperation||((channelId==$store.state.user.channelId)&&$store.state.user.userVo.type==2))"
           >&nbsp退款&nbsp</Button>
           <Button
-            style="margin-right:0px;float:left;margin-left:10px"
+            style="float:left"
             disabled
             type="primary"
             size="small"
             v-if="hasPerm('set:tranlist:refund')&&row.refundStatus==2&&(row.orderStatus==2||row.orderStatus==3||row.orderStatus==4||row.orderStatus==6)&&(isShowOperation||((channelId==$store.state.user.channelId)&&$store.state.user.userVo.type==2))"
           >已退款</Button>
           <Button
-            style="margin-left:10px;float:left;"
+            style="float:left"
             type="primary"
             size="small"
             @click="clear(row)"
             v-if="hasPerm('set:tranlist:refund')&&(row.sendBack==3||row.sendBack==1)&&(row.orderStatus==2||row.orderStatus==4||row.orderStatus==6)&&(isShowOperation||((channelId==$store.state.user.channelId)&&$store.state.user.userVo.type==2))"
           >&nbsp清算&nbsp</Button>
           <Button
-            style="margin-left:10px;float:left;"
+            style="float:left"
             disabled
             type="primary"
             size="small"
@@ -683,7 +683,7 @@ export default {
           title: "操作",
           align: "center",
           slot: "operation",
-          minWidth: 140,
+          minWidth: 125,
           tooltip: true
         },
         {
@@ -727,6 +727,20 @@ export default {
         {
           title: "出货数量",
           key: "productProduce",
+          align: "center",
+          minWidth: 80,
+          tooltip: true
+        },
+        {
+          title: "退货数量",
+          key: "refundNumber",
+          align: "center",
+          minWidth: 80,
+          tooltip: true
+        },
+        {
+          title: "清算数量",
+          key: "clearNumber",
           align: "center",
           minWidth: 80,
           tooltip: true
@@ -1351,7 +1365,7 @@ export default {
     margin-right: 5px;
   }
   .ivu-btn {
-    margin-right: 10px;
+    margin-left: 10px;
   }
   .ivu-table-wrapper {
     margin-top: 20px;

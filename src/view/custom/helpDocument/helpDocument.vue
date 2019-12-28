@@ -1,8 +1,8 @@
 <template>
   <div class='helpDocument layout'>
     <Layout>
-      <Sider hide-trigger width='300px'>
-        <Menu @on-select='menuChange'  width='300px' active-name="1-1" :open-names="['1','2','3']">
+      <Sider hide-trigger width='280px' class='sederLeft'>
+        <Menu @on-select='menuChange'  width='280px' active-name="1-1" :open-names="['1','2','3']">
           <Submenu  v-for='(v,i) in list' :key='v+i' :name="v.name">
             <template slot="title">{{v.title}}</template>
               <template  v-for='(value,index) in v.children' >
@@ -10,18 +10,18 @@
                   <Submenu :name="value.name">
                     <template slot="title">{{value.title}}</template>
                     <template v-for='(val,ind) in value.children'>
-                      <MenuGroup v-if='val.children&&val.children.length'  :key='val+ind' :title="val.title">
-                        <MenuItem v-for='(item,itemIndex) in val.children' :key='item+itemIndex' :name="item.name">{{item.title}}</MenuItem>
+                      <MenuGroup @click.native='groupClick' v-if='val.children&&val.children.length'  :key='val+ind' :title="val.title" :data-name='val.name'>
+                        <MenuItem v-for='(item,itemIndex) in val.children' :key='item+itemIndex' :name="item.name" :data-name='item.name'>{{item.title}}</MenuItem>
                       </MenuGroup>
-                      <MenuItem  :key='val+ind' v-if='!val.children||!val.children.length' :name="val.name">{{val.title}}</MenuItem>
+                      <MenuItem class='title' :key='val+ind' v-if='!val.children||!val.children.length' :name="val.name" :data-name='val.name'>{{val.title}}</MenuItem>
                     </template>
                 </Submenu>
                 </template>
                 <template v-else>
-                  <MenuGroup v-if='value.children&&value.children.length'  :key='value+index' :title="value.title">
-                    <MenuItem v-for='(item,itemIndex) in value.children' :key='item+itemIndex' :name="item.name">{{item.title}}</MenuItem>
+                  <MenuGroup @click.native='groupClick' v-if='value.children&&value.children.length'  :key='value+index' :title="value.title" :data-name='value.name'>
+                    <MenuItem v-for='(item,itemIndex) in value.children' :key='item+itemIndex' :name="item.name" :data-name='item.name'>{{item.title}}</MenuItem>
                   </MenuGroup>
-                  <MenuItem  :key='value+index' v-if='!value.children||!value.children.length' :name="value.name">{{value.title}}</MenuItem>
+                  <MenuItem class='title'  :key='value+index' v-if='!value.children||!value.children.length' :name="value.name" :data-name='value.name'>{{value.title}}</MenuItem>
                 </template>
               </template>
           </Submenu>
@@ -45,6 +45,7 @@ const fourData = {
           children:[
             {
               title:'一、注册/登录',
+              id:'1-1',
               children:[
                 {
                   title:'1.注册',
@@ -62,6 +63,7 @@ const fourData = {
             },
             {
               title:'二、新增售卖商品',
+              id:'1-3',
               children:[
                 {
                   title:'1.新增商品类型',
@@ -85,6 +87,7 @@ const fourData = {
             },
             {
               title:'三、管理设备',
+              id:'1-4',
               children:[
                 {
                   title:'1.新增分区线路',
@@ -136,6 +139,7 @@ const fourData = {
             },
             {
               title:'四、用户分配',
+              id:'1-5',
               children:[
                 {
                   title:'1.新增角色',
@@ -158,6 +162,7 @@ const fiveData = {
           children:[
             {
               title:'一、注册/登录',
+              id:'1-1',
               children:[
                 {
                   title:'1.注册',
@@ -175,6 +180,7 @@ const fiveData = {
             },
             {
               title:'二、商户收款码配置',
+              id:'1-2',
               children:[
                 {
                   title:' ',
@@ -186,6 +192,7 @@ const fiveData = {
             },
             {
               title:'三、新增售卖商品',
+              id:'1-3',
               children:[
                 {
                   title:'1.新增商品类型',
@@ -209,6 +216,7 @@ const fiveData = {
             },
             {
               title:'四、管理设备',
+              id:'1-4',
               children:[
                 {
                   title:'1.新增分区线路',
@@ -260,6 +268,7 @@ const fiveData = {
             },
             {
               title:'五、用户分配',
+              id:'1-5',
               children:[
                 {
                   title:'1.新增角色',
@@ -282,6 +291,7 @@ const nineData = {
   children:[
     {
       title:'1.商户管理',
+      id:'2-9-1',
       children:[
         {
           describe:'1.1商户信息管理（对所有的商户进行管理，审核各类信息，分配经营范围、收款权限、利润抽成比、活动权限）；',
@@ -303,6 +313,7 @@ const nineData = {
     },
     {
       title:'3.设备管理',
+      id:'2-9-3',
       children:[
         {
           describe:'3.1设备列表（ 批量上传模板、批量导入、设备转移、使用期限、维护费用、货道模板、开门记录、出厂信息、设备类型）；',
@@ -315,7 +326,57 @@ const nineData = {
           id:'2-9-3-2',
         }
       ]
-    }
+    },
+    {
+      title:'4.交易结算',
+      id:'2-9-4',
+      children:[
+        {
+          describe:'4.1交易管理：展示商户自身以及子商户的交易订单，可点击查看订单的“点位信息”、“订单详情”、“利益分配”，每个订单均有退款功能，出货失败的订单有清算功能。（退款与清算功能只能选其一）',
+          img:require('../../../assets/images/helpImg/02_2/9.4.1.png'),
+          id:'2-9-4-1',
+        },
+        {
+          describe:'4.2结算管理：展示商户自身以及子商户的结算列表，从收款方入手展示每笔资金来源，可查看关联设备、收款人详情、结算详情（可导出），在有收款权限的情况下有结算功能；',
+          img:require('../../../assets/images/helpImg/02_2/9.4.2.png'),
+          id:'2-9-4-2',
+        },
+        {
+          describe:'4.3结算记录管理：展示商户自身以及子商户的已结算记录，从收款方入手展示每笔资金来源，可查看关联设备、收款人详情、结算详情（可导出）；',
+          img:require('../../../assets/images/helpImg/02_2/9.4.3.png'),
+          id:'2-9-4-3',
+        }
+      ]
+    },
+    {
+      title:'5.系统管理',
+      id:'2-9-5',
+      children:[
+        {
+          describe:'此功能供开发者使用，暂不展开介绍；',
+        },
+      ]
+    },
+    {
+      title:'6.会员管理',
+      id:'2-9-6',
+      children:[
+        {
+          describe:'会员交易记录、积分、返现详情；',
+          img:require('../../../assets/images/helpImg/02_2/9.6.png'),
+        }
+      ]
+    },
+    {
+      title:'7.大数据',
+      id:'2-9-7',
+      children:[
+        {
+          describe:'统计注册商户、商品库、设备、销售额/利润额（日/月/年）、销售类型对比、商户销售量对比；',
+          img:require('../../../assets/images/helpImg/02_2/9.7.png'),
+        }
+      ]
+    },
   ]
 }
 let contentData = [
@@ -324,12 +385,12 @@ let contentData = [
           children:[
             {
               title:'一、首页',
+              id:'2-1',
               children:[
                 {
                   title:'',
                   describe:'',
                   img:require('../../../assets/images/helpImg/02_1/1.png'),
-                  id:'2-1',
                 },
                 {
                   title:'1.导航栏',
@@ -349,16 +410,17 @@ let contentData = [
             },
             {
               title:'二、商户（商户信息）',
+              id:'2-2',
               children:[
                 {
                   describe:'设置商户收款码、新增子商户、编辑自身商户信息；',
-                  img:require('../../../assets/images/helpImg/02_1/2_youshoukuanma.png'),
-                  id:'2-2',
+                  img:(store.state.user.userVo.type==2&&store.state.user.merchant.receiveTerminal==2)?require('../../../assets/images/helpImg/02_1/2_youshoukuanma.png'):require('../../../assets/images/helpImg/02_1/2_wushoukuanma.png'),
                 }
               ]
             },
             {
               title:'三、商品',
+              id:'2-3',
               children:[
                 {
                   title:'1.商品类型',
@@ -382,6 +444,7 @@ let contentData = [
             },
             {
               title:'四、设备',
+              id:'2-4',
               children:[
                 {
                   title:'1.设备管理',
@@ -440,6 +503,7 @@ let contentData = [
             },
             {
               title:'五、库存',
+              id:'2-5',
               children:[
                 {
                   title:'1.库存监控',
@@ -456,17 +520,18 @@ let contentData = [
             },
             {
               title:'六、促销活动',
+              id:'2-6',
               children:[
                 {
                   title:'促销活动（活动列表）',
                   describe:'展示商户自身以及子商户的活动，活动分为“低价促销”及“限免”两个类型，其中“限免”活动仅限环保购物袋；活动分为：活动中、待开始、已结束以及启用和停用状态；活动中不能修改只能删除，待开始则可以根据需求修改；',
                   img:require('../../../assets/images/helpImg/02_1/6.png'),
-                  id:'2-6',
                 }
               ]
             },
             {
               title:'七、销售结算',
+              id:'2-7',
               children:[
                 {
                   title:'1.交易列表',
@@ -490,6 +555,7 @@ let contentData = [
             },
             {
               title:'八、系统',
+              id:'2-8',
               children:[
                 {
                   title:'1.用户管理',
@@ -502,6 +568,93 @@ let contentData = [
                   describe:'新建角色，并为每个角色分配每个页面的权限；',
                   img:require('../../../assets/images/helpImg/02_1/8.2.png'),
                   id:'2-8-2',
+                }
+              ]
+            },
+          ]
+        },
+        {
+          headTitle:'商户APP“云自购”功能概览',
+          children:[
+            {
+              title:'一、首页',
+              id:'3-1',
+              children:[
+                {
+                  img:require('../../../assets/images/helpImg/03/1.png'),
+                },
+                {
+                  title:'1.我的利润',
+                  describe:'按时间段展示总利润以及每台设备的利润；',
+                  img:require('../../../assets/images/helpImg/03/1.1.png'),
+                  id:'3-1-1',
+                },
+                {
+                  title:'2.库存管理',
+                  describe:'对设备内的商品数量、价格、顺序等进行管理',
+                  img:require('../../../assets/images/helpImg/03/1.2.png'),
+                  id:'3-1-2'
+                },
+                {
+                  title:'3.报表查询',
+                  describe:'展示各类报表记录',
+                  img:require('../../../assets/images/helpImg/03/1.3.png'),
+                  id:'3-1-3'
+                },
+                {
+                  title:'4.商品中心',
+                  describe:'展示改商户下商品的品类及售卖价格',
+                  img:require('../../../assets/images/helpImg/03/1.4.png'),
+                  id:'3-1-4'
+                },
+                {
+                  title:'5.维护中心',
+                  describe:'工单以及电话服务',
+                  img:require('../../../assets/images/helpImg/03/1.5.png'),
+                  id:'3-1-5'
+                }
+              ]
+            },
+            {
+              title:'二、设备管理',
+              id:'3-2',
+              children:[
+                {
+                  describe:'展示改商户下商品的品类及售卖价格',
+                  img:require('../../../assets/images/helpImg/03/2.png'),
+                }
+              ]
+            },
+            {
+              title:'三、个人中心',
+              id:'3-3',
+              children:[
+                {
+                  img:require('../../../assets/images/helpImg/03/3.png'),
+                },
+                {
+                  title:'1.基本信息',
+                  describe:'查看用户基本信息',
+                  img:require('../../../assets/images/helpImg/03/3.1.png'),
+                  id:'3-3-1',
+                },
+                {
+                  title:'2.结算',
+                  describe:'查看未结算及已结算的信息',
+                  img:require('../../../assets/images/helpImg/03/3.2.png'),
+                  id:'3-3-2'
+                },
+                {
+                  title:'3.帮助',
+                  describe:'查看用户基本信息',
+                  img:require('../../../assets/images/helpImg/03/3.3.png'),
+                  id:'3-3-3'
+                },
+                {
+                  title:'4.关于',
+                  describe:'展示版本信息',
+                  img:require('../../../assets/images/helpImg/03/3.4.png'),
+                  id:'3-3-4'
                 }
               ]
             },
@@ -929,15 +1082,71 @@ export default {
     return{
       contentData:contentData,
       list:list,
+      isClick:false,
     }
   },
   methods:{
     menuChange(value){
+      this.isClick = true;
+      const divNode = document.querySelectorAll('div .ivu-menu-item-group-title');
+      divNode.forEach((v,i)=>{
+        v.classList.remove('ivu-menu-item-active')
+      })
       window.location.href=`#${value}`;
-      // document.scrollingElement.scrollTop = document.scrollingElement.scrollTop-100;
-    }
-  }, 
+    },
+    groupClick(e){
+      this.isClick = true;
+      const self = e.target;
+      const value = self.parentNode.dataset.name;
+      this.remove();
+      setTimeout(() => {
+        self.classList.add('ivu-menu-item-active');
+        window.location.href=`#${value}`;
+      }, 100);
+    },
+    remove(){
+      const liNode = document.querySelectorAll('li .ivu-menu-item');
+      liNode.forEach((v,i)=>{
+        v.classList.remove('ivu-menu-item-active')
+      })
+      const divNode = document.querySelectorAll('div .ivu-menu-item-group-title');
+      divNode.forEach((v,i)=>{
+        v.classList.remove('ivu-menu-item-active');
+      })
+    },
+  },
+  
   mounted(){
+    this.$nextTick(()=>{
+      const center = document.querySelector('.centerContent');
+      const seder = document.querySelector('.ivu-layout-sider-children');
+      center.onscroll = ()=>{
+        if(!this.isClick){
+          this.remove()
+          const scrollTop = center.scrollTop;
+          const peg = document.querySelectorAll('.peg');
+          peg.forEach((v,i)=>{
+            if (scrollTop >= peg[i].offsetTop&& scrollTop <= peg[i + 1].offsetTop) {
+              const id = peg[i].id;
+              if(id){
+                const divNode = document.querySelector(`li.ivu-menu-item-group[data-name='${id}']`);
+                if(divNode){
+                  divNode.children[0].classList.add('ivu-menu-item-active');
+                  seder.scrollTop = divNode.children[0].offsetTop;
+                }
+                const liNode = document.querySelector(`li.ivu-menu-item[data-name='${id}']`);
+                if(liNode){
+                  liNode.classList.add('ivu-menu-item-active')
+                  seder.scrollTop = liNode.offsetTop;
+                }
+              }
+            }
+          })
+        }
+        this.isClick = false;
+        // console.log(scrollTop)
+      }
+    })
   }
 }
 </script>
@@ -949,20 +1158,31 @@ export default {
   .ivu-layout{
     height: 100%
   }
+  .title, /deep/ .ivu-menu-item-group-title{
+    color:#515A6E;
+    cursor: pointer;
+    font-weight: 700
+  }
   /deep/.ivu-layout-sider{
-    background: white
+    background: white;
+    width: 280px;
   }
   /deep/.ivu-layout-sider-children{
-    width: 300px;
+    width: 280px;
     overflow: auto;
     >ul>li>div.ivu-menu-submenu-title{
       font-weight: 700;
       font-size: 16px
     }
   }
+  /deep/.ivu-menu .ivu-menu-submenu-title{
+    color:#515A6E;
+    cursor: pointer;
+    font-weight: 700
+  }
   .centerContent{
     background: white;
-    padding:20px 30px
+    padding:20px 0px 20px 60px
   }
 }
 </style>

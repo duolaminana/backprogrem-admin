@@ -12,6 +12,12 @@
       >
       </big-data-map>
     </Card>
+    <p class='ps'>
+      <template v-for='(v,i) in ps'>
+        <img :src="v.img" :key='v+i'>
+        <span>{{v.describe}}</span>
+      </template>
+    </p>
   </div>
 </template>
 <script>
@@ -27,12 +33,32 @@ export default {
   data () {
     return {
       channelId:this.$store.state.user.channelId,
-      dataList:[
-        // {imgNum:1,longitude:114.08595,laytitude:22.547},
-        // {imgNum:2,longitude:120.412618,laytitude:36.382612},
-        // {imgNum:3,longitude:113.370643,laytitude:22.938827},
-        // {imgNum:4,longitude:113.001181,laytitude:23.120518},
-        // {imgNum:5,longitude:113.890205,laytitude:22.798043}
+      dataList:[],
+      ps:[
+        {
+          img: require('../../../assets/images/p_red.png'),
+          describe:'代表棉花糖'
+        },
+        {
+          img: require('../../../assets/images/p_orange.png'),
+          describe:'代表烟'
+        },
+        {
+          img: require('../../../assets/images/p_green.png'),
+          describe:'代表药'
+        },
+        {
+          img: require('../../../assets/images/p_pink.png'),
+          describe:'代表电子烟'
+        },
+        {
+          img: require('../../../assets/images/p_blue.png'),
+          describe:'代表购物袋'
+        },
+        {
+          img: require('../../../assets/images/p_change.png'),
+          describe:'代表混合机'
+        }
       ]
 		}
   },
@@ -81,6 +107,17 @@ export default {
         padding:0;
         height:100%;
       }
+    }
+  }
+  .ps{
+    margin-top: 20px;
+    >span{
+      margin-right: 20px;
+      margin-left: 5px;
+      font-size: 12px;
+    }
+    >img{
+      width:24px
     }
   }
 </style>

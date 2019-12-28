@@ -25,7 +25,7 @@ export default {
         data: {
           key: {
             name: "title",
-            title: "id"
+            title: "id",
           }
         },
         ivew: {
@@ -38,14 +38,28 @@ export default {
           showIcon: true
         }
       },
-      nodes: []
+      nodes: [],
+      list:[1,117,120]
     };
   },
   methods: {
     pick(event, treeId, treeNode) {
-      console.log(event);
       this.$emit("pickTree", treeNode);
     }
+  },
+  mounted(){
+    this.$nextTick(()=>{
+      this.list.map((v,i)=>{
+        console.log(v)
+        let node = document.querySelector(`a[title=${v}]`);
+        console.log(node)
+        if(node){
+          let img=document.createElement("img");
+          g.src="http://baike.baidu.com/cms/rc/240x112dierzhou.jpg";
+          node.insertBefore(img,node.childNodes[0])
+        }
+      })
+    })
   }
 };
 </script>

@@ -478,7 +478,7 @@ export default {
     margin:0 auto;
     margin-top:10px;
     >img{
-      width: auto;
+      width: 120px;
       height: 120px;
       margin:0 auto;
       display:block;

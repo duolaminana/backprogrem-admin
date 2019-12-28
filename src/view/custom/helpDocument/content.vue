@@ -3,17 +3,17 @@
     <div v-for='(v,i) in list' :key='v+i'>
       <h2>{{v.headTitle}}</h2>
       <template v-for='(value,index) in v.children' >
-        <h1 :key='value+index+i'>{{value.title}}</h1>
+        <h1 :key='value+index+i' :id='value.id' class='peg'>{{value.title}}</h1>
         <template v-for='(item,itemIndex) in value.children'>
           <template v-if='item.children&&item.children.length'>
-            <h3 :key='item+itemIndex+i+index' :id='item.id'>{{item.title}}</h3>
+            <h3 :key='item+itemIndex+i+index' :id='item.id' class='peg'>{{item.title}}</h3>
             <template v-for='(itemChild,itemIndexChild) in item.children'>
-              <p :key='item+itemIndex+i+index+itemIndexChild' :id='itemChild.id'>{{itemChild.describe}}</p>
+              <p :key='item+itemIndex+i+index+itemIndexChild' :id='itemChild.id' class='peg'>{{itemChild.describe}}</p>
               <img v-if='itemChild.img' :src="itemChild.img" >
             </template>
           </template>
           <template v-else>
-            <h3 :key='item+itemIndex+i+index' :id='item.id'>{{item.title}}</h3>
+            <h3 :key='item+itemIndex+i+index' :id='item.id' class='peg'>{{item.title}}</h3>
             <p>{{item.describe}}</p>
             <img v-if='item.img' :src="item.img" >
           </template>

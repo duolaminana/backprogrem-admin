@@ -55,7 +55,9 @@
         <!-- 管理分区 -->
         <template slot="userRoutes" slot-scope="{ row, index }">
           <span v-if="row.type==2||row.managerRoute==1">全部</span>
-          <span v-if="row.type!=2&&row.managerRoute!=1">{{row.userRouteVos|userRouteVosText}}</span>
+          <Tooltip max-width="200" :content="row.routerStr" placement="top">
+            <span v-if="row.type!=2&&row.managerRoute!=1">{{row.userRouteVos|userRouteVosText}}</span>
+          </Tooltip>
         </template>
         <!-- 开门权限 -->
         <template slot="isOpen" slot-scope="{ row, index }">
@@ -65,7 +67,7 @@
             @click="toOpenModal(row)"
           >去开启</a>
           <Button
-          style="margin-right:0px"
+            style="margin-right:0px"
             type="primary"
             v-if="row.openDoor==1&&hasPerm('sys:user:edit')"
             size="small"
@@ -146,8 +148,27 @@
             </Upload>
           </template>
         </FormItem>
-        <FormItem label="登录名称" prop="userName" style="display:inline-block">
-          <Input v-model="formValidate.userName" placeholder="请输入登录名称" style="width:180px"></Input>
+        <FormItem label="登录名称" prop="userNameNew" style="display:inline-block">
+          <Input v-model="formValidate.userNameNew" placeholder="请输入登录名称" style="width:180px"></Input>
+          <Input
+            v-if="isAdd"
+            v-model="formValidate.userName"
+            type="text"
+            style="width:10px;opacity: 0;position: absolute"
+          ></Input>
+        </FormItem>
+        <FormItem label="密码" prop="passwordNew" v-if="ispassword" style="display:inline-block">
+          <Input
+            v-model="formValidate.password"
+            type="password"
+            style="width:10px;opacity: 0;position: absolute"
+          ></Input>
+          <Input
+            v-model="formValidate.passwordNew"
+            type="password"
+            placeholder="请输入密码"
+            style="width:180px"
+          ></Input>
         </FormItem>
         <FormItem label="真实姓名" prop="name" style="display:inline-block">
           <Input v-model="formValidate.name" placeholder="请输入真实姓名" style="width:180px"></Input>
@@ -155,18 +176,11 @@
         <FormItem label="身份证号" prop="card" style="display:inline-block">
           <Input v-model="formValidate.card" placeholder="请输入身份证号" style="width:180px"></Input>
         </FormItem>
-        <FormItem label="密码" prop="password" v-if="ispassword" style="display:inline-block">
-          <Input
-            v-model="formValidate.password"
-            type="password"
-            placeholder="请输入密码"
-            style="width:180px"
-          ></Input>
-        </FormItem>
+
         <FormItem label="手机号码" prop="phone">
           <Input v-model="formValidate.phone" placeholder="请输入手机号码" style="width:180px"></Input>
         </FormItem>
-        <FormItem label="邮箱" prop="email">
+        <FormItem label="邮箱">
           <Input v-model="formValidate.email" placeholder="请输入邮箱" style="width: 220px"></Input>
         </FormItem>
 
@@ -406,6 +420,7 @@ export default {
       }
     };
     return {
+      routerStr: "",
       managerRoute: null,
       isShowRouteTree: false,
       routeTreeList: [],
@@ -462,6 +477,7 @@ export default {
         name: "", // 姓名
         operator: this.$store.state.user.userId, // 操作人
         password: "", // 密码
+        passwordNew: "", // 密码
         phone: "", // 手机
         remark: "", // 备注
         roleId: "", // 角色id
@@ -470,11 +486,12 @@ export default {
         type: "1", // 用户类型
         managerRoute: "1",
         userName: "", // 用户名
+        userNameNew: "", // 用户名
         routes: [], //线路集合
         openDoor: 2 //开门权限，1有 2无，默认无
       },
       ruleValidate: {
-        userName: [
+        userNameNew: [
           { required: true, validator: validateUserName, trigger: "blur" },
           {
             max: 20,
@@ -482,13 +499,21 @@ export default {
             trigger: "blur"
           }
         ],
-        password: [
+        passwordNew: [
           { required: true, validator: validatePassword, trigger: "blur" },
           { min: 6, max: 20, message: "密码长度6-20个字符", trigger: "blur" }
         ],
         phone: [{ required: true, validator: validatePhone, trigger: "blur" }],
         email: [{ required: true, validator: validateEmail, trigger: "blur" }],
         card: [{ required: true, validator: validateCard, trigger: "blur" }],
+        newDeptId: [
+          {
+            type: "array",
+            required: true,
+            message: "部门不能为空",
+            trigger: "blur"
+          }
+        ],
         roleId: [{ required: true, message: "角色不能为空" }]
       },
       loadingDep: false, //部门模态框确定按钮的延时
@@ -600,7 +625,7 @@ export default {
           title: "管理分区",
           align: "center",
           slot: "userRoutes",
-          minWidth: 60,
+          minWidth: 80,
           tooltip: true
         },
         {
@@ -934,15 +959,16 @@ export default {
 
     // 新增用户点击事件
     addModal() {
+      this.$Spin.show();
       this.isShowRouteTree = false;
       this.uploadResult = false;
       this.isAdd = true;
-      this.isShow = true;
       this.ispassword = true;
       this.userId = null;
       this.getRouteTreeList();
       this.formValidate = {
         birth: null, // 出生日期
+        card: null, //身份证号码
         channelId: this.$store.state.user.channelId, // 渠道id
         newDeptId: [], // 部门id
         deptId: "", // 部门id
@@ -952,6 +978,7 @@ export default {
         name: "", // 姓名
         operator: this.$store.state.user.userId, // 操作人
         password: "", // 密码
+        passwordNew: "", // 密码
         phone: "", // 手机
         remark: "", // 备注
         roleId: "", // 角色id
@@ -960,9 +987,17 @@ export default {
         type: "1", // 类型
         managerRoute: "1",
         userName: "", // 用户
+        userNameNew: "", // 用户
         routes: [], //线路集合
         openDoor: 2 //开门权限，1有 0无，默认无
       };
+      setTimeout(() => {
+        this.$refs.formValidate.resetFields();
+        this.isShow = true;
+      }, 1000);
+      setTimeout(() => {
+        this.$Spin.hide();
+      }, 1200);
     },
     // 用户编辑点击事件
     async editModal(row) {
@@ -973,6 +1008,7 @@ export default {
       this.ispassword = false;
       this.userId = row.id;
       this.formValidate = JSON.parse(JSON.stringify(row));
+      this.formValidate.userNameNew = this.formValidate.userName;
       this.formValidate.password = null;
       row.status == "1" ? (this.isStatus = "1") : (this.isStatus = "2");
       this.formValidate.status = row.status + "";
@@ -980,9 +1016,19 @@ export default {
       this.formValidate.managerRoute = row.managerRoute + "";
       if (this.formValidate.managerRoute == "1") {
         this.isShowRouteTree = false;
+        this.formValidate.routes = [];
       } else {
         this.isShowRouteTree = true;
-        this.getRouteTreeList();
+        await searchRouteTreeByChannelId(this.channelId, this.userId).then(
+          res => {
+            if (res.data.code == 200) {
+              this.routeTreeList = res.data.result;
+            }
+          }
+        );
+        this.formValidate.routes = this.$refs.treeData
+          .getCheckedNodes()
+          .map(i => i.id);
       }
       // 根据用户id查询角色
       await searchRoleByUserId(row.id).then(res => {
@@ -1006,7 +1052,7 @@ export default {
           this.formValidate.newDeptId = array2;
         }
       });
-      this.formValidateStr = JSON.stringify(this.formValidate);
+      this.formValidateStr = await JSON.stringify(this.formValidate);
     },
 
     // 用户弹框确认的点击事件
@@ -1020,11 +1066,13 @@ export default {
       this.isStatus == "1"
         ? (this.formValidate.status = "1")
         : (this.formValidate.status = "2");
+      this.formValidate.userName = this.formValidate.userNameNew;
       this.$refs[name].validate(valid => {
         if (valid) {
           this.loading = true;
           if (this.isAdd) {
             // 对的
+            this.formValidate.password = this.formValidate.passwordNew;
             addUser(this.formValidate)
               .then(res => {
                 if (res.data.code == 200) {
@@ -1088,6 +1136,16 @@ export default {
           this.dataTable = res.data.result.list;
           this.total = res.data.result.total;
           this.pageNum = res.data.result.pageNum;
+          this.dataTable.forEach(item => {
+            let ary = [];
+            if (item.userRouteVos != null) {
+              item.userRouteVos.forEach(v => {
+                ary.push(v.label);
+                v.routerStr = ary.join("/");
+              });
+            }
+            item.routerStr = ary.join("/");
+          });
         }
       });
     },
@@ -1174,9 +1232,13 @@ export default {
     userRouteVosText(value) {
       let str = "";
       value.forEach((v, i) => {
-        str += v.label + ",";
+        str += v.label + "/";
       });
-      return str.slice(0, str.length - 1);
+      let str2 = str.slice(0, str.length - 1);
+      if (str2.length > 8) {
+        return str2.slice(0, 8) + "...";
+      }
+      return str2;
     }
   },
   mounted() {
@@ -1245,20 +1307,6 @@ export default {
   width: 300px;
   padding-left: 20px;
   margin-left: 100px;
-}
-.items {
-  padding: 2px 10px;
-  display: inline-block;
-  vertical-align: middle;
-  margin: 5px;
-  background: #f7f7f7;
-  border-radius: 3px;
-  /deep/.ivu-icon {
-    font-size: 16px;
-    vertical-align: -3px;
-    margin-left: 5px;
-    cursor: pointer;
-  }
 }
 .contentBox {
   /deep/ .ivu-input-wrapper {

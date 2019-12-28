@@ -5,8 +5,7 @@
       <Button size="large" class='keep' @click='keepModel '>保存为模板</Button>
       <Button type="primary"  size="large" @click='toBack' style="float:left;margin-right:30px;">返回</Button>
       <strong style="margin-right:30px;font-size:18px">{{query.machineCode}}</strong>
-      {{modal}}
-      <Select v-model="modal" :disabled='isKong>0'  @on-change='deviceChange' class='marginRight' :clearable='true' placeholder="货道商品模板">
+      <Select v-model="modal" :disabled='isKong>0&&query.isHasStock'  @on-change='deviceChange' class='marginRight' :clearable='true' placeholder="货道商品模板">
           <Option v-for="item in selectList" :value="item.value" :key="item.value">{{ item.label }}</Option>
       </Select>
     </div>
@@ -111,6 +110,7 @@ export default {
   props:['selectList','query','priceTemplate','machineCode','channelId'],
   filters:{
     prefixValue(value){
+      console.log(value)
       if(value<=9) return '0'+value
       return value
     }
@@ -469,7 +469,9 @@ export default {
         }else{
           let data = {
             list:ary,
+            templateId:this.modal,
             channelId:this.channelId,
+            machineCode:this.query.machineCode
           }
           let url;
           if(!this.isKong){
@@ -864,7 +866,7 @@ export default {
     margin:0 auto;
     margin-top:10px;
     >img{
-      width: auto;
+      width: 120px;
       height: 120px;
       margin:0 auto;
       display:block;

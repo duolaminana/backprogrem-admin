@@ -18,6 +18,16 @@
                   ></count-to>
                 </strong>
               </div>
+              <div class="awiat">
+                待处理的销售额：
+                <count-to
+                  :startVal="startVal"
+                  :endVal="headInfoData.todayPendingMarket"
+                  :decimals="decimals"
+                  :duration="duration"
+                ></count-to>
+                元
+              </div>
               <div class="middle gray">
                 昨日：
                 <count-to
@@ -61,6 +71,16 @@
                     :duration="duration"
                   ></count-to>
                 </strong>
+              </div>
+              <div class="awiat">
+                待处理的利润额：
+                <count-to
+                  :startVal="startVal"
+                  :endVal="headInfoData.todayPendingProfit"
+                  :decimals="decimals"
+                  :duration="duration"
+                ></count-to>
+                元
               </div>
               <div class="middle gray">
                 昨日：
@@ -174,7 +194,7 @@
         <div class="head">
           <div class="textHead">
             <strong>销售额统计</strong>
-            <Icon @click='getHeadInfo' type="md-refresh"  style="cursor: pointer;margin-left:15px;"/>
+            <Icon @click='isAnimate=true;getHeadInfo()' type="md-refresh" :class='{"isAnimate":isAnimate}'  style="cursor: pointer;margin-left:15px;"/>
           </div>
           <div id="tabHead" class="tab-head">
             <ul>
@@ -273,6 +293,7 @@ export default {
   name: "home",
   data() {
     return {
+      isAnimate:false,
       timing:null,
       QRcodeList: [],
       pieDataList: [],
@@ -310,6 +331,9 @@ export default {
       let url = `/report/findOrderDetailReport?channelId=${store.channelId}&&userId=${store.userId}&&userType=${store.userVo.type}&&managerRoute=${store.userVo.managerRoute}`;
       return netWorkOrder(url, null, "get").then(res => {
         this.headInfoData = res.result;
+        this.isAnimate = false;
+      }).catch(()=>{
+        this.isAnimate = false;
       });
     },
     getSalesVolumeReport() {
@@ -411,7 +435,7 @@ li {
         .ivu-row {
           height: 100%;
           .ivu-col {
-            height: 100%;
+            height:195px;
             background-color: #fff;
             .box-content {
               position: relative;
@@ -427,6 +451,10 @@ li {
               .money {
                 font-size: 30px;
                 margin-top: 10px;
+              }
+              .await {
+                font-size:16px;
+                margin-top:15px;
               }
               .saleType {
                 font-size: 14px;
@@ -490,7 +518,7 @@ li {
         }
         .echart-content {
           padding-top: 20px;
-          height: 90%;
+          height:520px;
           .basicAreaChart-left {
             float: left;
             width: 73%;
@@ -533,7 +561,7 @@ li {
   }
 }
 .middle {
-  margin-bottom: 20px;
+  margin-bottom:10px;
   margin-top: 5px;
   > span {
     margin-right: 15px;
@@ -543,5 +571,21 @@ li {
   width: 100%;
   height: 2%;
   background-color: #fff;
+}
+.isAnimate{
+  animation:lds-hourglass 0.5s infinite
+}
+@keyframes lds-hourglass{
+	0% {
+	transform:rotate(0);
+    animation-timing-function:cubic-bezier(.55,.055,.675,.19)
+  }
+  50% {
+    transform:rotate(900deg);
+    animation-timing-function:cubic-bezier(.215,.61,.355,1)
+  }
+  100% {
+    transform:rotate(1800deg)
+  }
 }
 </style>

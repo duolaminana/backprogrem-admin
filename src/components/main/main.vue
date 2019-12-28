@@ -121,9 +121,10 @@ export default {
       'getUnreadMessageCount'
     ]),
     helpDocument(){
-      this.$router.push({
+      let routeUrl = this.$router.resolve({
         name:'helpDocument'
-      })
+      });
+      window.open(routeUrl.href, '_blank');
     },
     // 页面跳转
     turnToPage (route) {

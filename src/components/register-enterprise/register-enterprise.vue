@@ -121,7 +121,7 @@
       </FormItem>
       <FormItem prop="NewareaNames" label="所在区域" style="margin-bottom:20px;width:325px">
         <Cascader
-        placeholder="请选择所在区域"
+          placeholder="请选择所在区域"
           class="cascader"
           :data="cityData"
           v-model="form.NewareaNames"
@@ -134,7 +134,13 @@
         <Input v-model.trim="form.address" placeholder="请输入详细地址"></Input>
       </FormItem>
       <FormItem prop="sale" label="销售范围" style="margin-bottom:20px">
-        <Select placeholder="请选择销售范围" v-model="form.sale" multiple style="width:585px" @on-change="saleChange">
+        <Select
+          placeholder="请选择销售范围"
+          v-model="form.sale"
+          multiple
+          style="width:585px"
+          @on-change="saleChange"
+        >
           <Option v-for="item in saleList" :label="item.label" :value="item.value" :key="item.id"></Option>
         </Select>
       </FormItem>
@@ -178,18 +184,23 @@
       <div style="margin-bottom:10px">
         <strong>商户信息</strong>
       </div>
-      <FormItem prop="userName" label="用户名称" style="margin-bottom:20px">
+      <FormItem prop="userNameNew" label="用户名称" style="margin-bottom:20px">
         <Input
+          name="namepl"
+          type="text"
           :maxlength="30"
-          v-model.trim="form.userName"
+          v-model.trim="form.userNameNew"
           placeholder="小于20个字符"
           @on-blur="checkUserName"
         ></Input>
+        <Input v-model="form.userName" type="text" style="opacity: 0;position: absolute"></Input>
       </FormItem>
-      <FormItem prop="password" label="密码" style="margin-bottom:20px">
+      <FormItem prop="passwordNew" label="密码" style="margin-bottom:20px">
+        <Input v-model="form.password" type="password" style="opacity: 0;position: absolute"></Input>
         <Input
+          name="psdpl"
           :maxlength="30"
-          v-model.trim="form.password"
+          v-model.trim="form.passwordNew"
           :type="pswd?'text':'password'"
           placeholder="字母+数字组合,大于6小于20个字符"
         >
@@ -489,12 +500,14 @@ export default {
         parentIds: ",1,", //父渠道pids
         operator: "1", // 操作人
         password: "", // 密码
+        passwordNew: "",
         phone: "", // 手机
         userName: "", // 用户名
+        userNameNew: "",
         remark: "" //备注
       },
       ruleValidate: {
-        userName: [
+        userNameNew: [
           { required: true, validator: validateUserName, trigger: "blur" },
           {
             max: 20,
@@ -502,7 +515,7 @@ export default {
             trigger: "blur"
           }
         ],
-        password: [
+        passwordNew: [
           { required: true, validator: validatePassword, trigger: "blur" },
           { min: 6, max: 20, message: "密码长度6-20个字符", trigger: "blur" }
         ],
@@ -689,6 +702,8 @@ export default {
           // this.isReceiveType == "1"
           //   ? (this.form.receiveType = 1)
           //   : (this.form.receiveType = 2);
+          this.form.userName = this.form.userNameNew;
+          this.form.password = this.form.passwordNew;
           this.form.areaNames = this.form.NewareaNames.join(",");
           this.form.companyName = this.form.channelName;
           this.form.card = this.form.receiveCard;
@@ -740,6 +755,13 @@ export default {
   },
   mounted() {
     this.getProductType();
+    this.$Spin.show();
+    setTimeout(() => {
+      this.$refs.registerEnt.resetFields();
+    }, 1000);
+    setTimeout(() => {
+      this.$Spin.hide();
+    }, 1200);
   }
 };
 </script>
