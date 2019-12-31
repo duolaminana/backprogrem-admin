@@ -7,6 +7,7 @@
 
 <script>
 import tree from "vue-giant-tree";
+import {netWorkHttp} from '@/api/data';
 export default {
   name: "DemoTree",
   components: {
@@ -39,26 +40,37 @@ export default {
         }
       },
       nodes: [],
-      list:[1,117,120]
     };
   },
   methods: {
     pick(event, treeId, treeNode) {
       this.$emit("pickTree", treeNode);
+    },
+    getMoney(ary){
+      ary.map((v,i)=>{
+        setTimeout(() => {
+          console.log(v)
+          let node = document.querySelector(`a[title='${v}']`);
+          let hasImg = node.querySelector(`img`);
+          if(node&&!hasImg){
+            let img=document.createElement("img");
+            img.src=require('../../../assets/images/money.png');
+            img.className = 'tapImg'
+            node.insertBefore(img,node.childNodes[0])
+          }
+        }, 500);
+      })
+    },
+    getMoneyList(){
+      const url = `/channelApply/queryHasReceiveTerminalChannelId`;
+      netWorkHttp(url,null,'get').then(res=>{
+        this.getMoney(res.result)
+      })
     }
   },
   mounted(){
     this.$nextTick(()=>{
-      this.list.map((v,i)=>{
-        console.log(v)
-        let node = document.querySelector(`a[title=${v}]`);
-        console.log(node)
-        if(node){
-          let img=document.createElement("img");
-          g.src="http://baike.baidu.com/cms/rc/240x112dierzhou.jpg";
-          node.insertBefore(img,node.childNodes[0])
-        }
-      })
+      this.getMoneyList();
     })
   }
 };
@@ -184,6 +196,11 @@ export default {
     position: absolute;
     content: "";
     border: 0.5px dotted #ccc;
+  }
+  /deep/.tapImg{
+    width: 14px;
+    height: 14px;
+    vertical-align: -2px
   }
 }
 </style>

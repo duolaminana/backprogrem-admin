@@ -367,6 +367,14 @@ export const addOrModifyUserMachine = info => {
     method: "post"
   });
 };
+// 用户重置密码
+export const resetPwd = info => {
+  return axios.request({
+    url: "/system/user/modifyUserPwd",
+    data: info,
+    method: "post"
+  });
+};
 // -------------------------------------------------商户模块--------------------------------------------------------------
 //新增商户
 export const addChannelApply = info => {
@@ -469,7 +477,16 @@ export const getFastCheck = (checkParam, checkType) => {
     method: "get"
   });
 };
-
+// 根据渠道商id查询收款余额
+export const getPrice = channelId => {
+  return axios.request({
+    url: "/order/order/queryBalance",
+    params: {
+      channelId
+    },
+    method: "get"
+  });
+};
 // -------------------------------------------------库存监控和补货模块--------------------------------------------------------------
 // 查询商品库存(明细)
 export const searchStockControl = info => {
@@ -673,7 +690,7 @@ export const searchAccountByAccountId = accountId => {
   });
 };
 // 根据账号id查询关联设备信息
-export const searchMachineByAccountId = (accountId,channelId) => {
+export const searchMachineByAccountId = (accountId, channelId) => {
   return axios.request({
     url: "/position/benefitMachine/queryByAccountId",
     params: {

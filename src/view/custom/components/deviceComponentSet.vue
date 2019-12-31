@@ -78,6 +78,7 @@ export default {
   props:['equipmentList','query','showNewlyType','rowData'],
   data (){
     return {
+      categoryId:null,
       templateName:this.rowData.templateName||null,
       stock:null,
       clickSecondNum:null,
@@ -139,6 +140,7 @@ export default {
         this.$Spin.show()
         let url = `/machineTypeRoad/queryByType?machineType=${this.modal}`;
         netWorkDevice(url,null,'get').then(res => {
+          this.categoryId = res.result.categoryId;
           this.maxColumnNo = res.result.maxClomun;
           this.maxLayerNo = res.result.maxLayer;
           this.columnNo = res.result.maxClomun;
@@ -451,7 +453,7 @@ export default {
     getTemplate(value,categoryId){
       let data = {
         // enable:'START',
-        categoryId:this.query.categoryId||categoryId,
+        categoryId:this.query.categoryId||this.categoryId||categoryId,
         productName:value,
         status:true,
         channelId:this.channelId,

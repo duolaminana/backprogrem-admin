@@ -131,6 +131,71 @@
         <Button type="primary" size="large" @click="isShowEquipment=false">确定</Button>
       </div>
     </Modal>
+    <!-- 结算页面 -->
+    <Modal v-model="isSettlement" :mask-closable="false" :title="'结算('+beneficiaryName+')'">
+      <Form ref="formValidateSettlement" :model="formValidateSettlement" :label-width="80">
+        <FormItem label="收款方：" prop="beneficiary">
+          <Input
+            v-model="formValidateSettlement.beneficiary"
+            placeholder="收款方"
+            disabled
+            style="width:250px"
+          ></Input>
+        </FormItem>
+        <FormItem label="收款人：" prop="payee">
+          <Input
+            v-model="formValidateSettlement.payee"
+            placeholder="收款人"
+            disabled
+            style="width:250px"
+          ></Input>
+        </FormItem>
+        <FormItem label="收款账户：" prop="account">
+          <Input
+            v-model="formValidateSettlement.account"
+            placeholder="收款账户"
+            disabled
+            style="width:250px"
+          ></Input>
+        </FormItem>
+        <FormItem label="开户行：" prop="openingBank">
+          <Input
+            v-model="formValidateSettlement.openingBank"
+            placeholder="开户行"
+            disabled
+            style="width:250px"
+          ></Input>
+        </FormItem>
+        <FormItem label="活动时间：" prop="startDate">
+          <DatePicker
+            type="datetime"
+            :options="startOptions"
+            placeholder="开始时间"
+            v-model="formValidate.startDate"
+            disabled
+          ></DatePicker>
+          <span style="line-height:32px">&nbsp&nbsp至&nbsp&nbsp</span>
+          <DatePicker type="datetime" placeholder="结束时间" v-model="formValidate.endDate" disabled></DatePicker>
+        </FormItem>
+        <FormItem label="结算金额：" prop="price">
+          <Input
+            v-model="formValidateSettlement.price"
+            placeholder="结算金额"
+            disabled
+            style="width:187px"
+          ></Input>
+        </FormItem>
+      </Form>
+      <div slot="footer">
+        <Button
+          type="text"
+          style="border:1px solid #c6c9ce"
+          size="large"
+          @click="isSettlement=false"
+        >取消</Button>
+        <Button type="primary" size="large" @click="isSettlement=false">确定</Button>
+      </div>
+    </Modal>
   </div>
 </template>
 <script>
@@ -155,6 +220,9 @@ export default {
 
   data() {
     return {
+      beneficiaryName: null,
+      isSettlement: false,
+      formValidateSettlement: {},
       isShowOperation: false,
       accountList: [],
       deductAccount: null,
@@ -319,8 +387,15 @@ export default {
           tooltip: true
         },
         {
-          title: "出货/退货数量",
+          title: "出货数量",
           key: "productProduce",
+          align: "center",
+          minWidth: 80,
+          tooltip: true
+        },
+        {
+          title: "退货数量",
+          key: "refundNumber",
           align: "center",
           minWidth: 80,
           tooltip: true
@@ -379,8 +454,8 @@ export default {
           title: "资金流动类型",
           slot: "flowType",
           align: "center",
-          minWidth: 80,
-          tooltip: true,
+          minWidth: 70,
+          tooltip: true
         }
       ],
       dataTableMore: [], //结算详情数据
@@ -571,7 +646,11 @@ export default {
     },
 
     // 结算点击事件
-    getSettlementClick(row) {},
+    getSettlementClick(row) {
+      console.log(row);
+      this.beneficiaryName = row.beneficiary;
+      this.isSettlement = true;
+    },
     searchSettlement() {
       this.pageNum = 1;
       this.getSettlement();
@@ -619,6 +698,11 @@ export default {
           this.dataTableMore = res.data.result.list;
           this.totalMore = res.data.result.total;
           this.pageNumMore = res.data.result.pageNum;
+          this.dataTableMore.forEach(item => {
+            item.refundNumber == null
+              ? (item.refundNumber = 0)
+              : item.refundNumber;
+          });
         }
       });
     },

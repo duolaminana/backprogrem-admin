@@ -1062,17 +1062,6 @@ let list = [
           ]
         },
       ];
-    if(store.state.user.channelId==1){
-      list[0].children.push(nine);
-      contentData[0].children.push(nineData);
-    }
-    if(store.state.user.userVo.type==2&&store.state.user.merchant.receiveTerminal==2){
-      list = [five,...list];
-      contentData = [fiveData,...contentData]
-    }else{
-      list = [four,...list];
-      contentData = [fourData,...contentData]
-    }
 export default {
   name:'helpDocument',
   components:{
@@ -1115,7 +1104,22 @@ export default {
       })
     },
   },
-  
+  beforeRouteEnter(to, from, next){
+    setTimeout(() => {
+      if(store.state.user.channelId==1){
+        list[0].children.push(nine);
+        contentData[0].children.push(nineData);
+      }
+      if(store.state.user.userVo.type==2&&store.state.user.merchant.receiveTerminal==2){
+        list = [five,...list];
+        contentData = [fiveData,...contentData]
+      }else{
+        list = [four,...list];
+        contentData = [fourData,...contentData]
+      }
+      next()
+    }, 1000);
+  },
   mounted(){
     this.$nextTick(()=>{
       const center = document.querySelector('.centerContent');
@@ -1130,6 +1134,7 @@ export default {
               const id = peg[i].id;
               if(id){
                 const divNode = document.querySelector(`li.ivu-menu-item-group[data-name='${id}']`);
+                console.log(id)
                 if(divNode){
                   divNode.children[0].classList.add('ivu-menu-item-active');
                   seder.scrollTop = divNode.children[0].offsetTop;
@@ -1144,7 +1149,6 @@ export default {
           })
         }
         this.isClick = false;
-        // console.log(scrollTop)
       }
     })
   }

@@ -42,7 +42,7 @@
       <Button type="primary" @click="searchuserManagement" v-if="hasPerm('sys:user:see')">查询</Button>
       <Button type="primary" @click="addModal" class="xzbtn" v-if="hasPerm('sys:user:edit')">新增</Button>
       <Button type="primary" @click="reset" v-if="hasPerm('sys:user:see')">重置</Button>
-      <Table highlight-row :columns="columns11" :data="dataTable" border ref="table">
+      <Table highlight-row :columns="columns" :data="dataTable" border ref="table">
         <!-- 图像 -->
         <template slot-scope="{ row, index }" slot="img">
           <img :src="row.imageAddress" class="imgstyle" />
@@ -83,6 +83,12 @@
             @click="editModal(row)"
             v-if="row.type!=2&&hasPerm('sys:user:edit')"
           >编辑</Button>
+          <Button
+            type="success"
+            size="small"
+            @click="resetPwd(row)"
+            v-if="row.type!=2&&hasPerm('sys:user:edit')"
+          >重置密码</Button>
           <!-- 删除按钮 -->
           <Button
             style="margin-right: 0px"
@@ -165,10 +171,12 @@
           ></Input>
           <Input
             v-model="formValidate.passwordNew"
-            type="password"
+            :type="pswd?'text':'password'"
             placeholder="请输入密码"
             style="width:180px"
-          ></Input>
+          >
+            <Icon @click.native="pswd=!pswd" :type="pswd?'md-eye-off':'md-eye'" slot="suffix" />
+          </Input>
         </FormItem>
         <FormItem label="真实姓名" prop="name" style="display:inline-block">
           <Input v-model="formValidate.name" placeholder="请输入真实姓名" style="width:180px"></Input>
@@ -335,6 +343,61 @@
         <Button type="primary" size="large" @click="openDoorModal">确定</Button>
       </div>
     </Modal>
+    <!-- 重置密码模态框 -->
+    <Modal v-model="isShowPwd" width="600" title="重置密码" :mask-closable="false">
+      <Form
+        ref="formValidatePwd"
+        :model="formValidatePwd"
+        :rules="ruleValidatePwd"
+        :label-width="120"
+      >
+        <FormItem label="新密码" prop="newPassword" class="modelInput">
+          <Input
+            :type="newPswd?'text':'password'"
+            v-model.trim="formValidatePwd.newPassword"
+            placeholder="新密码"
+          >
+            <Icon
+              @click.native="newPswd=!newPswd"
+              :type="newPswd?'md-eye-off':'md-eye'"
+              slot="suffix"
+            />
+          </Input>
+        </FormItem>
+        <FormItem label="再次输入新密码" prop="newPasswordAgain" class="modelInput">
+          <Input
+            :type="newPswdAgain?'text':'password'"
+            v-model.trim="formValidatePwd.newPasswordAgain"
+            placeholder="再次输入新密码"
+          >
+            <Icon
+              @click.native="newPswdAgain=!newPswdAgain"
+              :type="newPswdAgain?'md-eye-off':'md-eye'"
+              slot="suffix"
+            />
+          </Input>
+        </FormItem>
+      </Form>
+      <div slot="footer">
+        <Button type="text" size="large" @click="cancel">取消</Button>
+        <Button
+          type="primary"
+          size="large"
+          :loading="loading"
+          @click="resetPwdModal('formValidatePwd')"
+        >确定</Button>
+      </div>
+      <div slot="close">
+        <Icon
+          type="md-close"
+          size="20"
+          color="#515a6e"
+          style="margin-top:10px;margin-right:15px"
+          class="icon"
+          @click="close"
+        />
+      </div>
+    </Modal>
   </div>
 </template>
 <script>
@@ -354,7 +417,8 @@ import {
   modifyUserMachine,
   searchRouteTreeByChannelId,
   searchUserMachineList,
-  searchRouteListByChannelId
+  searchRouteListByChannelId,
+  resetPwd
 } from "@/api/http";
 import CoustomTree from "@/view/custom/components/coustom-tree";
 import deleteComponent from "@/view/custom/components/deleteComponent";
@@ -406,20 +470,25 @@ export default {
         callback();
       }
     };
-    const validateEmail = (rule, value, callback) => {
-      if (!value) {
-        return callback(new Error("输入不能为空"));
-      } else if (
-        !/^[a-zA-Z0-9_.-]+@[a-zA-Z0-9-]+(\.[a-zA-Z0-9-]+)*\.[a-zA-Z0-9]{2,6}$/.test(
-          value
-        )
-      ) {
-        callback(new Error("邮箱格式错误"));
-      } else {
-        callback();
-      }
-    };
     return {
+      newPswd: false,
+      newPswdAgain: false,
+      formValidatePwd: {
+        newPassword: null,
+        newPasswordAgain: null
+      },
+      ruleValidatePwd: {
+        newPassword: [
+          { required: true, validator: validatePassword, trigger: "blur" },
+          { min: 6, max: 20, message: "密码长度6-20个字符", trigger: "blur" }
+        ],
+        newPasswordAgain: [
+          { required: true, validator: validatePassword, trigger: "blur" },
+          { min: 6, max: 20, message: "密码长度6-20个字符", trigger: "blur" }
+        ]
+      },
+      isShowPwd: false,
+      pswd: false, //密码显示方式
       routerStr: "",
       managerRoute: null,
       isShowRouteTree: false,
@@ -504,7 +573,6 @@ export default {
           { min: 6, max: 20, message: "密码长度6-20个字符", trigger: "blur" }
         ],
         phone: [{ required: true, validator: validatePhone, trigger: "blur" }],
-        email: [{ required: true, validator: validateEmail, trigger: "blur" }],
         card: [{ required: true, validator: validateCard, trigger: "blur" }],
         newDeptId: [
           {
@@ -550,7 +618,7 @@ export default {
       userName: "", // 用户名
       status: "", // 用户状态
       // 数据结构
-      columns11: [
+      columns: [
         {
           title: "序号",
           type: "index",
@@ -646,7 +714,7 @@ export default {
           title: "操作",
           align: "center",
           slot: "operation",
-          minWidth: 100,
+          minWidth: 180,
           tooltip: true
         }
       ],
@@ -657,6 +725,46 @@ export default {
   },
 
   methods: {
+    resetPwd(row) {
+      console.log(row);
+      this.newPswd = false;
+      this.isShowPwd = true;
+      this.userId = row.id;
+    },
+    resetPwdModal(name) {
+      this.$refs[name].validate(valid => {
+        if (valid) {
+          if (
+            this.formValidatePwd.newPasswordAgain !=
+            this.formValidatePwd.newPassword
+          ) {
+            return this.$Message.error("两次输入密码不相同，请重新输入");
+          }
+          this.loading = true;
+          let data = {
+            id: this.userId,
+            modifyType: 1,
+            newPwd: this.formValidatePwd.newPasswordAgain
+          };
+          resetPwd(data)
+            .then(res => {
+              if (res.data.code == 200) {
+                this.loading = false;
+                this.isShowPwd = false;
+                this.$Message.info("密码修改成功");
+                this.getDepData(); // 重新获取数据
+              } else {
+                this.loading = false;
+                this.$Message.error(res.data.message);
+              }
+            })
+            .catch(err => {
+              this.loading = false;
+              this.$Message.error(res.data.message);
+            });
+        }
+      });
+    },
     changeRoute(value) {
       console.log(value);
       if (value == "2") {
@@ -808,14 +916,18 @@ export default {
     close() {
       this.loading = false;
       this.isShow = false;
+      this.isShowPwd = false;
       this.$refs.formValidate.resetFields();
+      this.$refs.formValidatePwd.resetFields();
     },
     // 用户取消按钮
     cancel() {
       this.$Message.info("取消操作");
       this.loading = false;
       this.isShow = false;
+      this.isShowPwd = false;
       this.$refs.formValidate.resetFields();
+      this.$refs.formValidatePwd.resetFields();
     },
     // 部门模态框删除
     closeDep() {

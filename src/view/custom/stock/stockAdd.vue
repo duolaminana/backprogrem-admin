@@ -76,7 +76,7 @@ export default {
           title: "商品出厂批次号",
           key: "batchNo",
           align: "center",
-          minWidth: 50,
+          minWidth: 60,
           tooltip: true
         },
         {
@@ -95,12 +95,14 @@ export default {
           title: "补货商品",
           key: "productName",
           align: "center",
+          minWidth: 60,
           tooltip: true
         },
         {
           title: "商品编码",
           key: "productCode",
           align: "center",
+          minWidth: 60,
           tooltip: true
         },
 
@@ -138,6 +140,7 @@ export default {
           title: "补货时间",
           key: "createDate",
           align: "center",
+          minWidth: 80,
           tooltip: true
         }
       ],

@@ -5,45 +5,94 @@
         class="QRcode"
         v-if="$store.state.user.merchant.receiveTerminal==2&&$store.state.user.userVo.type==2&&isShowArrow"
       >
-        <p>设备收钱码配置</p>
+        <div class="top">
+          <strong>设备收钱码</strong>
+          <div class="topText">
+            <span v-show="auditType==null" style="color:#d0d0d0">待配置</span>
+            <span v-show="auditType==1" style="color:#ffbd72">待审核</span>
+            <span v-show="auditType==2" style="color:#19be6b">审核通过</span>
+            <span v-show="auditType==3" style="color:#ed4014">审核失败</span>
+          </div>
+        </div>
+        <Divider />
+        <div class="content">
+          <div v-show="auditType==null||auditType!=2">待配置</div>
+          <div v-show="auditType==2">
+            <div class="price">
+              <div class="num">
+                <span v-show="!isOpenEye">********</span>
+                <Poptip
+                  trigger="hover"
+                  placement="right-start"
+                  v-model="visible"
+                  class="PoptipTitle"
+                >
+                  <div slot="title" style="overflow: hidden">
+                    <div style="float:left">余额详情</div>
+                    <div class="close" style="float:right">
+                      <Icon
+                        type="md-close"
+                        size="16"
+                        color="#515a6e"
+                        class="icon"
+                        @click="visible=false"
+                      />
+                    </div>
+                  </div>
+                  <div slot="content">
+                    <ul>
+                      <li>
+                        <p style="color:#19be6b" class="numMore">{{receivableAmount}}</p>
+                        <p class="textMore">总收款金额(元)</p>
+                      </li>
+                      <li>
+                        <p style="color:#ed4014" class="numMore">{{refundAmount}}</p>
+                        <p class="textMore">总退款金额(元)</p>
+                      </li>
+                      <li style="margin-right:0px">
+                        <p style="color:#ffbd72" class="numMore">{{settlementAmount}}</p>
+                        <p class="textMore">总结算金额(元)</p>
+                      </li>
+                    </ul>
+                    <Divider />
+                    <Button size="small" type="primary" @click="visible=false">关闭</Button>
+                  </div>
+                  <span class="numText" v-show="isOpenEye">{{balance}}</span>
+                </Poptip>
+              </div>
+              <div class="eye">
+                <img
+                  v-show="!isOpenEye"
+                  src="../../../assets/images/eye_close.png"
+                  alt
+                  @click="isOpenEye=!isOpenEye"
+                />
+                <img
+                  v-show="isOpenEye"
+                  src="../../../assets/images/eye_open.png"
+                  alt
+                  @click="isOpenEye=!isOpenEye"
+                />
+              </div>
+            </div>
+            <div style="font-size:12px;font-weight:400;color:#d0d0d0">当前余额（元）</div>
+          </div>
+        </div>
         <div class="btn">
           <Button
+            size="small"
             type="primary"
             style="width:100px"
             v-if="(QRcodeList[0]==null)&&$store.state.user.userVo.type==2"
             @click="toSet"
           >去配置</Button>
           <Button
+            size="small"
             type="primary"
             style="width:100px"
             v-if="!(QRcodeList[0]==null)&&$store.state.user.userVo.type==2"
             @click="toSee"
           >查看/编辑</Button>
-        </div>
-        <div class="span">
-          <span v-show="auditType==1" style="color:#ffbd72">待审核</span>
-          <span v-show="auditType==2" style="color:#19be6b">审核通过</span>
-          <span v-show="auditType==3" style="color:#ed4014">审核不通过</span>
-        </div>
-        <div class="remark">
-          <Poptip
-            trigger="hover"
-            :content="WXRemarkText"
-            placement="right-end"
-            word-wrap
-            width="200"
-          >
-            <div v-show="WXRemark==3" style="text-align:center">微信支付配置失败</div>
-          </Poptip>
-          <Poptip
-            trigger="hover"
-            :content="ZFBRemarkText"
-            placement="right-start"
-            word-wrap
-            width="300"
-          >
-            <div v-if="ZFBRemark==3" style="text-align:center">支付宝配置失败</div>
-          </Poptip>
         </div>
       </div>
       <!-- 渠道树 -->
@@ -280,33 +329,33 @@
           <div style="margin:10px 0">
             <strong>用户信息</strong>
           </div>
-          <FormItem label="用户名称" prop="userNameNew">
+          <FormItem label="用户名称" prop="userName">
             <Input
               :maxlength="30"
-              v-model.trim="formValidatePre.userNameNew"
+              v-model.trim="formValidatePre.userName"
               placeholder="小于20个字符"
               :disabled="isdisabled"
               @on-blur="checkUserName"
             ></Input>
             <Input
               v-if="isTab"
-              v-model="formValidatePre.userName"
+              :value="userName"
               type="text"
               style="opacity: 0;position: absolute"
             ></Input>
           </FormItem>
-          <FormItem label="密码" prop="passwordNew">
-            <Input
+          <FormItem label="密码" prop="password">
+            <!-- <Input
               v-if="isTab"
-              v-model="formValidatePre.password"
+              :value="password"
               type="password"
               style="opacity: 0;position: absolute"
-            ></Input>
+            ></Input> -->
             <Input
               :maxlength="30"
-              v-model.trim="formValidatePre.passwordNew"
+              v-model.trim="formValidatePre.password"
               type="password"
-              placeholder="大于6小于20个字符"
+              placeholder="字母+数字组合,大于6小于20个字符"
               :disabled="isdisabled"
             ></Input>
           </FormItem>
@@ -592,31 +641,31 @@
           <div style="margin:10px 0">
             <strong>用户信息</strong>
           </div>
-          <FormItem label="用户名称" prop="userNameNew">
+          <FormItem label="用户名称" prop="userName">
             <Input
               :maxlength="30"
-              v-model.trim="formValidateEnt.userNameNew"
+              v-model.trim="formValidateEnt.userName"
               placeholder="小于20个字符"
               :disabled="isdisabled"
               @on-blur="checkUserName"
             ></Input>
             <Input
               v-if="isTab"
-              v-model="formValidateEnt.userName"
+              :value="userName"
               type="text"
               style="opacity: 0;position: absolute"
             ></Input>
           </FormItem>
-          <FormItem label="密码" prop="passwordNew">
-            <Input
+          <FormItem label="密码" prop="password">
+            <!-- <Input
               v-if="isTab"
-              v-model="formValidateEnt.password"
+              :value="password"
               type="password"
               style="opacity: 0;position: absolute"
-            ></Input>
+            ></Input> -->
             <Input
               :maxlength="30"
-              v-model.trim="formValidateEnt.passwordNew"
+              v-model.trim="formValidateEnt.password"
               type="password"
               placeholder="字母+数字组合,大于6小于20个字符"
               :disabled="isdisabled"
@@ -962,7 +1011,8 @@ import {
   searchMerchantCategory,
   searchBank,
   searchMerchantCategorySale,
-  getFastCheck
+  getFastCheck,
+  getPrice
 } from "@/api/http";
 import { cityData } from "@/api/cityData.js";
 import deleteComponent from "@/view/custom/components/deleteComponent";
@@ -1036,7 +1086,15 @@ export default {
       }
     };
     return {
-      saleChannelId:null,
+      balance:null,
+      receivableAmount:null,
+      refundAmount:null,
+      settlementAmount:null,
+      visible: false,
+      userName: null,
+      password: null,
+      isOpenEye: false,
+      saleChannelId: null,
       isShowArrow: true,
       checkType: null, //1用户名2手机号
       checkParam: null,
@@ -1140,19 +1198,17 @@ export default {
           this.$store.state.user.channelId +
           ",", //父渠道pids
         password: null, // 密码
-        passwordNew: null, // 密码
         phone: null, // 手机
         remark: "", // 备注
         updateDate: null, // 修改时间
-        userName: null, // 用户名
-        userNameNew: null // 用户名
+        userName: null // 用户名
       },
       ruleValidatePre: {
-        userNameNew: [
+        userName: [
           { required: true, validator: validateUserName, trigger: "blur" },
           { max: 20, message: "长度最多是20个字符", trigger: "blur" }
         ],
-        passwordNew: [
+        password: [
           { required: true, validator: validatePassword, trigger: "blur" },
           { min: 6, max: 20, message: "密码长度6-20个字符", trigger: "blur" }
         ],
@@ -1248,19 +1304,17 @@ export default {
           this.$store.state.user.channelId +
           ",", //父渠道pids
         password: null, // 密码
-        passwordNew: null, // 密码
         phone: null, // 手机
         remark: "", // 备注
         updateDate: null, // 修改时间
-        userName: null, // 用户名
-        userNameNew: null // 用户名
+        userName: null // 用户名
       },
       ruleValidateEnt: {
-        userNameNew: [
+        userName: [
           { required: true, validator: validateUserName, trigger: "blur" },
           { max: 20, message: "长度最多是20个字符", trigger: "blur" }
         ],
-        passwordNew: [
+        password: [
           { required: true, validator: validatePassword, trigger: "blur" },
           { min: 6, max: 20, message: "密码长度6-20个字符", trigger: "blur" }
         ],
@@ -1514,6 +1568,7 @@ export default {
     enterpriseRegister() {
       this.tabIndex = 2;
       this.$refs.formValidatePre.resetFields();
+      this.$refs.formValidateEnt.resetFields();
       this.receive = null;
       this.formValidatePre.cardFront = null;
       this.formValidatePre.cardBack = null;
@@ -1522,6 +1577,7 @@ export default {
     // 个人注册
     personRegister() {
       this.tabIndex = 1;
+      this.$refs.formValidatePre.resetFields();
       this.$refs.formValidateEnt.resetFields();
       this.formValidateEnt.license = null;
       this.formValidateEnt.openAccount = null;
@@ -1669,14 +1725,18 @@ export default {
       this.loading = false;
       this.$refs.formValidatePre.resetFields();
       this.$refs.formValidateEnt.resetFields();
+      console.log(this.formValidatePre);
+      console.log(this.formValidateEnt);
     },
     // 取消按钮
     cancel(name) {
       this.isShow = false;
-      this.isQRShow = false;
       this.loading = false;
       this.$Message.info("取消操作");
       this.$refs[name].resetFields();
+      console.log(this.formValidatePre);
+      console.log(this.formValidateEnt);
+      
     },
 
     // 关闭按钮
@@ -1684,6 +1744,8 @@ export default {
       this.isShow = false;
       this.loading = false;
       this.$refs[name].resetFields();
+      console.log(this.formValidatePre);
+      console.log(this.formValidateEnt);
     },
     // 提交的点击事件
     changeAuditStatus(row) {
@@ -1727,16 +1789,6 @@ export default {
     addModal() {
       // this.isReceiveType = "2";
       this.$Spin.show();
-      this.isSeeReason = false;
-      this.isEnterprise = true;
-      this.isPerson = true;
-      this.isdisabled = false;
-      this.modalTitle = "新增【商户】";
-      this.isTab = true;
-      this.tabIndex = 2;
-      this.isregester = true;
-      this.remakedisabled = false;
-      this.getProductType();
       // 个人模态框表单数据
       this.formValidatePre = {
         receiveTerminal: 1, //是否开启收款码，默认不开启
@@ -1772,12 +1824,10 @@ export default {
           this.$store.state.user.channelId +
           ",", //父渠道pids
         password: null, // 密码
-        passwordNew: null, // 密码
         phone: null, // 手机
         remark: "", // 备注
         updateDate: null, // 修改时间
-        userName: null, // 用户名
-        userNameNew: null // 用户名
+        userName: null // 用户名
       };
       // 企业模态框表单数据
       this.formValidateEnt = {
@@ -1813,13 +1863,25 @@ export default {
           this.$store.state.user.channelId +
           ",", //父渠道pids
         password: null, // 密码
-        passwordNew: null, // 密码
         phone: null, // 手机
         remark: "", // 备注
         updateDate: null, // 修改时间
-        userName: null, // 用户名
-        userNameNew: null // 用户名
+        userName: null // 用户名
       };
+      // this.formValidatePre={};
+      // this.formValidateEnt={}
+      this.isSeeReason = false;
+      this.isEnterprise = true;
+      this.isPerson = true;
+      this.isdisabled = false;
+      this.modalTitle = "新增【商户】";
+      this.isTab = true;
+      this.tabIndex = 2;
+      this.isregester = true;
+      this.remakedisabled = false;
+      this.getProductType();
+      console.log(this.formValidatePre);
+      console.log(this.formValidateEnt);
       setTimeout(() => {
         this.$refs.formValidatePre.resetFields();
         this.$refs.formValidateEnt.resetFields();
@@ -1848,8 +1910,6 @@ export default {
         this.isEnterprise = false;
         this.tabIndex = 1;
         this.formValidatePre = JSON.parse(JSON.stringify(row));
-        this.formValidatePre.userNameNew = this.formValidatePre.userName;
-        this.formValidatePre.passwordNew = this.formValidatePre.password;
         this.formValidatePre.NewareaNames = array2;
         this.formValidatePre.sale = arr2;
         this.strPre = JSON.stringify(this.formValidatePre);
@@ -1858,8 +1918,6 @@ export default {
         this.isEnterprise = true;
         this.tabIndex = 2;
         this.formValidateEnt = JSON.parse(JSON.stringify(row));
-        this.formValidateEnt.userNameNew = this.formValidateEnt.userName;
-        this.formValidateEnt.passwordNew = this.formValidateEnt.password;
         this.formValidateEnt.NewareaNames = array2;
         this.formValidateEnt.sale = arr2;
         this.strEnt = JSON.stringify(this.formValidateEnt);
@@ -1914,8 +1972,6 @@ export default {
               // this.isReceiveType == "1"
               //   ? (this.formValidatePre.receiveType = 1)
               //   : (this.formValidatePre.receiveType = 2);
-              this.formValidatePre.userName = this.formValidatePre.userNameNew;
-              this.formValidatePre.password = this.formValidatePre.passwordNew;
               this.formValidatePre.areaNames = this.formValidatePre.NewareaNames.join(
                 ","
               );
@@ -1941,8 +1997,6 @@ export default {
               // this.isReceiveType == "1"
               //   ? (this.formValidateEnt.receiveType = 1)
               //   : (this.formValidateEnt.receiveType = 2);
-              this.formValidateEnt.userName = this.formValidateEnt.userNameNew;
-              this.formValidateEnt.password = this.formValidateEnt.passwordNew;
               this.formValidateEnt.areaNames = this.formValidateEnt.NewareaNames.join(
                 ","
               );
@@ -1975,8 +2029,6 @@ export default {
                 this.isShow = false;
                 this.loading = false;
               } else {
-                this.formValidatePre.userName = this.formValidatePre.userNameNew;
-                this.formValidatePre.password = this.formValidatePre.passwordNew;
                 this.formValidatePre.auditStatus = 1;
                 this.formValidatePre.areaNames = this.formValidatePre.NewareaNames.join(
                   ","
@@ -2008,8 +2060,6 @@ export default {
                 this.isShow = false;
                 this.loading = false;
               } else {
-                this.formValidateEnt.userName = this.formValidateEnt.userNameNew;
-                this.formValidateEnt.password = this.formValidateEnt.passwordNew;
                 this.formValidateEnt.auditStatus = 1;
                 this.formValidateEnt.areaNames = this.formValidateEnt.NewareaNames.join(
                   ","
@@ -2075,22 +2125,24 @@ export default {
     },
     // 查询渠道商的业务范围
     getMerchantCategorySale() {
-      searchMerchantCategorySale(this.saleChannelId, this.businessStr).then(res => {
-        if (res.data.code == 200) {
-          this.saleData = res.data.result;
-          this.saleData.forEach((item, index) => {
-            item.activityAuthority == 1
-              ? (item.activityAuthority = true)
-              : (item.activityAuthority = false);
-            item.benefitPercent == null
-              ? (item.benefitPercent = 0)
-              : (item.benefitPercent = item.benefitPercent);
-            // item.categoryId = this.saleList.find(
-            //   v => v.categoryName == item.categoryName
-            // ).id;
-          });
+      searchMerchantCategorySale(this.saleChannelId, this.businessStr).then(
+        res => {
+          if (res.data.code == 200) {
+            this.saleData = res.data.result;
+            this.saleData.forEach((item, index) => {
+              item.activityAuthority == 1
+                ? (item.activityAuthority = true)
+                : (item.activityAuthority = false);
+              item.benefitPercent == null
+                ? (item.benefitPercent = 0)
+                : (item.benefitPercent = item.benefitPercent);
+              // item.categoryId = this.saleList.find(
+              //   v => v.categoryName == item.categoryName
+              // ).id;
+            });
+          }
         }
-      });
+      );
     },
     // 据终端设备收款码应用id查询终端设备收款码信息
     getQRcodeByChannelId() {
@@ -2147,6 +2199,17 @@ export default {
           }
         }
       });
+    },
+    // 查询收款余额
+    searchPrice() {
+      getPrice(this.$store.state.user.channelId).then(res => {
+        if (res.data.code == 200) {
+          this.balance=res.data.result.balance
+          this.receivableAmount=res.data.result.receivableAmount
+          this.refundAmount=res.data.result.refundAmount
+          this.settlementAmount=res.data.result.settlementAmount
+        }
+      });
     }
   },
   filters: {
@@ -2169,6 +2232,9 @@ export default {
     this.getMerchant();
     this.getProductType();
     this.getQRcodeByChannelId();
+    if (this.$store.state.user.merchant.receiveTerminal == 2) {
+      this.searchPrice();
+    }
   }
 };
 </script>
@@ -2180,15 +2246,65 @@ export default {
     margin-right: 20px;
     .QRcode {
       margin: 0 auto;
-      width: 172px;
-      border: 1px solid #c6c9ce;
+      width: 206px;
+      border: 1px solid #fff;
       padding: 15px 10px 0 10px;
-      p {
-        text-align: center;
-        font-size: 14px;
+      font-size: 14px;
+      box-shadow: 0px 3px 5px 0px rgba(4, 0, 0, 0.2);
+      border-radius: 4px;
+      .ivu-divider-horizontal {
+        margin: 8px 0;
+      }
+      .top {
+        .topText {
+          float: right;
+        }
+      }
+      .content {
+        font-size: 16px;
+        font-weight: 700;
+        margin: 10px 0;
+        .price {
+          overflow: hidden;
+          .num {
+            float: left;
+            .PoptipTitle {
+              // font-size: 12px;
+              ul {
+                overflow: hidden;
+                margin: 10px 0;
+                li {
+                  float: left;
+                  list-style: none;
+                  margin-right: 30px;
+                  text-align: center;
+                  font-size: 14px;
+
+                  p.textMore {
+                    font-size: 12px;
+                    font-weight: 400;
+                  }
+                }
+              }
+              .ivu-divider-horizontal {
+                margin: 18px 0 10px 0;
+              }
+              .ivu-btn {
+                float: right;
+                margin-right: 0px;
+              }
+            }
+            .numText:hover {
+              text-decoration: underline;
+            }
+          }
+          .eye {
+            float: right;
+          }
+        }
       }
       .btn {
-        margin: 5px 23px;
+        margin: 10px 42px;
       }
       .span {
         text-align: center;
