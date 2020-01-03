@@ -117,13 +117,14 @@
 import { netWorkDevice, Upload } from "@/api/data";
 export default {
   name: "APKVersiondAministration",
+  props:['rowData'],
   data() {
     return {
       Upload,
       formValidate: {
         //新增字段
         apkCode: null,
-        apkId: null,
+        apkId:null,
         upgradeDesc: null,
         remark: null,
         enable: "1",
@@ -364,7 +365,7 @@ export default {
     },
     getPageDatas() {
       let data = {
-        apkId: this.apkId,
+        apkId:this.apkId?this.apkId:this.rowData.id,
         machineType: this.machineType,
         channelId: this.channelId,
         pageNum: this.pageNum,

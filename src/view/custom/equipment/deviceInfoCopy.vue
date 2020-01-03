@@ -13,15 +13,15 @@
           <Input v-model="name"  placeholder="设备编码" clearable class='marginRight'/>
           <Button @click='clickQuery' type="primary">查询</Button>
           <Button @click='reset' type="primary">重置</Button>
-          <Button  type="primary" @click='showNewlyAdded("xz")' class='xzbtn' icon="md-add">新增</Button>
+          <Button v-if="hasPerm('pos:devAdmin:edit')"  type="primary" @click='showNewlyAdded("xz")' class='xzbtn' icon="md-add">新增</Button>
           <Button  type="primary" @click='transferNewlyAdded = true' :disabled='!tableRowData'>设备转移</Button>
           <Button  type="success" @click='exportTemplate'>导出模板</Button>
-          <Button  type="success" @click='importTemplate'>导入</Button>
+          <Button v-if="hasPerm('pos:devAdmin:edit')"  type="success" @click='importTemplate'>导入</Button>
           <Table border ref="selection" :highlight-row='true' :columns="columns" :data="datas" @on-row-click='tableClick'>
             <template slot-scope="{ row, index }" slot="edit">
-              <Button type="success" size="small" v-if='row.status==0' @click='showNewlyAdded("sh",index,row)'  class='marBtn' >审核</Button>
-              <Button type="primary" size="small" @click='showNewlyAdded("bj",index,row)' class='marBtn' >编辑</Button>
-              <Button  type="error" size="small" class='marBtn' @click="devDelete(row,index)" >删除</Button>
+              <Button v-if="row.status==0&&hasPerm('pos:devAdmin:edit')"  type="success" size="small"  @click='showNewlyAdded("sh",index,row)'  class='marBtn' >审核</Button>
+              <Button v-if="hasPerm('pos:devAdmin:edit')"  type="primary" size="small" @click='showNewlyAdded("bj",index,row)' class='marBtn' >编辑</Button>
+              <Button v-if="hasPerm('pos:devAdmin:edit')"   type="error" size="small" class='marBtn' @click="devDelete(row,index)" >删除</Button>
             </template>
             <template slot-scope="{ row, index }" slot="info">
               <a class='lookDetails' @click='showNewlyAdded("ck",index,row)'>查看详情</a>
@@ -50,7 +50,7 @@
               <span v-show='!row.activateDate' class='gray'>未激活</span>
             </template>
             <template slot-scope="{ row, index }" slot="expireEdit">
-              <Button v-if='row.status==3||row.status==1' type="primary" size="small" @click='renewal(row,index)'>续租</Button>
+              <Button v-if="(row.status==3||row.status==1)&&hasPerm('pos:devAdmin:edit')" type="primary" size="small" @click='renewal(row,index)'>续租</Button>
             </template>
             <!-- <template slot-scope="{ row, index }" slot="cargoWay">
               <a class='lookDetails' @click='toLink(row)'>查看详情</a>

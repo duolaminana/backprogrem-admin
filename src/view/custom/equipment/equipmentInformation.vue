@@ -7,12 +7,12 @@
         </Select>
         <Button @click="clickQuery"  type="primary">查询</Button>
         <Button @click='reset' type="primary">重置</Button>
-				<Button  type="primary"  @click='showNewlyAdded("xz")' class='xzbtn' icon="md-add">新增</Button>
+				<Button v-if="hasPerm('pos:eqmAdmin:edit')"  type="primary"  @click='showNewlyAdded("xz")' class='xzbtn' icon="md-add">新增</Button>
         <Table border ref="selection" :columns="columns" :data="data" >
 					<template slot-scope="{ row, index }" slot="edit">
-              <Button type="success"  class='marBtn' size="small" @click='toLink(row)'>模板</Button>
-              <Button type="primary" size="small" class='marBtn'  @click='showNewlyAdded("bj",index,row)'>编辑</Button>
-              <Button type="error" size="small" @click="modalDel=true;delID=row.id;delIndex=index">删除</Button>
+              <Button v-if="hasPerm('pos:eqmAdmin:edit')"  type="success"  class='marBtn' size="small" @click='toLink(row)'>模板</Button>
+              <Button v-if="hasPerm('pos:eqmAdmin:edit')"  type="primary" size="small" class='marBtn'  @click='showNewlyAdded("bj",index,row)'>编辑</Button>
+              <Button v-if="hasPerm('pos:eqmAdmin:edit')"  type="error" size="small" @click="modalDel=true;delID=row.id;delIndex=index">删除</Button>
           </template>
           <template slot-scope="{ row, index }" slot="img">
             <viewer :images="[row.imageAddress]">

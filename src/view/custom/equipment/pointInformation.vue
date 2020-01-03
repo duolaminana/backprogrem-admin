@@ -7,8 +7,8 @@
         <Cascader :data="cityData" v-model="areaIds" placeholder="区域" class='marginRight'></Cascader>
         <Button  @click='inquiry' type="primary">查询</Button>
         <Button  @click='reset' type="primary">重置</Button>
-        <Button v-if="hasPerm('pos:pfm:edit')" type="primary" @click='showNewlyAdded("xz")' class='xzbtn' icon="md-add">新增</Button>
-        <Button v-if="hasPerm('pos:pfm:edit')" type="primary" @click='replace' :disabled='!tableRowData' class='xzbtn' >更改设备</Button>
+        <Button v-if="hasPerm('pos:sub:edit')" type="primary" @click='showNewlyAdded("xz")' class='xzbtn' icon="md-add">新增</Button>
+        <Button v-if="hasPerm('pos:sub:edit')" type="primary" @click='replace' :disabled='!tableRowData' class='xzbtn' >更改设备</Button>
         <Table :highlight-row='true' border ref="selection" :columns="columns" :data="datas" @on-row-click='tableClick'>
           <template slot-scope="{ row, index }" slot="cooperationType">
             <span v-show='row.cooperationType==1'>分成</span>
@@ -44,10 +44,10 @@
               <Button type="success" size="small" class='marBtn' v-show='row.positionStatus==2' @click.stop='rowData=row;rowIndex=index;examine=true'>审核</Button> -->
               <!-- <Button type="success" size="small" class='marBtn' v-show='row.enable==0' @click.stop='enable(row,index)'>启用</Button>
               <Button type="error" size="small" class='marBtn' v-show='row.enable==1' @click.stop='enable(row,index)'>停用</Button> -->
-              <Button v-if="hasPerm('pos:pfm:edit')" type="error" size="small" class='marBtn' v-show='row.machineCode' @click.stop='untying(row,index)'>解绑设备</Button>
-              <Button v-if="hasPerm('pos:pfm:edit')" type="primary" size="small" class='marBtn' v-show='!row.machineCode' @click.stop='binded(row)'>绑定设备</Button>
-              <Button v-if="hasPerm('pos:pfm:edit')" type="primary" size="small" class='marBtn' @click.stop='showNewlyAdded("bj",index)'>编辑</Button>
-              <Button v-if="hasPerm('pos:pfm:edit')" type="error" size="small" @click.stop="itemDelete(row,index)" >删除</Button>
+              <Button v-if="hasPerm('pos:sub:edit')" type="error" size="small" class='marBtn' v-show='row.machineCode' @click.stop='untying(row,index)'>解绑设备</Button>
+              <Button v-if="hasPerm('pos:sub:edit')" type="primary" size="small" class='marBtn' v-show='!row.machineCode' @click.stop='binded(row)'>绑定设备</Button>
+              <Button v-if="hasPerm('pos:sub:edit')" type="primary" size="small" class='marBtn' @click.stop='showNewlyAdded("bj",index)'>编辑</Button>
+              <Button v-if="hasPerm('pos:sub:edit')" type="error" size="small" @click.stop="itemDelete(row,index)" >删除</Button>
           </template>
           <template slot-scope="{ row, index }" slot="priceTemplate">
             <a @click.stop='rowData=row;lookPriceTemplate(row,index)' v-if='row.priceTemplate'>查看详情</a>
@@ -205,6 +205,13 @@ import  tableModal from "@/view/custom/components/tableModal";
 import axios from 'axios'
 export default {
   name:'pointInformation',
+  props:{
+    pickTreeData:{
+      default:() => {
+        return {};
+      }
+    }
+  },
   components:{
     mapDrag,
     deleteComponent,
@@ -299,7 +306,7 @@ export default {
         cooperationType:'1',//合作方式 1 分成 2 租用
         remark:null,//备注
         // machineCode:[],//机器编码
-        runDate:null,//点位运营时间
+        runDate:[ "00:00:00", "23:59:59" ],//点位运营时间
         routeId:null,
         positionName:null,
       },
@@ -659,7 +666,7 @@ export default {
         cooperationType:'1',//合作方式 1 分成 2 租用
         remark:null,//备注
         // machineCode:[],//机器编码
-        runDate:null,//点位运营时间
+        runDate:[ "00:00:00", "23:59:59" ],//点位运营时间
         routeId:null,
         positionName:null,
       };
@@ -842,17 +849,17 @@ export default {
         pageNum:this.pageNum,
         pageSize:this.pageSize,
         areaIds:this.areaIds.join(','),
-        routeId:this.routeId,
+        routeId:this.pickTreeData&&this.pickTreeData.id?this.pickTreeData.id:this.routeId,
         channelId:this.channelId,
         userId:this.operator,
         type:this.operatorType,
+        managerRoute:this.$store.state.user.userVo.managerRoute,
         machineCode:this.machineCode
       }
       netWorkDevice('/machinePosition/list',data).then(res => {
         this.pageNum = res.result.pageNum;
         this.total = res.result.total;
         this.datas = res.result.list;
-        console.log(res)
       })
     },
   },

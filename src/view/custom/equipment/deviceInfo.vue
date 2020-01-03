@@ -91,8 +91,11 @@
             <span v-else>——</span>
           </template>
           <template slot-scope="{ row, index }" slot="newHumidity">
-            <template v-if='(row.currentTemperature||row.currentTemperature==0)||(row.currentHumidness||row.currentHumidness==0)'>
-              <span v-if='row.currentTemperature||row.currentTemperature==0' :class='row.temperatureStatus?"green":"red"'>{{row.currentTemperature}}℃/</span><span v-if='row.currentHumidness||row.currentHumidness==0' :class='row.temperatureStatus?"green":"red"'>{{row.currentHumidness}}%</span>
+            <template v-if='row.temperatureHumidityStatus'>
+              <template v-if='(row.currentTemperature||row.currentTemperature==0)||(row.currentHumidness||row.currentHumidness==0)'>
+                <span v-if='row.currentTemperature||row.currentTemperature==0' :class='row.temperatureStatus?"green":"red"'>{{row.currentTemperature}}℃/</span><span v-if='row.currentHumidness||row.currentHumidness==0' :class='row.humidnessStatus?"green":"red"'>{{row.currentHumidness}}%</span>
+              </template>
+              <span v-else>——</span>
             </template>
             <span v-else>——</span>
           </template>

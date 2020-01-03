@@ -49,14 +49,15 @@ export default {
     getMoney(ary){
       ary.map((v,i)=>{
         setTimeout(() => {
-          console.log(v)
           let node = document.querySelector(`a[title='${v}']`);
-          let hasImg = node.querySelector(`img`);
-          if(node&&!hasImg){
-            let img=document.createElement("img");
-            img.src=require('../../../assets/images/money.png');
-            img.className = 'tapImg'
-            node.insertBefore(img,node.childNodes[0])
+          if(node){
+            let hasImg = node.querySelector(`img`);
+            if(!hasImg){
+              let img=document.createElement("img");
+              img.src=require('../../../assets/images/money.png');
+              img.className = 'tapImg'
+              node.insertBefore(img,node.childNodes[0])
+            }
           }
         }, 500);
       })

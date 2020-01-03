@@ -118,7 +118,7 @@
         show-sizer
       />
       <div slot="footer">
-        <Button type="primary" size="large" @click="exportTable">导出</Button>
+        <Button type="success" size="large" @click="exportTable">导出</Button>
         <Button type="primary" size="large" @click="handleClick">确定</Button>
       </div>
       <div slot="close">
@@ -302,7 +302,7 @@ export default {
         },
         {
           title: "订单编号",
-          key: "cardNo",
+          key: "orderNo",
           align: "center",
           minWidth: 80,
           tooltip: true
@@ -497,7 +497,15 @@ export default {
       return realVal;
     },
     cardNo(value) {
-      return `${value.substring(0, 3)}****${value.substring(value.length - 4)}`;
+      let realVal = "";
+      if (value) {
+        realVal = `${value.substring(0, 3)}****${value.substring(
+          value.length - 4
+        )}`;
+      } else {
+        realVal = "——";
+      }
+      return realVal;
     },
     flowTypeText(num) {
       switch (num) {

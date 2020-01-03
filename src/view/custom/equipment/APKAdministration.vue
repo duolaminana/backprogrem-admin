@@ -1,44 +1,47 @@
 <template>
   <div>
-    <div>
-      <Select v-model="apkId" class="marginRight" :clearable="true" placeholder="应用">
-        <Option v-for="item in apkList" :value="item.value" :key="item.value">{{ item.label }}</Option>
-      </Select>
-      <Select v-model="machineType" class="marginRight" :clearable="true" placeholder="机型">
-        <Option
-          v-for="item in machineTypeList"
-          :value="item.value"
-          :key="item.value"
-        >{{ item.label }}</Option>
-      </Select>
-      <Button type="primary" @click="getPageDatas">查询</Button>
-      <Button type="primary" @click="showNewlyAdded('xz')" class="xzbtn">新增</Button>
-      <Button type="primary" @click="reset">重置</Button>
-      <Table border ref="selection" :columns="columns" :data="datas">
-        <template slot-scope="{ row, index }" slot="img">
-          <viewer :images="[row.iconAddress]">
-            <img :src="row.iconAddress" />
-          </viewer>
-        </template>
-        <template slot-scope="{ row, index }" slot="edit">
-          <Button
-            type="primary"
-            size="small"
-            class="marBtn"
-            @click="showNewlyAdded('bj',index,row)"
-          >编辑</Button>
-        </template>
-      </Table>
-      <Page
-        :total="total"
-        show-elevator
-        :current="pageNum"
-        @on-change="pageChange"
-        :page-size="pageSize"
-        @on-page-size-change="sizeChange"
-        show-sizer
-      />
+    <div style='display: inline-block;vertical-align: top;width:39%;margin-right:2%'>
+      <div style="overflow: hidden;">
+        <Select v-model="apkId" class="marginRight" :clearable="true" placeholder="应用">
+          <Option v-for="item in apkList" :value="item.value" :key="item.value">{{ item.label }}</Option>
+        </Select>
+        <Select v-model="machineType" class="marginRight" :clearable="true" placeholder="机型">
+          <Option
+            v-for="item in machineTypeList"
+            :value="item.value"
+            :key="item.value"
+          >{{ item.label }}</Option>
+        </Select>
+        <Button type="primary" @click="getPageDatas">查询</Button>
+        <Button type="primary" @click="showNewlyAdded('xz')" class="xzbtn">新增</Button>
+        <Button type="primary" @click="reset">重置</Button>
+        <Table border ref="selection" :columns="columns" highlight-row :data="datas" @on-row-click='tableClick'>
+          <template slot-scope="{ row, index }" slot="img">
+            <viewer :images="[row.iconAddress]">
+              <img :src="row.iconAddress" />
+            </viewer>
+          </template>
+          <template slot-scope="{ row, index }" slot="edit">
+            <Button
+              type="primary"
+              size="small"
+              class="marBtn"
+              @click="showNewlyAdded('bj',index,row)"
+            >编辑</Button>
+          </template>
+        </Table>
+        <Page
+          :total="total"
+          show-elevator
+          :current="pageNum"
+          @on-change="pageChange"
+          :page-size="pageSize"
+          @on-page-size-change="sizeChange"
+          show-sizer
+        />
+      </div>
     </div>
+    <apk-ver ref='apkVer' :rowData='tableRowData' style='display: inline-block;vertical-align: top;width:59%;'></apk-ver>
     <!-- 新增弹框的模态框 -->
     <Modal
       v-model="newlyAdded"
@@ -99,10 +102,15 @@
 </template> 
 <script>
 import { netWorkDevice, Upload } from "@/api/data";
+import apkVer from './APKVersiondAministration'
 export default {
   name: "APKAdministration",
+  components:{
+    apkVer
+  },
   data() {
     return {
+      tableRowData:{},
       Upload,
       formValidate: {
         //新增字段
@@ -176,6 +184,13 @@ export default {
     };
   },
   methods: {
+    tableClick(row){
+      this.tableRowData = row;
+      console.log(row)
+      setTimeout(()=>{
+        this.$refs.apkVer.getPageDatas();
+      },1)
+    },
     // 重置按钮
     reset() {
       this.apkId = null;

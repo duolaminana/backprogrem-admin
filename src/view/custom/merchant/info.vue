@@ -11,7 +11,14 @@
             <span v-show="auditType==null" style="color:#d0d0d0">待配置</span>
             <span v-show="auditType==1" style="color:#ffbd72">待审核</span>
             <span v-show="auditType==2" style="color:#19be6b">审核通过</span>
-            <span v-show="auditType==3" style="color:#ed4014">审核失败</span>
+            <!-- <span v-show="auditType==3" style="color:#ed4014">审核失败</span> -->
+            <Tooltip max-width="200">
+              <div slot="content">
+                <div v-if="WXRemark==3">微信支付配置失败:{{WXRemarkText}}</div>
+                <div v-if="ZFBRemark==3">支付宝配置失败:{{ZFBRemarkText}}</div>
+              </div>
+              <span v-show="auditType==3" style="color:#ed4014">审核失败</span>
+            </Tooltip>
           </div>
         </div>
         <Divider />
@@ -339,18 +346,18 @@
             ></Input>
             <Input
               v-if="isTab"
-              :value="userName"
+              v-model="userName"
               type="text"
               style="opacity: 0;position: absolute"
             ></Input>
           </FormItem>
           <FormItem label="密码" prop="password">
-            <!-- <Input
+            <Input
               v-if="isTab"
-              :value="password"
+              v-model="password"
               type="password"
               style="opacity: 0;position: absolute"
-            ></Input> -->
+            ></Input>
             <Input
               :maxlength="30"
               v-model.trim="formValidatePre.password"
@@ -651,18 +658,18 @@
             ></Input>
             <Input
               v-if="isTab"
-              :value="userName"
+              v-model="userName"
               type="text"
               style="opacity: 0;position: absolute"
             ></Input>
           </FormItem>
           <FormItem label="密码" prop="password">
-            <!-- <Input
+            <Input
               v-if="isTab"
-              :value="password"
+              v-model="password"
               type="password"
               style="opacity: 0;position: absolute"
-            ></Input> -->
+            ></Input>
             <Input
               :maxlength="30"
               v-model.trim="formValidateEnt.password"
@@ -1086,10 +1093,10 @@ export default {
       }
     };
     return {
-      balance:null,
-      receivableAmount:null,
-      refundAmount:null,
-      settlementAmount:null,
+      balance: null,
+      receivableAmount: null,
+      refundAmount: null,
+      settlementAmount: null,
       visible: false,
       userName: null,
       password: null,
@@ -1162,47 +1169,7 @@ export default {
       delFormVisible: false, // 删除模态框显示方式
       isShow: false, // 弹框显示状态
       // 个人模态框表单数据
-      formValidatePre: {
-        receiveTerminal: 1, //是否开启收款码，默认不开启
-        receiveName: null, //收款人姓名
-        receiveBank: null, //开户行
-        receiveCard: null, //收款人身份证号
-        receiveAccount: null, //收款账户
-        receiveType: "2", //收款方式
-        businessScope: null, //经营范围
-        sale: [], //销售范围
-        NewareaNames: [], // 级联数据
-        accountType: 1, // 注册类型
-        address: null, // 详细地址
-        areaIds: null, // 区域ids
-        areaNames: null, // 区域names
-        auditDate: null, // 审核时间
-        auditStatus: 1, // 审核状态
-        sourceType: 2, // 数据来源
-        auditor: null, // 审核人
-        card: null, // 身份证号码
-        cardFront: null, // 身份证正面
-        frontAddress: null, // 身份证正面地址
-        cardBack: null, // 身份证反面
-        backAddress: null, // 身份证反面地址
-        other: null, //其他
-        otherAddress: null, //其他地址
-        channelId: null, // 渠道id
-        channelName: null, // 渠道名称
-        createDate: null, // 创建时间
-        name: null, // 姓名
-        operator: this.$store.state.user.userId, // 操作人
-        parentId: this.$store.state.user.channelId, // 父渠道id
-        parentIds:
-          this.$store.state.user.merchant.parentIds +
-          this.$store.state.user.channelId +
-          ",", //父渠道pids
-        password: null, // 密码
-        phone: null, // 手机
-        remark: "", // 备注
-        updateDate: null, // 修改时间
-        userName: null // 用户名
-      },
+      formValidatePre: {},
       ruleValidatePre: {
         userName: [
           { required: true, validator: validateUserName, trigger: "blur" },
@@ -1263,52 +1230,7 @@ export default {
         ]
       },
       // 企业模态框表单数据
-      formValidateEnt: {
-        receiveTerminal: 1, //是否开启收款码，默认不开启
-        receiveName: null, //收款人姓名
-        receiveBank: null, //开户行
-        receiveCard: null, //收款人身份证号
-        receiveAccount: null, //收款账户
-        receiveType: "2", //收款类型
-        businessScope: null, //经营范围
-        sale: [], //销售范围
-        NewareaNames: [], // 级联数据
-        accountType: 2, // 注册类型
-        address: null, // 详细地址
-        areaIds: null, // 区域ids
-        areaNames: null, // 区域names
-        auditDate: null, // 审核时间
-        auditStatus: 1, // 审核状态
-        sourceType: 2, // 数据来源
-        auditor: null, // 审核人
-        license: null, // 营业执照
-        licenseAddress: null, // 营业执照地址
-        openAccount: null, //开户许可证
-        openAccountAddress: null, //开户许可证地址
-        cardFront: null, // 身份证正面
-        frontAddress: null, // 身份证正面地址
-        cardBack: null, // 身份证反面
-        backAddress: null, // 身份证反面地址
-        other: null, //其他
-        otherAddress: null, //其他地址
-        channelId: null, // 渠道id
-        channelName: null, // 渠道名称
-        companyName: null, // 公司名称
-        companyNo: null, // 社会统一信用代码
-        createDate: null, // 创建时间
-        name: null, // 姓名
-        operator: this.$store.state.user.userId, // 操作人
-        parentId: this.$store.state.user.channelId, // 父渠道id
-        parentIds:
-          this.$store.state.user.merchant.parentIds +
-          this.$store.state.user.channelId +
-          ",", //父渠道pids
-        password: null, // 密码
-        phone: null, // 手机
-        remark: "", // 备注
-        updateDate: null, // 修改时间
-        userName: null // 用户名
-      },
+      formValidateEnt: {},
       ruleValidateEnt: {
         userName: [
           { required: true, validator: validateUserName, trigger: "blur" },
@@ -1441,14 +1363,14 @@ export default {
           title: "联系电话",
           key: "phone",
           align: "center",
-          minWidth: 60,
+          minWidth: 80,
           tooltip: true
         },
         {
           title: "创建时间",
           key: "createDate",
           align: "center",
-          minWidth: 60,
+          minWidth: 120,
           tooltip: true
         },
         {
@@ -1462,7 +1384,7 @@ export default {
           title: "审核时间",
           key: "auditDate",
           align: "center",
-          minWidth: 50,
+          minWidth: 120,
           tooltip: true
         },
         {
@@ -1523,6 +1445,7 @@ export default {
       }
     },
     checkUserName(event) {
+      console.log(event);
       this.checkType = 1;
       this.checkParam = event.target.value;
       if (this.modalTitle == "新增【商户】") {
@@ -1567,23 +1490,53 @@ export default {
     // 企业注册
     enterpriseRegister() {
       this.tabIndex = 2;
-      this.$refs.formValidatePre.resetFields();
       this.$refs.formValidateEnt.resetFields();
+      this.formValidateEnt = {
+        receiveTerminal: 1,
+        receiveType: "2",
+        sale: [],
+        NewareaNames: [],
+        accountType: 2,
+        auditStatus: 1,
+        sourceType: 2,
+        operator: this.$store.state.user.userId, // 操作人
+        parentId: this.$store.state.user.channelId, // 父渠道id
+        parentIds:
+          this.$store.state.user.merchant.parentIds +
+          this.$store.state.user.channelId +
+          "," //父渠道pids
+      };
       this.receive = null;
       this.formValidatePre.cardFront = null;
       this.formValidatePre.cardBack = null;
       this.formValidatePre.other = null;
+      console.log(this.formValidateEnt);
     },
     // 个人注册
     personRegister() {
       this.tabIndex = 1;
       this.$refs.formValidatePre.resetFields();
-      this.$refs.formValidateEnt.resetFields();
+      this.formValidatePre = {
+        receiveTerminal: 1,
+        receiveType: "2",
+        sale: [],
+        NewareaNames: [],
+        accountType: 1,
+        auditStatus: 1,
+        sourceType: 2,
+        operator: this.$store.state.user.userId, // 操作人
+        parentId: this.$store.state.user.channelId, // 父渠道id
+        parentIds:
+          this.$store.state.user.merchant.parentIds +
+          this.$store.state.user.channelId +
+          "," //父渠道pids
+      };
       this.formValidateEnt.license = null;
       this.formValidateEnt.openAccount = null;
       this.formValidateEnt.cardFront = null;
       this.formValidateEnt.cardBack = null;
       this.formValidateEnt.other = null;
+      console.log(this.formValidatePre);
     },
     // 文件大小限制
     handleMaxSize(file) {
@@ -1736,7 +1689,6 @@ export default {
       this.$refs[name].resetFields();
       console.log(this.formValidatePre);
       console.log(this.formValidateEnt);
-      
     },
 
     // 关闭按钮
@@ -1789,87 +1741,8 @@ export default {
     addModal() {
       // this.isReceiveType = "2";
       this.$Spin.show();
-      // 个人模态框表单数据
-      this.formValidatePre = {
-        receiveTerminal: 1, //是否开启收款码，默认不开启
-        receiveName: null, //收款人姓名
-        receiveBank: null, //开户行
-        receiveCard: null, //收款人身份证号
-        receiveAccount: null, //收款账户
-        receiveType: "2", //收款类型
-        businessScope: null, //经营范围
-        sale: [], //销售范围
-        NewareaNames: [], // 级联数据
-        accountType: 1, // 注册类型
-        address: null, // 详细地址
-        areaIds: null, // 区域ids
-        areaNames: null, // 区域names
-        auditDate: null, // 审核时间
-        auditStatus: 1, // 审核状态
-        sourceType: 2, // 数据来源
-        auditor: null, // 审核人
-        card: null, // 身份证号码
-        cardFront: null, // 身份证正面
-        frontAddress: null, // 身份证正面地址
-        cardBack: null, // 身份证反面
-        backAddress: null, // 身份证反面地址
-        channelId: null, // 渠道id
-        channelName: null, // 渠道名称
-        createDate: null, // 创建时间
-        name: null, // 姓名
-        operator: this.$store.state.user.userId, // 操作人
-        parentId: this.$store.state.user.channelId, // 父渠道id
-        parentIds:
-          this.$store.state.user.merchant.parentIds +
-          this.$store.state.user.channelId +
-          ",", //父渠道pids
-        password: null, // 密码
-        phone: null, // 手机
-        remark: "", // 备注
-        updateDate: null, // 修改时间
-        userName: null // 用户名
-      };
-      // 企业模态框表单数据
-      this.formValidateEnt = {
-        receiveTerminal: 1, //是否开启收款码，默认不开启
-        receiveName: null, //收款人姓名
-        receiveBank: null, //开户行
-        receiveCard: null, //收款人身份证号
-        receiveAccount: null, //收款账户
-        receiveType: "2", //收款类型
-        businessScope: null, //经营范围
-        sale: [], //销售范围
-        NewareaNames: [], // 级联数据
-        accountType: 2, // 注册类型
-        address: null, // 详细地址
-        areaIds: null, // 区域ids
-        areaNames: null, // 区域names
-        auditDate: null, // 审核时间
-        auditStatus: 1, // 审核状态
-        sourceType: 2, // 数据来源
-        auditor: null, // 审核人
-        license: null, // 营业执照
-        licenseAddress: null, // 营业执照地址
-        channelId: null, // 渠道id
-        channelName: null, // 渠道名称
-        companyName: null, // 公司名称
-        companyNo: null, // 社会统一信用代码
-        createDate: null, // 创建时间
-        name: null, // 姓名
-        operator: this.$store.state.user.userId, // 操作人
-        parentId: this.$store.state.user.channelId, // 父渠道id
-        parentIds:
-          this.$store.state.user.merchant.parentIds +
-          this.$store.state.user.channelId +
-          ",", //父渠道pids
-        password: null, // 密码
-        phone: null, // 手机
-        remark: "", // 备注
-        updateDate: null, // 修改时间
-        userName: null // 用户名
-      };
-      // this.formValidatePre={};
-      // this.formValidateEnt={}
+      console.log(this.formValidatePre);
+      console.log(this.formValidateEnt);
       this.isSeeReason = false;
       this.isEnterprise = true;
       this.isPerson = true;
@@ -1880,16 +1753,29 @@ export default {
       this.isregester = true;
       this.remakedisabled = false;
       this.getProductType();
-      console.log(this.formValidatePre);
-      console.log(this.formValidateEnt);
       setTimeout(() => {
         this.$refs.formValidatePre.resetFields();
         this.$refs.formValidateEnt.resetFields();
-        this.isShow = true;
-      }, 1800);
-      setTimeout(() => {
-        this.$Spin.hide();
+        this.formValidateEnt = {
+          receiveTerminal: 1,
+          receiveType: "2",
+          sale: [],
+          NewareaNames: [],
+          accountType: 2,
+          auditStatus: 1,
+          sourceType: 2,
+          operator: this.$store.state.user.userId, // 操作人
+          parentId: this.$store.state.user.channelId, // 父渠道id
+          parentIds:
+            this.$store.state.user.merchant.parentIds +
+            this.$store.state.user.channelId +
+            "," //父渠道pids
+        };
       }, 2000);
+      setTimeout(() => {
+        this.isShow = true;
+        this.$Spin.hide();
+      }, 2800);
     },
     // 编辑，查看显示方式
     showType(row) {
@@ -2204,10 +2090,10 @@ export default {
     searchPrice() {
       getPrice(this.$store.state.user.channelId).then(res => {
         if (res.data.code == 200) {
-          this.balance=res.data.result.balance
-          this.receivableAmount=res.data.result.receivableAmount
-          this.refundAmount=res.data.result.refundAmount
-          this.settlementAmount=res.data.result.settlementAmount
+          this.balance = res.data.result.balance;
+          this.receivableAmount = res.data.result.receivableAmount;
+          this.refundAmount = res.data.result.refundAmount;
+          this.settlementAmount = res.data.result.settlementAmount;
         }
       });
     }
@@ -2294,12 +2180,19 @@ export default {
                 margin-right: 0px;
               }
             }
+            .numText {
+              color:#2d8cf0;
+            }
             .numText:hover {
               text-decoration: underline;
+              cursor:pointer;
             }
           }
           .eye {
             float: right;
+            img:hover{
+              cursor:pointer;
+            }
           }
         }
       }

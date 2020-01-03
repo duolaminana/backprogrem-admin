@@ -264,6 +264,8 @@ export default {
               remark,
               operator:this.operator,
               operatorName:this.operatorName,
+              type:this.$store.state.user.userVo.type,
+              managerRoute:this.$store.state.user.userVo.managerRoute,
               channelId:this.channelId,
               id: value.id,
             };
@@ -289,6 +291,7 @@ export default {
       console.log(this.rowData.id)
       let data = {
         channelId:this.channelId,
+        userId:this.operator,
         pageNum:isAll?1:this.pageNum,
         pageSize:this.pageSize,
         templateName:this.templateName,

@@ -345,6 +345,7 @@ export default {
         // this.series.map(v=>v.smooth=true) //曲线图
         res.result.lineGraphSeriesList.forEach(item => {
           this.colorList.push(item.areaStyle.normal.color);
+          item.stack="销售额";
         });
       });
     },

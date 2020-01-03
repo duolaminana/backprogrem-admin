@@ -6,15 +6,32 @@
       </div> -->
       <div class="leftBox">
         <!-- <Cascader :data="channelList" v-model="channelValue" @on-change='channerChanges' change-on-select></Cascader> -->
-        <Input :value="$store.state.user.channelName"  readonly/>
-        <div style='font-size:14px;color:#2d8cf0;font-weight:700;margin-top:20px;'>线路列表</div>
+        <template v-if="hasPerm('pos:sub:edit')" >
+          <!-- 按钮 -->
+          <Button type="primary" icon="md-add" @click='showNewlyAdded("xz")'>添加路线</Button>
+          <!-- 下拉菜单 -->
+          <Dropdown style="margin-left: 10px"  @on-click='typeCLick'>
+            <Button>
+              更多操作
+              <Icon type="ios-arrow-down"></Icon>
+            </Button>
+            <DropdownMenu slot="list">
+              <DropdownItem name ='editType'>编辑</DropdownItem>
+              <DropdownItem name ='delType'>删除</DropdownItem>
+            </DropdownMenu>
+          </Dropdown>
+          <!-- 警告 -->
+        </template>
+        <Input :value="$store.state.user.channelName" class='readName'  readonly/>
+        <div style='font-size:14px;color:#2d8cf0;font-weight:700;margin-top:20px;'>分区线路列表</div>
         <coustom-tree 
           :treeData='treeData'
           @pickTree = 'pickTree'
         ></coustom-tree>
       </div>
       <div class='rightDiv'>
-        <Input v-model="routeName"  placeholder="线路名称" clearable class='marginRight'/>
+        <position ref='position' :pickTreeData='pickTreeData'></position>
+        <!-- <Input v-model="routeName"  placeholder="线路名称" clearable class='marginRight'/>
         <Select v-model="routeType"  class='marginRight' placeholder="线路类型" :clearable='true'>
             <Option v-for="item in routeTypeList" :value="item.value" :key="item.value">{{ item.label }}</Option>
         </Select>
@@ -23,11 +40,10 @@
         <Button v-if="channelId==$store.state.user.userVo.channelId && hasPerm('pos:sub:edit') " type="primary" @click='showNewlyAdded("xz")' class='xzbtn' icon="md-add">新增</Button>
         <Table border ref="selection" :columns="columns" :data="datas">
           <template slot-scope="{ row, index }"  slot="edit">
-              <Button v-if="channelId==$store.state.user.userVo.channelId && hasPerm('pos:sub:edit') " type="primary" size="small" @click='showNewlyAdded("bj",index,row)' class='marBtn' >编辑</Button>
+              <Button v-if="channelId==$store.state.user.userVo.channelId && hasPerm('pos:sub:edit') " type="primary" size="small" @click='showNewlyAdded("bj",row)' class='marBtn' >编辑</Button>
               <Button v-if="channelId==$store.state.user.userVo.channelId && hasPerm('pos:sub:edit') " type="error" size="small" @click="modalDel=true;delID=row.id;delIndex=index;delRouteType=row.routeType">删除</Button>
           </template>
           <template slot-scope="{ row, index }"  slot="routeType" >
-              <!-- <span v-show='row.routeType==1' class='blue'>分区</span> -->
               <Poptip placement="right" width="300" trigger='hover' >
                 <span v-show='row.routeType==2' class='blue'>线路</span>
                 <div slot="content">
@@ -42,14 +58,14 @@
               </Poptip>
           </template>
         </Table>
-        <Page :total="total" show-elevator :current='pageNum' @on-change='pageChange' :page-size='pageSize' @on-page-size-change='sizeChange'  show-sizer/>
+        <Page :total="total" show-elevator :current='pageNum' @on-change='pageChange' :page-size='pageSize' @on-page-size-change='sizeChange'  show-sizer/> -->
       </div>
       <!-- 新增弹框的模态框 -->
       <Modal v-model="newlyAdded" width="600" :title="showNewlyType=='xz'?'新增路线':'编辑路线'"  :mask-closable='false'>
-        <h4 style='padding:0 0 10px 60px' v-if='pickTreeData&&pickTreeData.name'>已选分区：{{pickTreeData.name}}（{{pickTreeData.routeType==1?'分区':'线路'}}）</h4>
+        <h4 style='padding:0 0 10px 60px' v-if='pickTreeData&&pickTreeData.name'>已选{{pickTreeData.routeType==1?'分区':'线路'}}：{{pickTreeData.name}}</h4>
         <Form ref="formValidate" :model="formValidate" :rules="ruleValidate" :label-width="120">
-          <FormItem label="线路名称" prop="routeName" class='modelInput'>
-            <Input v-model.trim="formValidate.routeName" placeholder="线路名称"/>
+          <FormItem label="线路名称" prop="name" class='modelInput'>
+            <Input v-model.trim="formValidate.name" placeholder="线路名称"/>
           </FormItem>
           <FormItem label="备注" prop="remark" class='modelInput'>
             <Input v-model.trim="formValidate.remark" placeholder="请输入备注"/>
@@ -81,11 +97,13 @@ import channelTree from '../components/channelTree';
 import CoustomTree from '../components/coustom-tree';
 import { netWorkDevice,netWorkHttp} from "@/api/data";
 import  deleteComponent from "@/view/custom/components/deleteComponent";
+import position from './pointInformation'
 export default {
   components: {
     channelTree,
     CoustomTree,
-    deleteComponent
+    deleteComponent,
+    position
   },
   name: 'subareaLine',
   data () {
@@ -104,12 +122,12 @@ export default {
       modal_loading:false,//删除的loading
       pickTreeData:null,
       formValidate:{
-        routeName:null,
+        name:null,
         remark:null,
         routeType:this.$store.state.user.userVo.managerRoute==2?'2':'1'
       },
       ruleValidate:{
-        routeName: [
+        name: [
           {
             required: true,
             message: "输入不能为空",
@@ -139,7 +157,7 @@ export default {
         },
         {
           title: '线路名称',
-          key: 'routeName',
+          key: 'name',
           align: 'center',
           tooltip:true
         },
@@ -180,6 +198,26 @@ export default {
     }
   },
   methods: {
+    typeCLick(name){
+      switch(name){
+        case 'editType':
+          if(this.pickTreeData){
+            this.showNewlyAdded("bj",this.pickTreeData)
+          }else{
+            this.$Message.error('请先选择节点！');
+          };
+          break;
+        case 'delType':
+          if(this.pickTreeData){
+            this.modalDel = true;
+            this.delID=this.pickTreeData.id;
+            this.delRouteType=this.pickTreeData.routeType
+          }else{
+            this.$Message.error('请先选择节点！');
+          };
+          break;
+      }
+    },
     clickQuery(){
       this.pageNum = 1;
       this.getPageDatas();
@@ -189,7 +227,7 @@ export default {
       this.pageNum = 1;
       this.total = null;
       this.pageSize = 15;
-      this.routeName = null;
+      this.name = null;
       this.routeID = null;
       this.channelId = this.$store.state.user.channelId;
       this.pickTreeData = null;
@@ -211,9 +249,10 @@ export default {
       netWorkDevice(url,null,'delete').then(res => {
         this.modal_loading = false;
         this.modalDel = false;
-        this.datas.splice(this.delIndex,1);
+        // this.datas.splice(this.delIndex,1);
         this.delID = null;//删除的ID
-        this.delIndex =null;//删除的索引
+        // this.delIndex =null;//删除的索引
+        this.pickTreeData =null;
         this.$Message.success('删除成功');
         this.getTreeData();
       }).catch(err => {
@@ -221,32 +260,34 @@ export default {
         // this.$Message.error(err);
       });
     },
-    async showNewlyAdded(type,index){
+    async showNewlyAdded(type,row){
       await this.initialization('formValidate');
       this.showNewlyType = type;
       this.formValidate = {
-        routeName:null,
+        name:null,
         remark:null,
         routeType:'1'
       };
       //初始化数据
       if(type=='bj'){
-        this.formValidate = JSON.parse(JSON.stringify(this.datas[index]));
+        this.formValidate = JSON.parse(JSON.stringify(row));
         this.formValidate.routeType = this.formValidate.routeType+'';
+        this.formValidate.name = this.formValidate.name.split('(')[0]
+        console.log(this.formValidate)
       }
       this.newlyAdded=true;
     },
-    Added(value,name){
-      this.$refs[name].validate(valid => {
+    Added(value,names){
+      this.$refs[names].validate(valid => {
         if(valid){
-          let  { routeName,remark,routeType} =  value;
+          let  { name:routeName,remark,routeType} =  value;
           if(this.showNewlyType=='xz'){
             if(this.pickTreeData&&this.pickTreeData.routeType==2){
               this.$Message.error('不能往下新增了');
               return false
             }
             let data = {
-              routeName:routeType==1?routeName:routeName+'(线路)',
+              routeName:routeType==1?routeName+'(分区)':routeName+'(线路)',
               remark,
               routeType,
               pid:this.pickTreeData?this.pickTreeData.id:-1,
@@ -262,7 +303,7 @@ export default {
             })
           }else if(this.showNewlyType=='bj'){
             let data = {
-              routeName,
+              routeName:routeType==1?routeName+'(分区)':routeName+'(线路)',
               remark,
               routeType,
               operator:this.operator,
@@ -271,7 +312,7 @@ export default {
               id:value.id
             }
             netWorkDevice('/route/modifyRoute',data).then(res => {
-              this.getPageDatas();//刷新页面
+              this.getTreeData();//刷新页面
               this.newlyAdded = false;
               this.$Message.success('编辑成功');
             })
@@ -294,6 +335,9 @@ export default {
       }else{
         this.routeID = null;
       }
+      setTimeout(()=>{
+        this.$refs.position.getPageDatas();
+      },1)
     },
     clickTreeRow(value){
       if(value){
@@ -381,5 +425,9 @@ export default {
     min-height: 900px;
     float: left;
     margin-right: 20px;
+  }
+  .readName{
+    display: block;
+    margin-top: 15px;
   }
 </style>

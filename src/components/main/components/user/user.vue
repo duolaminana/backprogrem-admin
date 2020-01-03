@@ -175,6 +175,7 @@ export default {
           let data =  {
             oldPwd,
             newPwd,
+            modifyType:2,
             id:this.$store.state.user.userId
           }
           netWorkHttp('/user/modifyUserPwd',data).then(res=>{

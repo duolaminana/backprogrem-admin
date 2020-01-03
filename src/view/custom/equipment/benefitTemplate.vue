@@ -14,7 +14,7 @@
         </template>
       </Table>
       <Page :total="total" show-elevator :current='pageNum' @on-change='pageChange' :page-size='pageSize' @on-page-size-change='sizeChange'  show-sizer/>
-      </div>
+    </div>
     <benefit-account ref='benefitAccount' :rowData='tableRowData' style='display: inline-block;vertical-align: top;width:59%;'></benefit-account> 
     <!-- 新增弹框的模态框 -->
     <Modal
@@ -399,6 +399,9 @@ export default {
         channelId:this.channelId,
         pageNum:this.pageNum,
         pageSize:this.pageSize,
+        userId:this.operator,
+        type:this.$store.state.user.userVo.type,
+        managerRoute:this.$store.state.user.userVo.managerRoute,
         templateName:this.templateName
       }
       netWorkDevice('/benefitTemplate/list', data).then(res => {

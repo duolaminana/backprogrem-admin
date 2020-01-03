@@ -60,7 +60,7 @@
       ></DatePicker>
       <Button type="primary" @click="getSearchOrder" v-if="hasPerm('set:tranlist:seeback')">查询</Button>
       <Button type="primary" @click="reset" v-if="hasPerm('set:tranlist:seeback')">重置</Button>
-      <Button type="primary" @click="exportTable" v-if="hasPerm('set:tranlist:seeback')">导出</Button>
+      <Button type="success" @click="exportTable" v-if="hasPerm('set:tranlist:seeback')">导出</Button>
       <Table
         @on-row-click="rowClick"
         highlight-row
@@ -84,12 +84,15 @@
         </template>
         <!-- 抽成金额 -->
         <template slot-scope="{row,index}" slot="commissionPrice">
-          <span>{{row.commissionPrice|amountText}}</span>
+          <span style="color:#ed4014">{{row.commissionPrice|amountText}}</span>
         </template>
         <!-- 收款金额 -->
         <template slot-scope="{row,index}" slot="payAmount">
-          <span v-show="row.orderStatus!=1">{{row.payAmount}}</span>
-          <span v-show="row.orderStatus==1">0</span>
+          <span
+            style="color:#19be6b"
+            v-show="row.orderStatus!=1&&row.orderStatus!=5"
+          >{{row.payAmount}}</span>
+          <span style="color:#19be6b" v-show="row.orderStatus==1||row.orderStatus==5">0</span>
         </template>
         <!-- 利益分配 -->
         <template slot-scope="{row,index}" slot="templateName">
@@ -111,6 +114,9 @@
           <span v-show="row.orderStatus==6" style="color:#ff9900">部分出货成功</span>
           <span v-show="row.orderStatus==4" style="color:#ed4014">出货失败</span>
         </template>
+        <template slot-scope="{row,index}" slot="refundAmount">
+          <span style="color:#ed4014" v-show="row.refundStatus==2">{{row.refundAmount}}</span>
+        </template>
         <template slot-scope="{row,index}" slot="operation">
           <!-- 退款按钮 -->
           <Button
@@ -118,7 +124,7 @@
             type="primary"
             size="small"
             @click="refund(row)"
-            v-if="hasPerm('set:tranlist:refundback')&&row.refundStatus==1&&(row.orderStatus==2||row.orderStatus==3||row.orderStatus==4||row.orderStatus==6)"
+            v-if="hasPerm('set:tranlist:refundback')&&((row.sendBack==2&&row.orderStatus==3)||row.sendBack!=2)&&row.refundStatus==1&&(row.orderStatus==2||row.orderStatus==3||row.orderStatus==4||row.orderStatus==6)"
           >&nbsp退款&nbsp</Button>
           <Button
             style="float:left"
@@ -135,11 +141,11 @@
             v-if="hasPerm('set:tranlist:refundback')&&(row.sendBack==3||row.sendBack==1)&&(row.orderStatus==2||row.orderStatus==4||row.orderStatus==6)"
           >&nbsp清算&nbsp</Button>
           <Button
-            style="float:left;"
+            style="float:left;margin-right:5px"
             disabled
             type="primary"
             size="small"
-            v-if="hasPerm('set:tranlist:refundback')&&row.refundStatus==1&&row.sendBack==2&&(row.orderStatus==2||row.orderStatus==4||row.orderStatus==6)"
+            v-if="hasPerm('set:tranlist:refundback')&&row.sendBack==2&&(row.orderStatus==2||row.orderStatus==4||row.orderStatus==6)"
           >已清算</Button>
         </template>
       </Table>
@@ -350,7 +356,7 @@ export default {
           title: "商品名称",
           key: "productName",
           align: "center",
-          minWidth: 80,
+          minWidth: 180,
           tooltip: true
         },
         {
@@ -467,7 +473,7 @@ export default {
           title: "商品名称",
           key: "productName",
           align: "center",
-          minWidth: 80,
+          minWidth: 180,
           tooltip: true
         },
         {
@@ -670,7 +676,7 @@ export default {
           title: "操作",
           align: "center",
           slot: "operation",
-          minWidth: 125,
+          minWidth: 130,
           tooltip: true
         },
         {
@@ -701,7 +707,7 @@ export default {
           title: "商品名称",
           key: "productName",
           align: "center",
-          minWidth: 80,
+          minWidth: 180,
           tooltip: true
         },
         {
@@ -722,28 +728,28 @@ export default {
           title: "商品进价(元)",
           key: "buyPrice",
           align: "center",
-          minWidth: 100,
+          minWidth: 80,
           tooltip: true
         },
         {
           title: "实际售价(元)",
           key: "actualPrice",
           align: "center",
-          minWidth: 100,
+          minWidth: 80,
           tooltip: true
         },
         {
           title: "活动售价(元)",
           key: "activityPrice",
           align: "center",
-          minWidth: 100,
+          minWidth: 80,
           tooltip: true
         },
         {
           title: "利润抽成比例(%)",
           key: "commissionPercent",
           align: "center",
-          minWidth: 120,
+          minWidth: 80,
           tooltip: true,
           render: (h, param) => {
             if (param.row.commissionPercent == null) {
@@ -756,7 +762,7 @@ export default {
           title: "利润抽成金额(元)",
           slot: "commissionPriceMore",
           align: "center",
-          minWidth: 120,
+          minWidth: 80,
           tooltip: true
         }
       ],
@@ -829,7 +835,7 @@ export default {
         .reduce((pre, cur) => {
           return pre + cur || 0;
         }, 0);
-      return value < 0 ? 0 : value> this.payAmount? this.payAmount : value;
+      return value < 0 ? 0 : value > this.payAmount ? this.payAmount : value;
     },
     refundAmount() {
       let value = this.dataTableMore
@@ -1070,8 +1076,10 @@ export default {
       this.pageNum = 1;
       this.pageSize = 15;
       this.total = null;
+      this.channelId = this.$store.state.user.channelId;
       this.getOrder(); // 重新获取数据
       this.getSearchTreeByUser();
+      this.$refs.channelTree.getTreeData();
     },
     // 页码改变时触发
     pageChange(value) {

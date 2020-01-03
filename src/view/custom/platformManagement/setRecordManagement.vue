@@ -101,6 +101,9 @@
         <template slot-scope="{row,index}" slot="primayCapital">
           <span>{{row.primayCapital|primayCapital}}</span>
         </template>
+        <template slot-scope="{row,index}" slot="cardNo">
+          <span>{{row.cardNo|cardNo}}</span>
+        </template>
         <template slot-scope="{row,index}" slot="flowType">
           <span>{{row.flowType|flowTypeText}}</span>
         </template>
@@ -115,7 +118,7 @@
         show-sizer
       />
       <div slot="footer">
-        <Button type="primary" size="large" @click="exportTable">导出</Button>
+        <Button type="success" size="large" @click="exportTable">导出</Button>
         <Button type="primary" size="large" @click="handleClick">确定</Button>
       </div>
       <div slot="close">
@@ -156,7 +159,7 @@ import {
   searchAccountByAccountId,
   searchMachineByAccountId,
   getSettlementExcle,
-  searchBenefitAccount,
+  searchBenefitAccount
 } from "@/api/http";
 export default {
   components: {
@@ -304,7 +307,7 @@ export default {
         },
         {
           title: "消费者",
-          key: "cardNo",
+          slot: "cardNo",
           align: "center",
           minWidth: 100,
           tooltip: true
@@ -420,7 +423,7 @@ export default {
           slot: "flowType",
           align: "center",
           minWidth: 80,
-          tooltip: true,
+          tooltip: true
         }
       ],
       dataTableMore: [], //结算详情数据
@@ -486,6 +489,15 @@ export default {
       if (value) {
         // 截取当前数据到小数点后两位
         realVal = parseFloat(value).toFixed(2);
+      } else {
+        realVal = "——";
+      }
+      return realVal;
+    },
+    cardNo(value) {
+      let realVal = "";
+      if (value) {
+        realVal = value;
       } else {
         realVal = "——";
       }
@@ -630,7 +642,7 @@ export default {
         pageSize: this.pageSize, // 页容量
         userId: this.userId,
         userType: this.userType,
-        managerRoute:this.$store.state.user.userVo.managerRoute
+        managerRoute: this.$store.state.user.userVo.managerRoute
       };
       searchSettlementOver(data).then(res => {
         if (res.data.code == 200) {
@@ -667,7 +679,7 @@ export default {
     },
     // 获取关联设备详情
     getMachine() {
-      searchMachineByAccountId(this.accountId,this.channelId).then(res => {
+      searchMachineByAccountId(this.accountId, this.channelId).then(res => {
         if (res.data.code == 200) {
           this.dataTableEquipment = res.data.result;
         }
@@ -680,7 +692,7 @@ export default {
           this.accountList = res.data.result.boxVoList;
         }
       });
-    },
+    }
   },
 
   mounted() {

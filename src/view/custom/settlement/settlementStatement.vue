@@ -71,6 +71,16 @@
     </div>
     <!-- 结算详情弹框的模态框 -->
     <Modal v-model="isShow" :mask-closable="false" :title="'结算详情('+deductAccount+')'" width="1700">
+      <div>
+        <strong
+          v-if="accountId!=deductAccountId"
+          style="color:red"
+        >提示：待结算金额 =（总利润-被抽成金额）* 利润百分比 + 本金</strong>
+        <strong
+          v-if="accountId==deductAccountId"
+          style="color:red"
+        >提示：待结算金额 =（总利润-被抽成金额）* 利润百分比 + 本金 + 抽成金额 - 使用返利金额</strong>
+      </div>
       <Table
         class="setMore"
         :columns="columnsMore"
@@ -102,7 +112,7 @@
         show-sizer
       />
       <div slot="footer">
-        <Button type="primary" size="large" @click="exportTable">导出</Button>
+        <Button type="success" size="large" @click="exportTable">导出</Button>
         <Button type="primary" size="large" @click="handleClick">确定</Button>
       </div>
       <div slot="close">
@@ -355,7 +365,7 @@ export default {
           title: "商品名称",
           key: "productName",
           align: "center",
-          minWidth: 100,
+          minWidth: 120,
           tooltip: true
         },
         {
@@ -390,14 +400,14 @@ export default {
           title: "出货数量",
           key: "productProduce",
           align: "center",
-          minWidth: 80,
+          minWidth: 50,
           tooltip: true
         },
         {
           title: "退货数量",
           key: "refundNumber",
           align: "center",
-          minWidth: 80,
+          minWidth: 50,
           tooltip: true
         },
         {
@@ -408,23 +418,31 @@ export default {
           tooltip: true
         },
         {
-          title: "本金(元)",
+          title: "使用返利金额",
+          key: "rebateAmount",
+          align: "center",
+          minWidth: 60,
+          tooltip: true,
+          className: "more"
+        },
+        {
+          title: "本金",
           slot: "primayCapital",
           align: "center",
-          minWidth: 80,
+          minWidth: 60,
           tooltip: true,
           className: "more"
         },
         {
-          title: "被抽成金额(元)",
+          title: "被抽成金额",
           slot: "Price",
           align: "center",
-          minWidth: 80,
+          minWidth: 60,
           tooltip: true,
           className: "more"
         },
         {
-          title: "利润(元)",
+          title: "利润",
           key: "profitPrice",
           align: "center",
           minWidth: 60,
@@ -443,10 +461,10 @@ export default {
           className: "more"
         },
         {
-          title: "待结算金额(元)",
+          title: "待结算金额",
           key: "benefitPrice",
           align: "center",
-          minWidth: 80,
+          minWidth: 60,
           tooltip: true,
           className: "more"
         },
@@ -454,7 +472,7 @@ export default {
           title: "资金流动类型",
           slot: "flowType",
           align: "center",
-          minWidth: 70,
+          minWidth: 80,
           tooltip: true
         }
       ],
@@ -527,7 +545,15 @@ export default {
       return realVal;
     },
     cardNo(value) {
-      return `${value.substring(0, 3)}****${value.substring(value.length - 4)}`;
+      let realVal = "";
+      if (value) {
+        realVal = `${value.substring(0, 3)}****${value.substring(
+          value.length - 4
+        )}`;
+      } else {
+        realVal = "——";
+      }
+      return realVal;
     },
     flowTypeText(num) {
       switch (num) {
@@ -564,6 +590,7 @@ export default {
       this.pageNum = 1;
       this.pageSize = 15;
       this.total = null;
+      this.channelId = this.$store.state.user.channelId;
       this.getSettlement();
       this.$refs.channelTree.getTreeData();
     },
@@ -611,10 +638,14 @@ export default {
       this.clearingId = null;
       this.accountName = null;
       this.createDate = "";
+      this.accountId=null;
+      this.deductAccountId=null;
     },
     //查看结算详情
     seeSettlementMore(row) {
       console.log(row);
+      this.accountId = row.accountId;
+      this.deductAccountId = row.deductAccountId;
       this.clearingId = row.id;
       this.createDate = row.createDate;
       this.deductAccount = row.beneficiary;

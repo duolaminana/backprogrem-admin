@@ -70,7 +70,17 @@
       />
     </div>
     <!-- 结算详情弹框的模态框 -->
-    <Modal v-model="isShow" :mask-closable="false" :title="'结算详情('+deductAccount+')'" width="1700">
+    <Modal v-model="isShow" :mask-closable="false" :title="'结算详情('+deductAccount+')'" width="1800">
+      <div>
+        <strong
+          v-if="accountId!=deductAccountId"
+          style="color:red"
+        >提示：待结算金额 =（总利润-被抽成金额）* 利润百分比 + 本金</strong>
+        <strong
+          v-if="accountId==deductAccountId"
+          style="color:red"
+        >提示：待结算金额 =（总利润-被抽成金额）* 利润百分比 + 本金 + 抽成金额 - 使用返利金额</strong>
+      </div>
       <Table
         class="setMore"
         :columns="columnsMore"
@@ -84,6 +94,9 @@
         </template>
         <template slot-scope="{row,index}" slot="primayCapital">
           <span>{{row.primayCapital|primayCapital}}</span>
+        </template>
+        <template slot-scope="{row,index}" slot="cardNo">
+          <span>{{row.cardNo|cardNo}}</span>
         </template>
         <template slot-scope="{row,index}" slot="flowType">
           <span>{{row.flowType|flowTypeText}}</span>
@@ -99,7 +112,7 @@
         show-sizer
       />
       <div slot="footer">
-        <Button type="primary" size="large" @click="exportTable">导出</Button>
+        <Button type="success" size="large" @click="exportTable">导出</Button>
         <Button type="primary" size="large" @click="handleClick">确定</Button>
       </div>
       <div slot="close">
@@ -128,6 +141,71 @@
         <Button type="primary" size="large" @click="isShowEquipment=false">确定</Button>
       </div>
     </Modal>
+    <!-- 结算页面 -->
+    <Modal v-model="isSettlement" :mask-closable="false" :title="'结算('+beneficiaryName+')'">
+      <Form ref="formValidateSettlement" :model="formValidateSettlement" :label-width="80">
+        <FormItem label="收款方：" prop="beneficiary">
+          <Input
+            v-model="formValidateSettlement.beneficiary"
+            placeholder="收款方"
+            disabled
+            style="width:250px"
+          ></Input>
+        </FormItem>
+        <FormItem label="收款人：" prop="payee">
+          <Input
+            v-model="formValidateSettlement.payee"
+            placeholder="收款人"
+            disabled
+            style="width:250px"
+          ></Input>
+        </FormItem>
+        <FormItem label="收款账户：" prop="account">
+          <Input
+            v-model="formValidateSettlement.account"
+            placeholder="收款账户"
+            disabled
+            style="width:250px"
+          ></Input>
+        </FormItem>
+        <FormItem label="开户行：" prop="openingBank">
+          <Input
+            v-model="formValidateSettlement.openingBank"
+            placeholder="开户行"
+            disabled
+            style="width:250px"
+          ></Input>
+        </FormItem>
+        <FormItem label="活动时间：" prop="startDate">
+          <DatePicker
+            type="datetime"
+            :options="startOptions"
+            placeholder="开始时间"
+            v-model="formValidate.startDate"
+            disabled
+          ></DatePicker>
+          <span style="line-height:32px">&nbsp&nbsp至&nbsp&nbsp</span>
+          <DatePicker type="datetime" placeholder="结束时间" v-model="formValidate.endDate" disabled></DatePicker>
+        </FormItem>
+        <FormItem label="结算金额：" prop="price">
+          <Input
+            v-model="formValidateSettlement.price"
+            placeholder="结算金额"
+            disabled
+            style="width:187px"
+          ></Input>
+        </FormItem>
+      </Form>
+      <div slot="footer">
+        <Button
+          type="text"
+          style="border:1px solid #c6c9ce"
+          size="large"
+          @click="isSettlement=false"
+        >取消</Button>
+        <Button type="primary" size="large" @click="isSettlement=false">确定</Button>
+      </div>
+    </Modal>
   </div>
 </template>
 <script>
@@ -151,6 +229,10 @@ export default {
 
   data() {
     return {
+      beneficiaryName: null,
+      isSettlement: false,
+      formValidateSettlement: {},
+      isShowOperation: false,
       accountList: [],
       deductAccount: null,
       createDate: "",
@@ -261,14 +343,14 @@ export default {
           title: "订单编号",
           key: "orderNo",
           align: "center",
-          minWidth: 160,
+          minWidth: 150,
           tooltip: true
         },
         {
           title: "消费者",
-          key: "cardNo",
+          slot: "cardNo",
           align: "center",
-          minWidth: 160,
+          minWidth: 150,
           tooltip: true
         },
         {
@@ -282,7 +364,7 @@ export default {
           title: "商品名称",
           key: "productName",
           align: "center",
-          minWidth: 100,
+          minWidth: 120,
           tooltip: true
         },
         {
@@ -314,21 +396,36 @@ export default {
           tooltip: true
         },
         {
-          title: "出货/退货数量",
+          title: "出货数量",
           key: "productProduce",
           align: "center",
-          minWidth: 80,
+          minWidth: 50,
+          tooltip: true
+        },
+        {
+          title: "退货数量",
+          key: "refundNumber",
+          align: "center",
+          minWidth: 50,
           tooltip: true
         },
         {
           title: "交易时间",
           key: "dealDate",
           align: "center",
-          minWidth: 160,
+          minWidth: 140,
           tooltip: true
         },
         {
-          title: "本金(元)",
+          title: "使用返利金额",
+          key: "rebateAmount",
+          align: "center",
+          minWidth: 60,
+          tooltip: true,
+          className: "more"
+        },
+        {
+          title: "本金",
           slot: "primayCapital",
           align: "center",
           minWidth: 60,
@@ -336,15 +433,15 @@ export default {
           className: "more"
         },
         {
-          title: "被抽成金额(元)",
+          title: "被抽成金额",
           slot: "Price",
           align: "center",
-          minWidth: 80,
+          minWidth: 60,
           tooltip: true,
           className: "more"
         },
         {
-          title: "利润(元)",
+          title: "利润",
           key: "profitPrice",
           align: "center",
           minWidth: 60,
@@ -363,10 +460,10 @@ export default {
           className: "more"
         },
         {
-          title: "待结算金额(元)",
+          title: "待结算金额",
           key: "benefitPrice",
           align: "center",
-          minWidth: 80,
+          minWidth: 60,
           tooltip: true,
           className: "more"
         },
@@ -374,8 +471,8 @@ export default {
           title: "资金流动类型",
           slot: "flowType",
           align: "center",
-          minWidth: 80,
-          tooltip: true,
+          minWidth: 70,
+          tooltip: true
         }
       ],
       dataTableMore: [], //结算详情数据
@@ -446,6 +543,15 @@ export default {
       }
       return realVal;
     },
+    cardNo(value) {
+      let realVal = "";
+      if (value) {
+        realVal = value;
+      } else {
+        realVal = "——";
+      }
+      return realVal;
+    },
     flowTypeText(num) {
       switch (num) {
         case 1:
@@ -478,7 +584,8 @@ export default {
       this.clearingStartDate = "";
       this.clearingEndDate = "";
       this.pageNum = 1;
-       this.total = null;
+      this.total = null;
+      this.channelId = this.$store.state.user.channelId;
       this.getSettlement();
       this.$refs.channelTree.getTreeData();
     },
@@ -526,10 +633,14 @@ export default {
       this.clearingId = null;
       this.accountName = null;
       this.createDate = "";
+      this.accountId = null;
+      this.deductAccountId = null;
     },
     //查看结算详情
     seeSettlementMore(row) {
       console.log(row);
+      this.accountId = row.accountId;
+      this.deductAccountId = row.deductAccountId;
       this.clearingId = row.id;
       this.createDate = row.createDate;
       this.deductAccount = row.beneficiary;
@@ -561,7 +672,11 @@ export default {
     },
 
     // 结算点击事件
-    getSettlementClick(row) {},
+    getSettlementClick(row) {
+      console.log(row);
+      this.beneficiaryName = row.beneficiary;
+      this.isSettlement = true;
+    },
     searchSettlement() {
       this.pageNum = 1;
       this.getSettlement();
@@ -585,7 +700,7 @@ export default {
         pageSize: this.pageSize, // 页容量
         userId: this.userId,
         userType: this.userType,
-        managerRoute:this.$store.state.user.userVo.managerRoute
+        managerRoute: this.$store.state.user.userVo.managerRoute
       };
       searchSettlement(data).then(res => {
         if (res.data.code == 200) {
@@ -622,7 +737,7 @@ export default {
     },
     // 获取关联设备详情
     getMachine() {
-      searchMachineByAccountId(this.accountId,this.channelId).then(res => {
+      searchMachineByAccountId(this.accountId, this.channelId).then(res => {
         if (res.data.code == 200) {
           this.dataTableEquipment = res.data.result;
         }
@@ -635,7 +750,7 @@ export default {
           this.accountList = res.data.result.boxVoList;
         }
       });
-    },
+    }
   },
 
   mounted() {

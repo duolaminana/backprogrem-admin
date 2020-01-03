@@ -1134,15 +1134,22 @@ export default {
               const id = peg[i].id;
               if(id){
                 const divNode = document.querySelector(`li.ivu-menu-item-group[data-name='${id}']`);
-                console.log(id)
                 if(divNode){
                   divNode.children[0].classList.add('ivu-menu-item-active');
-                  seder.scrollTop = divNode.children[0].offsetTop;
+                  if(divNode.children[0].offsetTop<seder.scrollTop){
+                    seder.scrollTop += divNode.children[0].offsetTop;
+                  }else{
+                    seder.scrollTop = divNode.children[0].offsetTop;
+                  }
                 }
                 const liNode = document.querySelector(`li.ivu-menu-item[data-name='${id}']`);
                 if(liNode){
                   liNode.classList.add('ivu-menu-item-active')
-                  seder.scrollTop = liNode.offsetTop;
+                  if(liNode.offsetTop<seder.scrollTop){
+                    seder.scrollTop += liNode.offsetTop;
+                  }else{
+                    seder.scrollTop = liNode.offsetTop;
+                  }
                 }
               }
             }

@@ -88,7 +88,7 @@
             size="small"
             @click="resetPwd(row)"
             v-if="row.type!=2&&hasPerm('sys:user:edit')"
-          >重置密码</Button>
+          >密码重置</Button>
           <!-- 删除按钮 -->
           <Button
             style="margin-right: 0px"
@@ -344,7 +344,7 @@
       </div>
     </Modal>
     <!-- 重置密码模态框 -->
-    <Modal v-model="isShowPwd" width="600" title="重置密码" :mask-closable="false">
+    <Modal v-model="isShowPwd" width="600" title="密码重置" :mask-closable="false">
       <Form
         ref="formValidatePwd"
         :model="formValidatePwd"
@@ -651,7 +651,7 @@ export default {
           title: "身份证号",
           key: "card",
           align: "center",
-          minWidth: 60,
+          minWidth: 120,
           tooltip: true
         },
         {
@@ -672,7 +672,7 @@ export default {
           title: "所属部门",
           key: "deptName",
           align: "center",
-          minWidth: 80,
+          minWidth: 60,
           tooltip: true
         },
         {
@@ -700,7 +700,7 @@ export default {
           title: "创建时间",
           key: "createDate",
           align: "center",
-          minWidth: 60,
+          minWidth: 120,
           tooltip: true
         },
         {
@@ -728,6 +728,7 @@ export default {
     resetPwd(row) {
       console.log(row);
       this.newPswd = false;
+      this.newPswdAgain=false;
       this.isShowPwd = true;
       this.userId = row.id;
     },

@@ -37,27 +37,27 @@ export default {
       ps:[
         {
           img: require('../../../assets/images/p_red.png'),
-          describe:'代表棉花糖'
+          describe:'棉花糖机'
         },
         {
           img: require('../../../assets/images/p_orange.png'),
-          describe:'代表烟'
+          describe:'烟机'
         },
         {
           img: require('../../../assets/images/p_green.png'),
-          describe:'代表药'
+          describe:'药机'
         },
         {
           img: require('../../../assets/images/p_pink.png'),
-          describe:'代表电子烟'
+          describe:'电子烟'
         },
         {
           img: require('../../../assets/images/p_blue.png'),
-          describe:'代表购物袋'
+          describe:'购物袋'
         },
         {
           img: require('../../../assets/images/p_change.png'),
-          describe:'代表混合机'
+          describe:'混合机'
         }
       ]
 		}
