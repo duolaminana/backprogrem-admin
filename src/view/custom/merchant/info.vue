@@ -11,14 +11,7 @@
             <span v-show="auditType==null" style="color:#d0d0d0">待配置</span>
             <span v-show="auditType==1" style="color:#ffbd72">待审核</span>
             <span v-show="auditType==2" style="color:#19be6b">审核通过</span>
-            <!-- <span v-show="auditType==3" style="color:#ed4014">审核失败</span> -->
-            <Tooltip max-width="200">
-              <div slot="content">
-                <div v-if="WXRemark==3">微信支付配置失败:{{WXRemarkText}}</div>
-                <div v-if="ZFBRemark==3">支付宝配置失败:{{ZFBRemarkText}}</div>
-              </div>
-              <span v-show="auditType==3" style="color:#ed4014">审核失败</span>
-            </Tooltip>
+            <span v-show="auditType==3" style="color:#ed4014">审核失败</span>
           </div>
         </div>
         <Divider />
@@ -107,14 +100,14 @@
     </div>
     <div class="rightDiv">
       <Input v-model="channelName" style="margin-right:10px" placeholder="请输入商户名称" clearable />
-      <Select v-model="auditStatus" clearable placeholder="审核状态" style="margin-right:10px">
+      <Select v-model="auditStatus" clearable placeholder="审核状态" style="margin-right:10px;width:100px">
         <Option
           v-for="item in auditStatusList"
           :value="item.value"
           :key="item.value"
         >{{ item.label }}</Option>
       </Select>
-      <Select v-model="accountType" clearable placeholder="注册类型" style="margin-right:10px">
+      <Select v-model="accountType" clearable placeholder="注册类型" style="margin-right:10px;width:100px">
         <Option
           v-for="item in accountTypeList"
           :value="item.value"
@@ -995,8 +988,6 @@
       :loadingZFB.sync="loadingZFB"
       :isQRShow.sync="isQRShow"
       :auditType.sync="auditType"
-      :WXRemark.sync="WXRemark"
-      :ZFBRemark.sync="ZFBRemark"
       :isSaveWX.sync="isSaveWX"
       :isSaveZFB.sync="isSaveZFB"
     ></code-modal>
@@ -1135,10 +1126,6 @@ export default {
         }
       ],
       saleData: [], //销售数据
-      WXRemark: null, //微信备注
-      WXRemarkText: null, //微信备注
-      ZFBRemark: null, //支付宝备注
-      ZFBRemarkText: null, //支付宝备注
       QRcodeList: [], //收钱码数组
       auditType: null, //收钱码审核状态
       loadingWX: false,
@@ -2039,16 +2026,12 @@ export default {
           this.QRcodeList.forEach(item => {
             array = [...array, item.auditType];
             if (item.payType == 1) {
-              this.WXRemark = item.auditType;
-              this.WXRemarkText = item.remark;
               if (item.configStat == 1) {
                 this.isSaveWX = false;
               } else {
                 this.isSaveWX = true;
               }
             } else if (item.payType == 2) {
-              this.ZFBRemark = item.auditType;
-              this.ZFBRemarkText = item.remark;
               if (item.configStat == 1) {
                 this.isSaveZFB = false;
               } else {

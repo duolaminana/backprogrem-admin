@@ -50,7 +50,7 @@
         @on-change="handleChangeStart"
         style="width: 160px"
       ></DatePicker>
-      <span>&nbsp&nbsp至&nbsp&nbsp</span>
+      <span>&nbsp至&nbsp&nbsp</span>
       <DatePicker
         v-model="endDate"
         type="datetime"

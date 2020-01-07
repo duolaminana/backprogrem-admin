@@ -20,6 +20,17 @@ export default {
       }
     }
   },
+  watch:{
+    treeData:{
+      handler(newVal,oldVal){
+        const r = this.recursion(newVal);
+        if(!r){
+          this.getMoney(this.list)
+        }
+      },
+      deep:true
+    }
+  },
   data() {
     return {
       setting: {
@@ -39,10 +50,24 @@ export default {
           showIcon: true
         }
       },
+      list:[],
       nodes: [],
     };
   },
   methods: {
+    recursion(ary){
+      ary.map(v=>{
+        if(v.payee==2){
+          this.list.push(v.id)
+        }
+        if(v.children&&v.children.length){
+          return this.recursion(v.children);
+        }else{
+          return true
+        }
+      })
+      console.log(this.list)
+    },
     pick(event, treeId, treeNode) {
       this.$emit("pickTree", treeNode);
     },
@@ -71,7 +96,8 @@ export default {
   },
   mounted(){
     this.$nextTick(()=>{
-      this.getMoneyList();
+      // this.getMoneyList();
+      console.log(this.list)
     })
   }
 };

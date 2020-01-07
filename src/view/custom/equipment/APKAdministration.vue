@@ -243,6 +243,7 @@ export default {
           };
           netWorkDevice("/apk/add", data).then(res => {
             this.getPageDatas(); //刷新页面
+            this.$refs.apkVer.getapk()
             this.newlyAdded = false;
             this.$Message.success("新增成功");
           });

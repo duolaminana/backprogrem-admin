@@ -6,14 +6,14 @@
     </div>
     <div class="rightDiv">
       <Input v-model="channelName" style="margin-right:10px" placeholder="商户名称" clearable />
-      <Select v-model="auditStatus" clearable placeholder="审核状态" style="margin-right:10px">
+      <Select v-model="auditStatus" clearable placeholder="审核状态" style="margin-right:10px;width:100px">
         <Option
           v-for="item in auditStatusList"
           :value="item.value"
           :key="item.value"
         >{{ item.label }}</Option>
       </Select>
-      <Select v-model="accountType" clearable placeholder="注册类型" style="margin-right:10px">
+      <Select v-model="accountType" clearable placeholder="注册类型" style="margin-right:10px;width:100px">
         <Option
           v-for="item in accountTypeList"
           :value="item.value"

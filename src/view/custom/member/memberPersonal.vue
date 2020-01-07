@@ -1,65 +1,57 @@
 <template>
   <div class="clientManagement">
-    <div class="leftBox">
-      <channel-tree @clickTreeRow="clickTreeRow" ref="channelTree"></channel-tree>
-    </div>
     <div class="clientManagementContent">
-      <div class="rightDiv">
-        <Input class="input" v-model="memberName" clearable placeholder="会员姓名" />
-        <Input class="input" v-model="cardNo" placeholder="身份证号" clearable />
-        <Input
-          class="input"
-          style="width:110px"
-          v-model="memberPhone"
-          placeholder="联系电话"
-          clearable
-        />
-        <Button type="primary" @click="searchGetMember">查询</Button>
-        <Button type="primary" @click="reset">重置</Button>
-        <Button type="success" @click="exportTable">导出</Button>
-        <!-- 表格 -->
-        <Table
-          highlight-row
-          ref="table"
-          border
-          :columns="columns"
-          :data="dataTable"
-          style="margin:20px 0"
-        >
-          <template slot-scope="{row,index}" slot="cardNo">{{row.cardNo|text}}</template>
-          <!-- 联系电话 -->
-          <template slot-scope="{row,index}" slot="memberPhone">{{row.memberPhone|text}}</template>
-          <!-- 返现金额 -->
-          <template slot-scope="{row,index}" slot="rebatePrice">
-            <a
-              v-show="row.rebatePrice"
-              class="lookDetails"
-              @click="seeRebatePrice(row)"
-            >{{row.rebatePrice|priceText}}</a>
-            <span v-show="!row.rebatePrice">——</span>
-          </template>
-          <!-- 积分 -->
-          <template slot-scope="{row,index}" slot="integral">
-            <a v-show="row.integral" class="lookDetails" @click="seeIntegral(row)">{{row.integral}}</a>
-            <span v-show="!row.integral">——</span>
-          </template>
-          <!-- 交易记录 -->
-          <template slot-scope="{row,index}" slot="action">
-            <a class="lookDetails" @click="seeOrder(row)">查看详情</a>
-          </template>
-        </Table>
+      <Input class="input" v-model="memberName" clearable placeholder="会员姓名" />
+      <Input class="input" v-model="cardNo" placeholder="身份证号" clearable />
+      <Input class="input" v-model="memberPhone" placeholder="联系电话" clearable />
+      <Button type="primary" @click="searchGetMember">查询</Button>
+      <Button type="primary" @click="reset">重置</Button>
 
-        <!-- 页码 -->
-        <Page
-          :total="total"
-          show-elevator
-          :current="pageNum"
-          @on-change="pageChange"
-          :page-size="pageSize"
-          @on-page-size-change="sizeChange"
-          show-sizer
-        />
-      </div>
+      <!-- 表格 -->
+      <Table
+        highlight-row
+        ref="table"
+        border
+        :columns="columns"
+        :data="dataTable"
+        style="margin:20px 0"
+      >
+        <template slot-scope="{row,index}" slot="cardNo">
+          <span>{{row.cardNo|cardNo}}</span>
+        </template>
+        <!-- 联系电话 -->
+        <template slot-scope="{row,index}" slot="memberPhone">{{row.memberPhone|text}}</template>
+        <!-- 返现金额 -->
+        <template slot-scope="{row,index}" slot="rebatePrice">
+          <a
+            v-show="row.rebatePrice"
+            class="lookDetails"
+            @click="seeRebatePrice(row)"
+          >{{row.rebatePrice|priceText}}</a>
+          <span v-show="!row.rebatePrice">——</span>
+        </template>
+        <!-- 积分 -->
+        <template slot-scope="{row,index}" slot="integral">
+          <a v-show="row.integral" class="lookDetails" @click="seeIntegral(row)">{{row.integral}}</a>
+          <span v-show="!row.integral">——</span>
+        </template>
+        <!-- 交易记录 -->
+        <template slot-scope="{row,index}" slot="action">
+          <a class="lookDetails" @click="seeOrder(row)">查看详情</a>
+        </template>
+      </Table>
+
+      <!-- 页码 -->
+      <Page
+        :total="total"
+        show-elevator
+        :current="pageNum"
+        @on-change="pageChange"
+        :page-size="pageSize"
+        @on-page-size-change="sizeChange"
+        show-sizer
+      />
+
       <!-- 交易订单明细弹出框 -->
       <Modal v-model="isShow" :mask-closable="false" width="1000" title="交易明细">
         <Table
@@ -119,11 +111,11 @@
 </template>
 
 <script>
-import channelTree from "@/view/custom/components/channelTree";
+import CoustomTree from "@/view/custom/components/coustom-tree";
 import { searchMember, searchMemberMore, searchMemberOrder } from "@/api/http";
 export default {
   components: {
-    channelTree
+    CoustomTree
   },
   name: "clientManagement",
   data() {
@@ -242,7 +234,6 @@ export default {
       buyerId: null, //支付宝唯一买家账号
       cardNo: null, //身份证号码
       id: null, //id
-      channelId: null,
       memberName: null, //姓名
       memberPhone: null, //电话
       memberSex: null, //性别:1 男 2 女
@@ -279,7 +270,7 @@ export default {
           title: "身份证号码",
           slot: "cardNo",
           align: "center",
-          minWidth: 180,
+          minWidth: 100,
           tooltip: true
         },
         {
@@ -330,6 +321,17 @@ export default {
   },
   // 过滤器
   filters: {
+    cardNo(value) {
+      let realVal = "";
+      if (value) {
+        realVal = `${value.substring(0, 3)}****${value.substring(
+          value.length - 4
+        )}`;
+      } else {
+        realVal = "——";
+      }
+      return realVal;
+    },
     priceText(value) {
       let realVal = "";
       if (value) {
@@ -349,22 +351,13 @@ export default {
     }
   },
   methods: {
-    exportTable() {},
-    clickTreeRow(value) {
-      if (value) {
-        this.channelId = value.id;
-        this.getMember();
-      }
-    },
     // 用户重置按钮
     reset() {
       this.memberName = null;
       this.cardNo = null;
       this.memberPhone = null;
       this.pageNum = 1;
-      this.channelId = null;
       this.getMember();
-      this.$refs.channelTree.getTreeData();
     },
     // 页码改变时触发
     pageChange(value) {
@@ -413,8 +406,8 @@ export default {
         alipayState: this.alipayState,
         buyerId: this.buyerId,
         cardNo: this.cardNo,
+        channelId: this.$store.state.user.channelId,
         id: this.id,
-        channelId: this.channelId,
         memberName: this.memberName,
         memberPhone: this.memberPhone,
         memberSex: this.memberSex,
@@ -484,11 +477,6 @@ export default {
   .page {
     margin: 20px 220px;
   }
-}
-.leftBox {
-  min-height: 900px;
-  float: left;
-  margin-right: 20px;
 }
 .lookDetails {
   text-decoration: underline;

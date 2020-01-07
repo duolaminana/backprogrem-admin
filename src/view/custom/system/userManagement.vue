@@ -36,7 +36,7 @@
     <div class="rightDiv">
       <Input v-model="userName" style="margin-right:10px" placeholder="用户名" clearable />
       <Input v-model="phone" style="margin-right:10px" placeholder="手机号码" clearable />
-      <Select v-model="status" clearable placeholder="用户状态" style="margin-right:10px">
+      <Select v-model="status" clearable placeholder="用户状态" style="margin-right:10px;width:90px">
         <Option v-for="item in List" :value="item.value" :key="item.value">{{ item.label }}</Option>
       </Select>
       <Button type="primary" @click="searchuserManagement" v-if="hasPerm('sys:user:see')">查询</Button>

@@ -397,6 +397,7 @@ export default {
           title: '点位名称',
           key: 'positionName',
           align: 'center',
+          width:150,
           tooltip:true
         },
         {
@@ -484,7 +485,7 @@ export default {
           title: '操作',
           slot: 'edit',
           align: 'center',
-          width:240,
+          width:200,
           tooltip:true
         },
       ],

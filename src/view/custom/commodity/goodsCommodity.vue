@@ -456,6 +456,12 @@ export default {
       datas: [],
       columns: [
         {
+          title: '序号',
+          type: 'index',
+          width:50,
+          align: 'center',
+        },
+        {
           title: "商品编号",
           key: "productCode",
           align: "center",

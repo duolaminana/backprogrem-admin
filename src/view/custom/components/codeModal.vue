@@ -12,18 +12,24 @@
           <div class="title">
             <img src="@/assets/images/weixin.jpg" alt />
             <span>微信支付配置</span>
+            <span v-if="formValidateWX.auditType==1" style="color:#ffbd72">（待审核）</span>
+            <span v-if="formValidateWX.auditType==2" style="color:#19be6b">（审核通过）</span>
+            <Tooltip max-width="200">
+              <div slot="content">{{formValidateWX.remark}}</div>
+              <span v-if="formValidateWX.auditType==3" style="color:#ed4014">（审核失败）</span>
+            </Tooltip>
             <Button
               v-if="((!idWX&&formValidateWX.auditType!=1)||formValidateWX.configStat==2)"
               type="primary"
               size="small"
-              style="margin-left:128px"
+              class="toButton"
               @click="toStartWX"
             >去启用</Button>
             <Button
               v-if="idWX&&formValidateWX.auditType!=1&&formValidateWX.configStat==1"
               type="error"
               size="small"
-              style="margin-left:135px"
+              class="toButton"
               @click="toEndWX"
             >禁用</Button>
           </div>
@@ -85,18 +91,24 @@
           <div class="title">
             <img src="@/assets/images/zhifubao.jpg" alt />
             <span>支付宝配置</span>
+            <span v-if="formValidateZFB.auditType==1" style="color:#ffbd72">（待审核）</span>
+            <span v-if="formValidateZFB.auditType==2" style="color:#19be6b">（审核通过）</span>
+            <Tooltip max-width="200">
+              <div slot="content">{{formValidateZFB.remark}}</div>
+              <span v-if="formValidateZFB.auditType==3" style="color:#ed4014">（审核失败）</span>
+            </Tooltip>
             <Button
               v-if="((!idZFB&&formValidateZFB.auditType!=1)||formValidateZFB.configStat==2)"
               type="primary"
               size="small"
-              style="margin-left:143px"
+              class="toButton"
               @click="toStartZFB"
             >去启用</Button>
             <Button
               v-if="idZFB&&formValidateZFB.auditType!=1&&formValidateZFB.configStat==1"
               type="error"
               size="small"
-              style="margin-left:150px"
+              class="toButton"
               @click="toEndZFB"
             >禁用</Button>
           </div>
@@ -202,8 +214,6 @@ export default {
     //支付宝保存编辑显示方式
     isSaveZFB: { default: true },
     auditType: { default: null, type: Number },
-    WXRemark: { default: null, type: Number },
-    ZFBRemark: { default: null, type: Number }
   },
   data() {
     return {
@@ -351,6 +361,7 @@ export default {
     // 去禁用微信
     async toEndWX() {
       this.isdisabledWX = true;
+      this.formValidateWX.auditType = null;
       this.formValidateWX.configStat = 2;
       await editQRcode(this.formValidateWX).then(res => {
         if (res.data.code == 200) {
@@ -367,6 +378,7 @@ export default {
     // 去禁用支付宝
     async toEndZFB() {
       this.isdisabledZFB = true;
+      this.formValidateZFB.auditType = null;
       this.formValidateZFB.configStat = 2;
       await editQRcode(this.formValidateZFB).then(res => {
         if (res.data.code == 200) {
@@ -410,12 +422,12 @@ export default {
                   this.$Message.info("微信支付配置成功,请等待审核");
                 } else {
                   this.$emit("update:loadingWX", false);
-                  this.$Message.error(res.data.message)
+                  this.$Message.error(res.data.message);
                 }
               })
               .catch(err => {
                 this.$emit("update:loadingWX", false);
-                this.$Message.error(res.data.message)
+                this.$Message.error(res.data.message);
               });
           } else if (this.formValidateWX.id != null) {
             // 编辑
@@ -435,12 +447,12 @@ export default {
                     this.$Message.info("微信支付编辑成功,请等待审核");
                   } else {
                     this.$emit("update:loadingWX", false);
-                    this.$Message.error(res.data.message)
+                    this.$Message.error(res.data.message);
                   }
                 })
                 .catch(err => {
                   this.$emit("update:loadingWX", false);
-                  this.$Message.error(res.data.message)
+                  this.$Message.error(res.data.message);
                 });
             }
           }
@@ -466,12 +478,12 @@ export default {
                   this.$Message.info("支付宝配置成功,请等待审核");
                 } else {
                   this.$emit("update:loadingZFB", false);
-                  this.$Message.error(res.data.message)
+                  this.$Message.error(res.data.message);
                 }
               })
               .catch(err => {
                 this.$emit("update:loadingZFB", false);
-                this.$Message.error(res.data.message)
+                this.$Message.error(res.data.message);
               });
           } else if (this.formValidateZFB.id != null) {
             // 编辑
@@ -491,12 +503,12 @@ export default {
                     this.$Message.info("支付宝编辑成功,请等待审核");
                   } else {
                     this.$emit("update:loadingZFB", false);
-                    this.$Message.error(res.data.message)
+                    this.$Message.error(res.data.message);
                   }
                 })
                 .catch(err => {
                   this.$emit("update:loadingZFB", false);
-                  this.$Message.error(res.data.message)
+                  this.$Message.error(res.data.message);
                 });
             }
           }
@@ -514,11 +526,9 @@ export default {
             if (item.payType == 1) {
               this.formValidateWX = item;
               this.idWX = item.id;
-              this.$emit("update:WXRemark", item.auditType);
             } else if (item.payType == 2) {
               this.formValidateZFB = item;
               this.idZFB = item.id;
-              this.$emit("update:ZFBRemark", item.auditType);
             }
           });
           if (array.includes(3)) {
@@ -585,6 +595,10 @@ export default {
       span {
         margin-left: 5px;
         font-size: 16px;
+      }
+      .toButton {
+        margin-right: 75px;
+        float: right;
       }
     }
     /deep/ .ivu-form-item-label:before {

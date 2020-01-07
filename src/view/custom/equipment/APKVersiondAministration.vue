@@ -128,9 +128,10 @@ export default {
         upgradeDesc: null,
         remark: null,
         enable: "1",
-        apkAddress: null,
+        apkUrl: null,
         apkFile: null,
-        apkSize: null
+        apkSize: null,
+        apkMd5:null,
       },
       ruleValidate: {},
       showNewlyType: "xz",
@@ -146,7 +147,7 @@ export default {
       columns: [
         {
           title: "apk地址",
-          key: "apkAddress",
+          key: "apkUrl",
           align: "center",
           tooltip: true
         },
@@ -252,9 +253,10 @@ export default {
         upgradeDesc: null,
         remark: null,
         enable: "1",
-        apkAddress: null,
+        apkUrl: null,
         apkFile: null,
-        apkSize: null
+        apkSize: null,
+        apkMd5:null
       };
       if (type == "bj") {
         
@@ -275,9 +277,10 @@ export default {
           upgradeDesc,
           remark,
           enable,
-          apkAddress,
+          apkUrl,
           apkFile,
-          apkSize
+          apkSize,
+          apkMd5
         } = value;
         if (this.showNewlyType == "xz") {
           let data = {
@@ -286,9 +289,10 @@ export default {
             upgradeDesc,
             remark,
             enable,
-            apkAddress,
+            apkUrl,
             apkFile,
             apkSize,
+            apkMd5,
             publishStatus,
             operator: this.operator,
             operatorName: this.operatorName,
@@ -306,9 +310,10 @@ export default {
             upgradeDesc,
             remark,
             enable,
-            apkAddress,
+            apkUrl,
             apkFile,
             apkSize,
+            apkMd5,
             publishStatus,
             operator: this.operator,
             operatorName: this.operatorName,
@@ -332,11 +337,10 @@ export default {
       this.$Message.error("上传失败");
     },
     imgSuccess(response, file) {
-      console.log(file);
       if (response.code === 200) {
-        console.log(response);
-        this.$set(this.formValidate, "apkAddress", response.result.url);
+        this.$set(this.formValidate, "apkUrl", response.result.url);
         this.formValidate.apkFile = response.result.key;
+        this.formValidate.apkMd5 = response.result.key;
         this.formValidate.apkSize = (file.size / 1024 / 1024).toFixed(2) + "M";
         this.$Message.success("上传成功");
       } else if (response.code === 500) {
