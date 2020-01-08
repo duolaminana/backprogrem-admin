@@ -75,7 +75,7 @@
             <Option v-for="item in apkList" :value="item.value" :key="item.value">{{ item.label }}</Option>
           </Select>
         </FormItem>
-        <FormItem label="上传apk" prop="iconAddress">
+        <FormItem label="上传apk" prop="apkUrl">
           <template>
             <Upload
               :action="Upload"
@@ -83,10 +83,17 @@
               :on-format-error="formtError"
               :on-error="onError"
               :on-success="imgSuccess"
+              :before-upload = 'beforeUpload'
             >
               <Button icon="ios-cloud-upload-outline">上传apk</Button>
             </Upload>
           </template>
+        </FormItem>
+        <FormItem label="apk链接" prop="apkUrl">
+          <Input v-model.trim="formValidate.apkUrl" placeholder />
+        </FormItem>
+        <FormItem label="md5" prop="apkMd5">
+          <Input v-model.trim="formValidate.apkMd5" placeholder />
         </FormItem>
         <FormItem label="升级描述" prop="upgradeDesc">
           <Input v-model.trim="formValidate.upgradeDesc" placeholder />
@@ -107,8 +114,8 @@
       </Form>
       <template slot="footer">
         <Button type="text" size="large" @click="newlyAdded=false">取消</Button>
-        <Button type="primary" size="large" @click="Added(formValidate,0)">确定</Button>
-        <Button type="success" size="large" @click="Added(formValidate,1)">发布</Button>
+        <Button type="primary" size="large" @click="Added(formValidate,0,'formValidate')">确定</Button>
+        <Button type="success" size="large" @click="Added(formValidate,1,'formValidate')">发布</Button>
       </template>
     </Modal>
   </div>
@@ -133,7 +140,43 @@ export default {
         apkSize: null,
         apkMd5:null,
       },
-      ruleValidate: {},
+      ruleValidate: {
+        apkCode: [
+          {
+            required: true,
+            message: "不能为空",
+            trigger: "blur"
+          }
+        ],
+        apkId: [
+          {
+            required: true,
+            message: "不能为空",
+            trigger: "change"
+          }
+        ],
+        apkUrl: [
+          {
+            required: true,
+            message: "未上传apk",
+            trigger: "change"
+          }
+        ],
+        apkMd5: [
+          {
+            required: true,
+            message: "md5不能为空",
+            trigger: "change"
+          }
+        ],
+        upgradeDesc: [
+          {
+            required: true,
+            message: "不能为空",
+            trigger: "blur"
+          }
+        ],
+      },
       showNewlyType: "xz",
       newlyAdded: false,
       apkList: [],
@@ -243,7 +286,8 @@ export default {
       //   this.$Message.error(err);
       // });
     },
-    showNewlyAdded(type, index, row) {
+    async showNewlyAdded(type, index, row) {
+      await this.initialization('formValidate');
       this.showNewlyType = type;
       //初始化数据
       this.formValidate = {
@@ -269,21 +313,10 @@ export default {
       }
       this.newlyAdded = true;
     },
-    Added(value, publishStatus) {
-      if (true) {
-        let {
-          apkCode,
-          apkId,
-          upgradeDesc,
-          remark,
-          enable,
-          apkUrl,
-          apkFile,
-          apkSize,
-          apkMd5
-        } = value;
-        if (this.showNewlyType == "xz") {
-          let data = {
+    Added(value, publishStatus,name) {
+      this.$refs[name].validate(valid => {
+        if (valid) {
+          let {
             apkCode,
             apkId,
             upgradeDesc,
@@ -292,43 +325,60 @@ export default {
             apkUrl,
             apkFile,
             apkSize,
-            apkMd5,
-            publishStatus,
-            operator: this.operator,
-            operatorName: this.operatorName,
-            channelId: this.channelId
-          };
-          netWorkDevice("/apkVersion/upload", data).then(res => {
-            this.getPageDatas(); //刷新页面
-            this.newlyAdded = false;
-            this.$Message.success("新增成功");
-          });
-        } else if (this.showNewlyType == "bj") {
-          let data = {
-            apkCode,
-            apkId,
-            upgradeDesc,
-            remark,
-            enable,
-            apkUrl,
-            apkFile,
-            apkSize,
-            apkMd5,
-            publishStatus,
-            operator: this.operator,
-            operatorName: this.operatorName,
-            channelId: this.channelId,
-            id: value.id
-          };
-          netWorkDevice("/apkVersion/modify", data).then(res => {
-            this.getPageDatas(); //刷新页面
-            this.newlyAdded = false;
-            this.$Message.success("编辑成功");
-          });
+            apkMd5
+          } = value;
+          if (this.showNewlyType == "xz") {
+            let data = {
+              apkCode,
+              apkId,
+              upgradeDesc,
+              remark,
+              enable,
+              apkUrl,
+              apkFile,
+              apkSize,
+              apkMd5,
+              publishStatus,
+              operator: this.operator,
+              operatorName: this.operatorName,
+              channelId: this.channelId
+            };
+            netWorkDevice("/apkVersion/upload", data).then(res => {
+              this.getPageDatas(); //刷新页面
+              this.newlyAdded = false;
+              this.$Message.success("新增成功");
+            });
+          } else if (this.showNewlyType == "bj") {
+            let data = {
+              apkCode,
+              apkId,
+              upgradeDesc,
+              remark,
+              enable,
+              apkUrl,
+              apkFile,
+              apkSize,
+              apkMd5,
+              publishStatus,
+              operator: this.operator,
+              operatorName: this.operatorName,
+              channelId: this.channelId,
+              id: value.id
+            };
+            netWorkDevice("/apkVersion/modify", data).then(res => {
+              this.getPageDatas(); //刷新页面
+              this.newlyAdded = false;
+              this.$Message.success("编辑成功");
+            });
+          }
         }
-      } else {
-        this.$Message.error("信息填写不完整！");
-      }
+      })
+    },
+    beforeUpload(){
+      this.$set(this.formValidate, "apkUrl", null);
+      this.formValidate.apkFile = null;
+      this.formValidate.apkMd5 = null;
+      this.formValidate.apkSize = null;
     },
     formtError(file, fileList) {
       this.$Message.error("上传文件类型错误");
@@ -340,7 +390,7 @@ export default {
       if (response.code === 200) {
         this.$set(this.formValidate, "apkUrl", response.result.url);
         this.formValidate.apkFile = response.result.key;
-        this.formValidate.apkMd5 = response.result.key;
+        this.formValidate.apkMd5 = response.result.md5;
         this.formValidate.apkSize = (file.size / 1024 / 1024).toFixed(2) + "M";
         this.$Message.success("上传成功");
       } else if (response.code === 500) {

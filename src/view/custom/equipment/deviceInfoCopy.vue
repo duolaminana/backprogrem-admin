@@ -32,8 +32,8 @@
               <a v-else class='gray'>去设定</a>
             </template>
             <template slot-scope="{ row, index }" slot="network">
-              <span v-show='row.networkStatus==1' class='green'>在线</span>
-              <span v-show='row.networkStatus==0' class='gray'>离线</span>
+              <span v-if='row.networkStatus==1' class='green'>在线</span>
+              <span v-else class='gray'>离线</span>
             </template>
             <template slot-scope="{ row, index }" slot="status">
               <span v-show='row.status==0' class='gray'>待审核</span>

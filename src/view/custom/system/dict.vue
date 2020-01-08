@@ -399,9 +399,9 @@ export default {
     reset() {
       this.dataName = "";
       this.dataValue = "";
-      this.pageNum = 1;
-      this.getDictData();
-      this.getDictType();
+      this.refresh()
+      // this.getDictData();
+      // this.getDictType();
     },
 
     // 字典数据模态框取消按钮点击事件

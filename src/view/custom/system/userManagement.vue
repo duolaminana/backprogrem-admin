@@ -1106,9 +1106,9 @@ export default {
       };
       setTimeout(() => {
         this.$refs.formValidate.resetFields();
-        this.isShow = true;
       }, 1000);
       setTimeout(() => {
+        this.isShow = true;
         this.$Spin.hide();
       }, 1200);
     },

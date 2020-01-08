@@ -951,7 +951,7 @@ export default {
             };
             netWorkGoods("/product/productModified",data).then(res => {
               if (res.result) {
-                this.categoryId = null; //清除掉 筛选id
+                // this.categoryId = null; //清除掉 筛选id
                 this.treePids = null;
                 this.categoryType = null;
                 this.getPageDatas(); //刷新页面

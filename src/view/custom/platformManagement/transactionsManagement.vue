@@ -175,7 +175,7 @@
     <Modal
       class="interest"
       v-model="interestNewlyAdded"
-      width="700"
+      width="800"
       title="利益分配"
       :mask-closable="false"
     >
@@ -773,14 +773,14 @@ export default {
           title: "分配类型",
           slot: "benefitType",
           align: "center",
-          // minWidth: 60,
+          minWidth: 60,
           tooltip: true
         },
         {
           title: "利益分配(%)",
           key: "benefitPercent",
           align: "center",
-          // minWidth: 60,
+          minWidth: 60,
           tooltip: true,
           render: (h, param) => {
             if (param.row.benefitPercent == 0) {
@@ -793,21 +793,21 @@ export default {
           title: "收款方",
           key: "beneficiary",
           align: "center",
-          // minWidth: 60,
+          minWidth: 120,
           tooltip: true
         },
         {
           title: "收款人",
           key: "payee",
           align: "center",
-          // minWidth: 60,
+          minWidth: 120,
           tooltip: true
         },
         {
           title: "收款账户",
           key: "account",
           align: "center",
-          minWidth: 100,
+          minWidth: 120,
           tooltip: true
         }
       ],
