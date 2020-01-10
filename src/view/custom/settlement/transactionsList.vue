@@ -270,7 +270,7 @@
         :columns="columnsClear"
         :data="dataTableMore"
         border
-        ref="tableRefund"
+        ref="tableClear"
         style="margin:20px 0"
       >
         <!-- 出货状态 -->
@@ -298,7 +298,7 @@
       <div class="textDiv">
         <div class="leftReason">
           清算原因：
-          <Input :maxlength="30" v-model.trim="refundReason" />
+          <Input :maxlength="30" v-model.trim="clearingReason" />
         </div>
         <div class="rightPrice">
           使用返利金额：
@@ -306,7 +306,7 @@
           实际收款金额：
           <strong>{{payAmount}}</strong>&nbsp元&nbsp
           清算金额：
-          <Input disabled v-model="clearPrice" class="text" />元
+          <Input disabled v-model="clearingPrice" class="text" />元
         </div>
       </div>
       <div slot="footer">
@@ -316,7 +316,7 @@
           size="large"
           @click="isShowClear=false"
         >取消</Button>
-        <Button type="primary" size="large" @click="isShowClear=false">确定</Button>
+        <Button type="primary" :loading="loading" size="large" @click="clearModal">确定</Button>
       </div>
     </Modal>
   </div>
@@ -335,7 +335,8 @@ import {
   deleteOrder,
   seeReceiveTerminal,
   searchTreeByUser,
-  refundOrder
+  refundOrder,
+  clearOrder
 } from "@/api/http";
 export default {
   components: {
@@ -348,6 +349,7 @@ export default {
   data() {
     return {
       loading: false,
+      clearingReason: null,
       refundReason: null,
       isShowClear: false,
       columnsClear: [
@@ -604,7 +606,7 @@ export default {
           title: "点位名称",
           slot: "positionName",
           align: "center",
-          minWidth: 60,
+          minWidth: 80,
           tooltip: true
         },
         {
@@ -739,7 +741,7 @@ export default {
         },
         {
           title: "清算数量",
-          key: "clearNumber",
+          key: "settlementNumber",
           align: "center",
           minWidth: 80,
           tooltip: true
@@ -835,7 +837,7 @@ export default {
     };
   },
   computed: {
-    clearPrice() {
+    clearingPrice() {
       let value = this.dataTableMore
         .map((v, i) => {
           if (v.productNumber != v.productProduce) {
@@ -1070,6 +1072,7 @@ export default {
     },
     cancel() {
       this.newlyAdded = false;
+      this.positionId=null;
     },
     handleChangeStart(value) {
       this.startDate = value;
@@ -1143,15 +1146,14 @@ export default {
       this.getOrderMore();
     },
     refundModalConfirm() {
-      let array = [];
-      this.dataTableMore.forEach(item => {
-        if (item.productNumber != item.productProduce) {
-          if (item.refundNumber == 0) {
-            array.push(item.refundNumber);
-          }
-        }
-      });
-      if (array.length) {
+      let sum = this.dataTableMore
+        .map(item => {
+          return item.refundNumber;
+        })
+        .reduce((pre, cur) => {
+          return pre + cur || 0;
+        }, 0);
+      if (!sum) {
         this.$Message.error("退货数量有误,请修改!");
       } else {
         if (!this.refundAmount) {
@@ -1206,12 +1208,55 @@ export default {
     },
     clear(row) {
       console.log(row);
+      this.loading = false;
+      this.clearingReason = null;
       this.channelId = row.channelId;
       this.orderNoMore = row.orderNo;
       this.couponAmount = row.couponAmount;
       this.payAmount = row.payAmount;
       this.getOrderMore();
       this.isShowClear = true;
+    },
+    clearModal() {
+      this.loading = true;
+      let list = [];
+      this.dataTableMore.forEach(item => {
+        list.push({
+          detailNo: item.detailNo,
+          productNumber: item.productNumber,
+          productProduce: item.productProduce,
+          refundNumber: item.refundNumber,
+          settlementNumber:
+            item.productNumber - item.productProduce - item.refundNumber < 0
+              ? 0
+              : item.productNumber - item.productProduce - item.refundNumber
+        });
+      });
+
+      let data = {
+        clearingOrderDetailDto: list,
+        clearingPrice: this.clearingPrice,
+        clearingReason: this.clearingReason,
+        couponAmount: this.couponAmount,
+        orderNo: this.orderNoMore,
+        payAmount: this.payAmount
+      };
+      clearOrder(data)
+        .then(res => {
+          if (res.data.code == 200) {
+            this.loading = false;
+            this.isShowClear = false;
+            this.$Message.info("清算成功");
+            this.getOrder();
+          } else {
+            this.loading = false;
+            this.$Message.error(res.data.message);
+          }
+        })
+        .catch(err => {
+          this.loading = false;
+          this.$Message.error(res.data.message);
+        });
     },
     searchOrder() {
       this.pageNum = 1;

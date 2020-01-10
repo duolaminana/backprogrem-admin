@@ -48,9 +48,9 @@ export default {
     return {};
   },
   methods: {
-    cancel() {
-      this.$emit("update:isShowAccount", false);
-    }
+    cancel(){
+      this.$emit('cancel')
+    },
   },
   mounted() {}
 };

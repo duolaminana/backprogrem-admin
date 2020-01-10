@@ -298,6 +298,7 @@ export default {
             }
             netWorkDevice('/route/addRoute',data).then(res => {
               this.getTreeData();
+              this.$refs.position.getRouteName();
               this.newlyAdded = false;
               this.$Message.success('新增成功');
             })
@@ -313,6 +314,7 @@ export default {
             }
             netWorkDevice('/route/modifyRoute',data).then(res => {
               this.getTreeData();//刷新页面
+              this.$refs.position.getRouteName();
               this.newlyAdded = false;
               this.$Message.success('编辑成功');
             })

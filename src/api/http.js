@@ -649,12 +649,6 @@ export const searchQRcodeByChannelId = channelId => {
 };
 
 // -------------------------------------------------结算模块--------------------------------------------------------------
-//新增结算列表
-
-// 删除结算列表
-
-// 编辑结算列表
-
 // 查询待结算列表
 export const searchSettlement = info => {
   return axios.request({
@@ -720,6 +714,14 @@ export const searchBenefitAccount = channelId => {
   });
 };
 
+// 编辑角色
+export const settlementClearing = info => {
+  return axios.request({
+    url: "/order/clearing/modificationClearing",
+    data: info,
+    method: "put"
+  });
+};
 //-------------------------------------------------订单模块--------------------------------------------------------------
 //新增交易列表
 
@@ -813,6 +815,15 @@ export const refundOrder = info => {
     method: "post"
   });
 };
+// 清算
+export const clearOrder = info => {
+  return axios.request({
+    url: "/order/order/manualClearingOrder",
+    data: info,
+    method: "post"
+  });
+};
+
 //-------------------------------------------------会员模块--------------------------------------------------------------
 //新增会员
 

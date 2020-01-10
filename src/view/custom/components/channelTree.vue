@@ -8,7 +8,7 @@
       @click="leftArrow()"
     />
     <div v-if="isShowArrow">
-      <Coustom-tree :treeData="treeData" @pickTree="pickTree"></Coustom-tree>
+      <Coustom-tree ref="coustomTree" :treeData="treeData" @pickTree="pickTree"></Coustom-tree>
       <Page
         :current="pageNumTree"
         :total="totalTree"
@@ -39,6 +39,11 @@ export default {
   methods: {
     leftArrow() {
       this.isShowArrow = !this.isShowArrow;
+      setTimeout(()=>{
+        if(this.isShowArrow){
+          this.$refs.coustomTree.init(this.treeData);
+        }
+      },1)
       this.$emit("leftArrow",this.isShowArrow);
     },
     pickTree(value) {

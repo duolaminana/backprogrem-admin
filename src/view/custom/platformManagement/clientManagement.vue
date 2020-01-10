@@ -61,7 +61,7 @@
         />
       </div>
       <!-- 交易订单明细弹出框 -->
-      <Modal v-model="isShow" :mask-closable="false" width="1000" title="交易明细">
+      <Modal v-model="isShow" :mask-closable="false" width="1200" title="交易明细">
         <Table
           :columns="columnsOrder"
           :data="dataTableOrder"
@@ -176,6 +176,7 @@ export default {
           title: "订单编号",
           key: "orderNo",
           align: "center",
+          minWidth: 100,
           tooltip: true
         },
         {
@@ -188,12 +189,14 @@ export default {
           title: "交易时间",
           key: "createDate",
           align: "center",
+          minWidth: 100,
           tooltip: true
         },
         {
           title: "购买商品",
           key: "productName",
           align: "center",
+          minWidth: 100,
           tooltip: true
         },
 
@@ -214,21 +217,19 @@ export default {
           title: "积分",
           slot: "integralAquire",
           align: "center",
-          // minWidth: 80,
+          
           tooltip: true
         },
         {
           title: "交易状态",
           slot: "orderStatus",
           align: "center",
-          // maxWidth: 100,
           tooltip: true
         },
         {
           title: "出货状态",
           slot: "Status",
           align: "center",
-          // maxWidth: 100,
           tooltip: true
         }
       ],

@@ -74,6 +74,9 @@
         @on-select-all="selectAll"
         @on-select-all-cancel="selectAllCancel"
       >
+        <template slot-scope="{row,index}" slot="cardNo">
+          <span>{{row.cardNo|cardNo}}</span>
+        </template>
         <!-- 点位名称 -->
         <template slot-scope="{row,index}" slot="positionName">
           <a class="lookDetails" @click="showPositin(row)">{{row.positionName}}</a>
@@ -221,7 +224,7 @@
             style="color:#ff9900"
           >部分出货成功</span>
         </template>
-        <template slot-scope="{row,index}" slot="activityPrice">{{row.activityPrice|activityText}}</template>
+        <template slot-scope="{row,index}" slot="activityPrice">{{row.activityPrice|amountText}}</template>
         <template slot-scope="{row,index}" slot="productPrice">
           <span v-if="row.activityPrice>0">{{row.productNumber*row.activityPrice}}</span>
           <span v-else>{{row.productNumber*row.actualPrice}}</span>
@@ -266,7 +269,7 @@
         :columns="columnsClear"
         :data="dataTableMore"
         border
-        ref="tableRefund"
+        ref="tableClear"
         style="margin:20px 0"
       >
         <!-- 出货状态 -->
@@ -281,7 +284,7 @@
             style="color:#ff9900"
           >部分出货成功</span>
         </template>
-        <template slot-scope="{row,index}" slot="activityPrice">{{row.activityPrice|activityText}}</template>
+        <template slot-scope="{row,index}" slot="activityPrice">{{row.activityPrice|amountText}}</template>
         <template slot-scope="{row,index}" slot="productPrice">
           <span v-if="row.activityPrice>0">{{row.productNumber*row.activityPrice}}</span>
           <span v-else>{{row.productNumber*row.actualPrice}}</span>
@@ -294,7 +297,7 @@
       <div class="textDiv">
         <div class="leftReason">
           清算原因：
-          <Input :maxlength="30" v-model.trim="refundReason" />
+          <Input :maxlength="30" v-model.trim="clearingReason" />
         </div>
         <div class="rightPrice">
           使用返利金额：
@@ -302,7 +305,7 @@
           实际收款金额：
           <strong>{{payAmount}}</strong>&nbsp元&nbsp
           清算金额：
-          <Input disabled v-model="clearPrice" class="text" />元
+          <Input disabled v-model="clearingPrice" class="text" />元
         </div>
       </div>
       <div slot="footer">
@@ -312,7 +315,7 @@
           size="large"
           @click="isShowClear=false"
         >取消</Button>
-        <Button type="primary" size="large" @click="isShowClear=false">确定</Button>
+        <Button type="primary" :loading="loading" size="large" @click="clearModal">确定</Button>
       </div>
     </Modal>
   </div>
@@ -330,7 +333,8 @@ import {
   getOrderExcle,
   deleteOrder,
   searchTreeByUser,
-  refundOrder
+  refundOrder,
+  clearOrder
 } from "@/api/http";
 export default {
   components: {
@@ -343,6 +347,7 @@ export default {
   data() {
     return {
       loading: false,
+      clearingReason: null,
       refundReason: null,
       isShowClear: false,
       columnsClear: [
@@ -582,9 +587,9 @@ export default {
         },
         {
           title: "消费者",
-          key: "cardNo",
+          slot: "cardNo",
           align: "center",
-          minWidth: 80,
+          minWidth: 130,
           tooltip: true
         },
         {
@@ -598,7 +603,7 @@ export default {
           title: "点位名称",
           slot: "positionName",
           align: "center",
-          minWidth: 60,
+          minWidth: 80,
           tooltip: true
         },
         {
@@ -725,6 +730,20 @@ export default {
           tooltip: true
         },
         {
+          title: "退货数量",
+          key: "refundNumber",
+          align: "center",
+          minWidth: 80,
+          tooltip: true
+        },
+        {
+          title: "清算数量",
+          key: "settlementNumber",
+          align: "center",
+          minWidth: 80,
+          tooltip: true
+        },
+        {
           title: "商品进价(元)",
           key: "buyPrice",
           align: "center",
@@ -815,7 +834,7 @@ export default {
     };
   },
   computed: {
-    clearPrice() {
+    clearingPrice() {
       let value = this.dataTableMore
         .map((v, i) => {
           if (v.productNumber != v.productProduce) {
@@ -909,22 +928,21 @@ export default {
       }
       return realVal;
     },
-    activityText(value) {
-      let realVal = "";
-      if (value) {
-        // 截取当前数据到小数点后两位
-        realVal = parseFloat(value).toFixed(2);
-      } else {
-        realVal = "——";
-      }
-      return realVal;
-    },
     clearNumText(num) {
       let realVal = "";
       if (num >= 0) {
         realVal = num;
       } else {
         realVal = 0;
+      }
+      return realVal;
+    },
+    cardNo(value) {
+      let realVal = "";
+      if (value) {
+        realVal = value;
+      } else {
+        realVal = "——";
       }
       return realVal;
     }
@@ -979,7 +997,6 @@ export default {
     },
     add(row, index) {
       this.once = false;
-      console.log(row);
       if (row.refundNumber >= row.productNumber) {
         row.refundNumber = row.productNumber;
       } else {
@@ -1039,6 +1056,7 @@ export default {
     },
     cancel() {
       this.newlyAdded = false;
+      this.positionId=null;
     },
     handleChangeStart(value) {
       this.startDate = value;
@@ -1111,15 +1129,14 @@ export default {
       this.getOrderMore();
     },
     refundModalConfirm() {
-      let array = [];
-      this.dataTableMore.forEach(item => {
-        if (item.productNumber != item.productProduce) {
-          if (item.refundNumber == 0) {
-            array.push(item.refundNumber);
-          }
-        }
-      });
-      if (array.length) {
+      let sum = this.dataTableMore
+        .map(item => {
+          return item.refundNumber;
+        })
+        .reduce((pre, cur) => {
+          return pre + cur || 0;
+        }, 0);
+      if (!sum) {
         this.$Message.error("退货数量有误,请修改!");
       } else {
         if (!this.refundAmount) {
@@ -1174,12 +1191,54 @@ export default {
     },
     clear(row) {
       console.log(row);
+      this.loading = false;
+      this.clearingReason = null;
       this.channelId = row.channelId;
       this.orderNoMore = row.orderNo;
-      this.isShowClear = true;
       this.couponAmount = row.couponAmount;
       this.payAmount = row.payAmount;
       this.getOrderMore();
+      this.isShowClear = true;
+    },
+    clearModal() {
+      this.loading = true;
+      let list = [];
+      this.dataTableMore.forEach(item => {
+        list.push({
+          detailNo: item.detailNo,
+          productNumber: item.productNumber,
+          productProduce: item.productProduce,
+          refundNumber: item.refundNumber,
+          settlementNumber:
+            item.productNumber - item.productProduce - item.refundNumber < 0
+              ? 0
+              : item.productNumber - item.productProduce - item.refundNumber
+        });
+      });
+      let data = {
+        clearingOrderDetailDto: list,
+        clearingPrice: this.clearingPrice,
+        clearingReason: this.clearingReason,
+        couponAmount: this.couponAmount,
+        orderNo: this.orderNoMore,
+        payAmount: this.payAmount
+      };
+      clearOrder(data)
+        .then(res => {
+          if (res.data.code == 200) {
+            this.loading = false;
+            this.isShowClear = false;
+            this.$Message.info("清算成功");
+            this.getOrder();
+          } else {
+            this.loading = false;
+            this.$Message.error(res.data.message);
+          }
+        })
+        .catch(err => {
+          this.loading = false;
+          this.$Message.error(res.data.message);
+        });
     },
     getSearchOrder() {
       this.pageNum = 1;
