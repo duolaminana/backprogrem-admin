@@ -69,7 +69,6 @@ export default {
           return true
         }
       })
-      console.log(this.list)
     },
     pick(event, treeId, treeNode) {
       this.$emit("pickTree", treeNode);

@@ -119,7 +119,7 @@
           color="#515a6e"
           style="margin-top:10px;margin-right:15px"
           class="icon"
-          @click="close"
+          @click="handleClick"
         />
       </div>
     </Modal>
@@ -675,10 +675,6 @@ export default {
         );
       }
     },
-    // 右上角关闭按钮
-    close() {
-      this.handleClick();
-    },
     // 结算详情确定按钮
     handleClick() {
       this.isShow = false;
@@ -866,7 +862,7 @@ export default {
     margin-right: 5px;
   }
   .ivu-btn {
-    margin-right: 10px;
+    margin-left: 10px;
   }
   .ivu-table-wrapper {
     margin-top: 20px;

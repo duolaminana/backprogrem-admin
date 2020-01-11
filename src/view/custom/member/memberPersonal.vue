@@ -81,7 +81,7 @@
       </Modal>
 
       <!-- 返利弹框 -->
-      <Modal v-model="isShowRebatePrice" :mask-closable="false" width="500" heigh="1200" title="返利明细">
+      <Modal v-model="isShowRebatePrice" :mask-closable="false" width="500" heigh="1200" title="返现">
         <Table
           :columns="columnsRebatePrice"
           :data="dataTablemodal"
@@ -94,7 +94,7 @@
         </div>
       </Modal>
       <!-- 积分弹框 -->
-      <Modal v-model="isShowIntegral" :mask-closable="false" width="500" heigh="1200" title="积分明细">
+      <Modal v-model="isShowIntegral" :mask-closable="false" width="500" heigh="1200" title="积分">
         <Table
           :columns="columnsIntegral"
           :data="dataTablemodal"

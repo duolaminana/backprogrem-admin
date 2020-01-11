@@ -1128,6 +1128,7 @@ export default {
     },
     //查看交易详情
     seeSettlementMore(row) {
+      console.log(row);
       this.orderNoMore = row.orderNo;
       this.isShow = true;
       this.getOrderMore();

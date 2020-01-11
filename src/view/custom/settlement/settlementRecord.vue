@@ -135,12 +135,12 @@
           color="#515a6e"
           style="margin-top:10px;margin-right:15px"
           class="icon"
-          @click="close"
+          @click="handleClick"
         />
       </div>
     </Modal>
     <!-- 收款人详情弹框的模态框 -->
-    <account :isShowAccount.sync="isShowAccount" :formValidate="formValidate"></account>
+    <account :isShowAccount.sync="isShowAccount" :formValidate="formValidate" @cancel="cancel"></account>
     <!-- 关联设备弹框的模态框 -->
     <Modal v-model="isShowEquipment" :mask-closable="false" title="关联设备" width="500">
       <Table
@@ -151,7 +151,21 @@
         style="margin:20px 0"
       ></Table>
       <div slot="footer">
-        <Button type="primary" size="large" @click="isShowEquipment=false">确定</Button>
+        <Button
+          type="primary"
+          size="large"
+          @click="isShowEquipment=false;accountId=null;channelId=null"
+        >确定</Button>
+      </div>
+      <div slot="close">
+        <Icon
+          type="md-close"
+          size="20"
+          color="#515a6e"
+          style="margin-top:10px;margin-right:15px"
+          class="icon"
+          @click="isShowEquipment=false;accountId=null;channelId=null"
+        />
       </div>
     </Modal>
   </div>
@@ -448,7 +462,7 @@ export default {
           slot: "flowType",
           align: "center",
           minWidth: 80,
-          tooltip: true,
+          tooltip: true
         }
       ],
       dataTableMore: [], //结算详情数据
@@ -609,19 +623,9 @@ export default {
       this.accountId = row.accountId;
       this.getAccount();
     },
-    // 右上角关闭按钮
-    close() {
-      this.handleClick();
-    },
-    // 结算详情确定按钮
-    handleClick() {
-      this.isShow = false;
-      this.clearingId = null;
-      this.accountName = null;
-      this.createDate = "";
-      this.clearingDate = "";
-      this.accountId=null;
-      this.deductAccountId=null;
+    cancel() {
+      this.isShowAccount = false;
+      this.accountId = null;
     },
     //查看结算详情
     seeSettlementMore(row) {
@@ -641,6 +645,16 @@ export default {
           1
         );
       }
+    },
+    // 结算详情确定按钮
+    handleClick() {
+      this.isShow = false;
+      this.clearingId = null;
+      this.accountName = null;
+      this.createDate = "";
+      this.clearingDate = "";
+      this.accountId = null;
+      this.deductAccountId = null;
     },
     // 导出表格
     exportTable() {
@@ -688,7 +702,7 @@ export default {
         pageSize: this.pageSize, // 页容量
         userId: this.userId,
         userType: this.userType,
-        managerRoute:this.$store.state.user.userVo.managerRoute
+        managerRoute: this.$store.state.user.userVo.managerRoute
       };
       searchSettlementOver(data).then(res => {
         if (res.data.code == 200) {
@@ -725,7 +739,7 @@ export default {
     },
     // 获取关联设备详情
     getMachine() {
-      searchMachineByAccountId(this.accountId,this.channelId).then(res => {
+      searchMachineByAccountId(this.accountId, this.channelId).then(res => {
         if (res.data.code == 200) {
           this.dataTableEquipment = res.data.result;
         }
@@ -765,7 +779,7 @@ export default {
     margin-right: 5px;
   }
   .ivu-btn {
-    margin-right: 10px;
+    margin-left: 10px;
   }
   .ivu-table-wrapper {
     margin-top: 20px;
