@@ -62,8 +62,8 @@
           ref="table"
           style="margin:20px 0"
         >
-        <template slot-scope="{row,index}" slot="couponAquire">{{row.couponAquire|text}}</template>
-        <template slot-scope="{row,index}" slot="integralAquire">{{row.integralAquire|text}}</template>
+          <template slot-scope="{row,index}" slot="couponAquire">{{row.couponAquire|text}}</template>
+          <template slot-scope="{row,index}" slot="integralAquire">{{row.integralAquire|text}}</template>
           <template slot-scope="{row,index}" slot="orderStatus">
             <span v-show="row.shipingStatus==2||row.shipingStatus==4">交易正常</span>
             <span v-show="row.shipingStatus==1||row.shipingStatus==3" style="color:red">交易失败</span>
@@ -81,8 +81,9 @@
       </Modal>
 
       <!-- 返利弹框 -->
-      <Modal v-model="isShowRebatePrice" :mask-closable="false" width="500" heigh="1200" title="返现">
+      <Modal v-model="isShowRebatePrice" :mask-closable="false" width="500" title="返现">
         <Table
+          height="500"
           :columns="columnsRebatePrice"
           :data="dataTablemodal"
           border
@@ -94,8 +95,9 @@
         </div>
       </Modal>
       <!-- 积分弹框 -->
-      <Modal v-model="isShowIntegral" :mask-closable="false" width="500" heigh="1200" title="积分">
+      <Modal v-model="isShowIntegral" :mask-closable="false" width="500" title="积分">
         <Table
+          height="500"
           :columns="columnsIntegral"
           :data="dataTablemodal"
           border

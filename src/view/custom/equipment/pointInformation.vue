@@ -5,6 +5,7 @@
             <Option v-for="item in routeNameList" :value="item.value" :key="item.value">{{ item.label }}</Option>
         </Select>
         <Cascader :data="cityData" v-model="areaIds" placeholder="区域" class='marginRight'></Cascader>
+        <Input v-model="positionName"  placeholder="点位名称" clearable class='marginRight'/>
         <Button  @click='inquiry' type="primary">查询</Button>
         <Button  @click='reset' type="primary">重置</Button>
         <Button v-if="hasPerm('pos:sub:edit')" type="primary" @click='showNewlyAdded("xz")' class='xzbtn' icon="md-add">新增</Button>
@@ -228,6 +229,7 @@ export default {
       }
     };
     return{
+      positionName:null,
       machineList:[],
       priceTotal:null,
       pricePageNum:1,
@@ -513,6 +515,7 @@ export default {
       }
     },
     reset(){
+      this.positionName = null;
       this.routeId = null;
       this.machineCode = null;
       this.pageNum = 1;
@@ -847,6 +850,7 @@ export default {
     },
     getPageDatas(){
       let data = {
+        positionName:this.positionName,
         pageNum:this.pageNum,
         pageSize:this.pageSize,
         areaIds:this.areaIds.join(','),

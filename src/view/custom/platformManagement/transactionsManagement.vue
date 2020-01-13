@@ -607,14 +607,6 @@ export default {
           tooltip: true
         },
         {
-          title: "订单详情",
-          slot: "orserList",
-          align: "center",
-          minWidth: 60,
-          tooltip: true
-        },
-
-        {
           title: "交易金额(元)",
           key: "orderAmount",
           align: "center",
@@ -675,6 +667,13 @@ export default {
           slot: "Status",
           align: "center",
           minWidth: 80,
+          tooltip: true
+        },
+        {
+          title: "订单详情",
+          slot: "orserList",
+          align: "center",
+          minWidth: 60,
           tooltip: true
         },
         {

@@ -82,12 +82,12 @@ export default {
           align: 'center',
           tooltip:true
         },
-        {
-          title: '备注',
-          key: 'remark',
-          align: 'center',
-          tooltip:true
-        },
+        // {
+        //   title: '备注',
+        //   key: 'remark',
+        //   align: 'center',
+        //   tooltip:true
+        // },
         {
           title: '创建时间',
           key: 'createDate',

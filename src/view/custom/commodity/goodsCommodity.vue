@@ -148,7 +148,7 @@
           <FormItem label="售价" prop="salePrice" class='modelInput'>
             <Input type='number' v-model.trim.number="formValidate.salePrice" placeholder="请输入售价"/>
           </FormItem>
-          <FormItem v-show='formValidate.categoryId[0]!=drugsID' label="商品描述" class='modelInput'>
+          <FormItem v-show='formValidate.categoryId[0]!=drugsID' prop="productDesc" label="商品描述" class='modelInput'>
             <Input v-model.trim="formValidate.productDesc" placeholder="请输入商品描述"/>
           </FormItem>
           <template v-if='formValidate.categoryId[0]==drugsID'>
@@ -391,6 +391,9 @@ export default {
             type: "number",
           },
           { max: 9999, message: "不能超过最大值9999", trigger: "blur",type: "number" }
+        ],
+        productDesc: [
+          { max: 20, message: "长度最多是20个字符", trigger: "blur" }
         ],
         imageAddress: [
           {

@@ -107,18 +107,18 @@
       <Modal v-model="newlyAdded" width="740" :title="showNewlyType=='xz'?'新增信息管理':'编辑信息管理'"  :mask-closable='false'>
         <Form ref="formValidate" class='newAddModal' :model="formValidate" :rules="ruleValidate" :label-width="120" inline>
           <FormItem label="设备类型" prop="remark" >
-            <Input v-model.trim="formValidate.machineName" v-if='showNewlyType=="ck"&&formValidate.machineName' :disabled='showNewlyType=="ck"' placeholder="请输入机器编码"/>
-            <Input v-model.trim="formValidate.remark" v-else :disabled='showNewlyType=="ck"' placeholder="请输入机器编码"/>
+            <Input v-model.trim="formValidate.machineName" v-if='showNewlyType=="ck"&&formValidate.machineName' :disabled='showNewlyType=="ck"' placeholder="如：自助咖啡机"/>
+            <Input v-model.trim="formValidate.remark" v-else :disabled='showNewlyType=="ck"' placeholder="如：自助咖啡机"/>
           </FormItem>
           <FormItem label="设备编码">
-            <Input v-model.trim="formValidate.machineCode" :disabled='showNewlyType=="ck"||true' placeholder="请输入机器编码"/>
+            <Input v-model.trim="formValidate.machineCode" :disabled='showNewlyType=="ck"||true' placeholder="请输入设备编码"/>
           </FormItem>
           <FormItem label="IMEI"  >
             <Input v-model.trim="formValidate.machineImei" :disabled='showNewlyType=="ck"' placeholder="请输入机器串号"/>
             <p class='ivu-form-item-error-tip'>'IMEI'为特殊选填项（有的话必须填）</p>
           </FormItem>
           <FormItem label="设备识别码" prop="headingCode" >
-            <Input v-model.trim="formValidate.headingCode" :disabled='showNewlyType=="ck"||showNewlyType=="sh"' placeholder="请输入设备识别码"/>
+            <Input v-model.trim="formValidate.headingCode" :disabled='showNewlyType=="ck"||showNewlyType=="sh"' placeholder="请输入设备S/N编码"/>
           </FormItem>
           <FormItem label="摄像头编码">
             <Input v-model.trim="formValidate.cameraCode" :disabled='showNewlyType=="ck"' placeholder="请输入摄像头编码"/>
@@ -327,7 +327,7 @@
       <Modal
         class='erweima'
         v-model="erweimaNewlyAdded"
-        width="400"
+        width="800"
         title="二维码下载"
         :mask-closable="false"
       >

@@ -86,8 +86,8 @@
               <Input v-model.trim="formValidate.machineImei" :disabled='showNewlyType=="ck"||showNewlyType=="sh"' placeholder="请输入机器串号"/>
               <p class='ivu-form-item-error-tip'>'IMEI'为特殊选填项（有的话必须填）</p>
             </FormItem>
-            <FormItem label="硬件指令版本"  prop="hardwareVersion">
-              <Select v-model="formValidate.hardwareVersion" placeholder="硬件指令版本" clearable :disabled='showNewlyType=="ck"||showNewlyType=="sh"'>
+            <FormItem label="指令发送方式"  prop="hardwareVersion">
+              <Select v-model="formValidate.hardwareVersion" placeholder="指令发送方式" clearable :disabled='showNewlyType=="ck"||showNewlyType=="sh"'>
                 <Option v-for="item in hardwareVersionList" :value="item.value" :key="item.value">{{ item.label }}</Option>
               </Select>
             </FormItem>
@@ -149,8 +149,8 @@
               <FormItem label="管理年费"  prop="annualFee">
                 <Input v-model.trim="formValidate.annualFee" placeholder="元/天"/>
               </FormItem>
-              <FormItem label="硬件指令版本"  prop="hardwareVersion">
-                <Select v-model="formValidate.hardwareVersion" placeholder="硬件指令版本" clearable>
+              <FormItem label="指令发送方式"  prop="hardwareVersion">
+                <Select v-model="formValidate.hardwareVersion" placeholder="指令发送方式" clearable>
                   <Option v-for="item in hardwareVersionList" :value="item.value" :key="item.value">{{ item.label }}</Option>
                 </Select>
               </FormItem>
@@ -494,9 +494,9 @@ export default {
         {value:2,label:'租用'},
       ],
       hardwareVersionList:[
-        {value:1,label:'第一代'},
-        {value:2,label:'第二代'},
-        {value:3,label:'药机指令'},
+        {value:1,label:'平台发送第一代'},
+        {value:2,label:'平台发送第二代'},
+        {value:3,label:'设备发送'},
       ],
       priceTemplate:null,
       rowData:null, //行信息

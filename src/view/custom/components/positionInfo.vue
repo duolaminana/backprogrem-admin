@@ -10,7 +10,7 @@
         <Input :disabled='isRead' v-model="formValidate.positionName	" placeholder="点位名称"></Input>
       </FormItem>
       <FormItem label="分区线路" prop="routeId">
-        <Select v-model="formValidate.routeId" :disabled='isRead'>
+        <Select placeholder="分区线路" v-model="formValidate.routeId" :disabled='isRead'>
           <Option
             v-for="item in routeNameList"
             :value="item.value"
@@ -33,7 +33,7 @@
         <Input v-else :disabled='isRead' v-model="formValidate.positionAddress" placeholder="点位地址"></Input>
       </FormItem>
       <FormItem label="点位类型" prop="positionType">
-        <Select v-model="formValidate.positionType" :disabled='isRead'>
+        <Select placeholder="点位类型" v-model="formValidate.positionType" :disabled='isRead'>
           <Option
             v-for="item in positionType"
             :value="item.value"
@@ -51,7 +51,7 @@
         ></TimePicker>
       </FormItem>
       <FormItem label="价格模板" prop="priceTemplate">
-        <Select v-model="formValidate.priceTemplate" :disabled='isRead'>
+        <Select placeholder="价格模板" v-model="formValidate.priceTemplate" :disabled='isRead'>
           <Option
             v-for="item in priceTemplateList"
             :value="item.value"
