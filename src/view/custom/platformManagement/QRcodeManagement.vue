@@ -305,42 +305,42 @@ export default {
           title: "联系电话",
           key: "phone",
           align: "center",
-          minWidth: 40,
+          minWidth: 100,
           tooltip: true
         },
         {
           title: "创建时间",
           key: "createDate",
           align: "center",
-          minWidth: 50,
+          minWidth: 120,
           tooltip: true
         },
         {
           title: "审核状态",
           slot: "auditType",
           align: "center",
-          minWidth: 30,
+          minWidth: 60,
           tooltip: true
         },
         {
           title: "审核时间",
           key: "auditData",
           align: "center",
-          minWidth: 50,
+          minWidth: 120,
           tooltip: true
         },
         {
           title: "备注",
           key: "remark",
           align: "center",
-          minWidth: 50,
+          minWidth: 80,
           tooltip: true
         },
         {
           title: "操作",
           align: "center",
           slot: "operation",
-          minWidth: 100,
+          minWidth: 120,
           tooltip: true
         }
       ],

@@ -257,7 +257,7 @@
                 <div class="list-left">{{v.name}}：</div>
                 <div class="list-right">
                   <strong>{{v.value}}</strong>
-                  <span>盒</span>
+                  <span>{{v.productUnit}}</span>
                 </div>
               </div>
             </div>

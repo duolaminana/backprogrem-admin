@@ -111,7 +111,7 @@
             <Input v-model.trim="formValidate.remark" v-else :disabled='showNewlyType=="ck"' placeholder="如：自助咖啡机"/>
           </FormItem>
           <FormItem label="设备编码">
-            <Input v-model.trim="formValidate.machineCode" :disabled='showNewlyType=="ck"||true' placeholder="请输入设备编码"/>
+            <Input v-model.trim="formValidate.machineCode" :disabled='showNewlyType=="ck"||true' />
           </FormItem>
           <FormItem label="IMEI"  >
             <Input v-model.trim="formValidate.machineImei" :disabled='showNewlyType=="ck"' placeholder="请输入机器串号"/>

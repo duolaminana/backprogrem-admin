@@ -2,7 +2,7 @@
   <div class='helpDocument layout'>
     <Layout>
       <Sider hide-trigger width='280px' class='sederLeft'>
-        <Menu @on-select='menuChange'  width='280px' active-name="1-1" :open-names="['1','2','3']">
+        <Menu @on-select='menuChange'  width='280px' active-name="1-1" :open-names="['1']">
           <Submenu  v-for='(v,i) in list' :key='v+i' :name="v.name">
             <template slot="title">{{v.title}}</template>
               <template  v-for='(value,index) in v.children' >

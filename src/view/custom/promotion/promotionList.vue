@@ -618,10 +618,6 @@ export default {
         }
         this.formDynamic[index].activityNum = parseInt(value);
       } else {
-        // if (value < item.buyPrice) {
-        //   this.$Message.error("活动价格需要高于成本价，请重新输入");
-        //   this.formDynamic[index].activityPrice = "";
-        // }
         this.formDynamic[index].activityPrice = parseFloat(value).toFixed(2);
       }
     },
@@ -809,9 +805,6 @@ export default {
           // 对的
           this.loading = true;
           if (this.modalTitle == "新增【活动】") {
-            // if(this.isLimitedEdition==1){
-            //   this.formDynamic.activityNum=parseInt(this.formDynamic.activityNum)
-            // }
             this.formValidate.list = this.formDynamic;
             addActivity(this.formValidate)
               .then(res => {
@@ -834,7 +827,6 @@ export default {
               ...this.formDynamic,
               ...this.formDynamic1
             ];
-
             editActivity(this.formValidate)
               .then(res => {
                 if (res.data.code == 200) {
@@ -918,11 +910,6 @@ export default {
   },
   mounted() {
     this.getActivity();
-    
-    // this.getActivity().then(() => {
-    //   this.countDown();
-    // });
-    // this.getProductChannelAll();
   },
   beforeDestroy() {
     if (this.timer) {

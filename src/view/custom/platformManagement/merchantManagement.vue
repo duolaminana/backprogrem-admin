@@ -6,14 +6,24 @@
     </div>
     <div class="rightDiv">
       <Input v-model="channelName" style="margin-right:10px" placeholder="商户名称" clearable />
-      <Select v-model="auditStatus" clearable placeholder="审核状态" style="margin-right:10px;width:100px">
+      <Select
+        v-model="auditStatus"
+        clearable
+        placeholder="审核状态"
+        style="margin-right:10px;width:100px"
+      >
         <Option
           v-for="item in auditStatusList"
           :value="item.value"
           :key="item.value"
         >{{ item.label }}</Option>
       </Select>
-      <Select v-model="accountType" clearable placeholder="注册类型" style="margin-right:10px;width:100px">
+      <Select
+        v-model="accountType"
+        clearable
+        placeholder="注册类型"
+        style="margin-right:10px;width:100px"
+      >
         <Option
           v-for="item in accountTypeList"
           :value="item.value"
@@ -130,14 +140,6 @@
           <Divider />
           <div style="margin:10px 0">
             <strong class="receivablesInfo">收款信息</strong>
-            <!-- <RadioGroup v-model="isReceiveType">
-              <Radio label="1" disabled>
-                <span>支付宝</span>
-              </Radio>
-              <Radio label="2" disabled>
-                <span>银行卡</span>
-              </Radio>
-            </RadioGroup>-->
           </div>
           <FormItem label="收款人" style="margin-bottom:20px">
             <Input v-model="formValidatePre.receiveName" placeholder="请输入收款人" disabled></Input>
@@ -145,10 +147,10 @@
           <FormItem label="收款人身份证号码" style="margin-bottom:10px">
             <Input v-model="formValidatePre.receiveCard" placeholder="请输入收款人身份证号码" disabled></Input>
           </FormItem>
-          <FormItem style="margin-bottom:20px" :label="this.isReceiveType==2?'收款账号':'支付宝账号'">
+          <FormItem style="margin-bottom:20px" label="收款账号">
             <Input v-model="formValidatePre.receiveAccount" placeholder="请输入账号" disabled></Input>
           </FormItem>
-          <FormItem label="开户行" v-show="this.isReceiveType=='2'" style="margin-bottom:20px">
+          <FormItem label="开户行" style="margin-bottom:20px">
             <Input v-model="formValidatePre.receiveBank" placeholder="请输入开户行" disabled></Input>
           </FormItem>
           <Divider />
@@ -309,14 +311,6 @@
           <Divider />
           <div style="margin:10px 0">
             <strong class="receivablesInfo">收款信息</strong>
-            <!-- <RadioGroup v-model="isReceiveType">
-              <Radio label="1" disabled>
-                <span>支付宝</span>
-              </Radio>
-              <Radio label="2" disabled>
-                <span>银行卡</span>
-              </Radio>
-            </RadioGroup>-->
           </div>
           <FormItem label="收款人" style="margin-bottom:20px">
             <Input v-model="formValidateEnt.receiveName" placeholder="请输入收款人" disabled></Input>
@@ -324,14 +318,10 @@
           <FormItem label="收款人身份证号码" style="margin-bottom:10px">
             <Input v-model="formValidateEnt.receiveCard" placeholder="请输入收款人身份证号码" disabled></Input>
           </FormItem>
-          <FormItem :label="this.isReceiveType==2?'收款账号':'支付宝账号'" style="margin-bottom:20px">
+          <FormItem label="收款账号" style="margin-bottom:20px">
             <Input v-model="formValidateEnt.receiveAccount" placeholder="请输入收款账号" disabled></Input>
           </FormItem>
-          <FormItem
-            label="开户行"
-            v-show="this.isReceiveType=='2'?true:false "
-            style="margin-bottom:20px"
-          >
+          <FormItem label="开户行" style="margin-bottom:20px">
             <Input v-model="formValidateEnt.receiveBank" placeholder="请输入开户行" disabled></Input>
           </FormItem>
           <Divider />
@@ -626,7 +616,6 @@ export default {
       modalDel: false,
       modal_loading: false, //删除的loading
       delID: null, //删除的ID
-      isReceiveType: "2", //全局收款方式变量
       saleList: [], //销售范围
       parentChannelName: "", //上级商户名
       isEnterprise: true, // 企业切换显示
@@ -1012,7 +1001,7 @@ export default {
     },
 
     // 审核点击事件
-    async checkModal(row,type) {
+    async checkModal(row, type) {
       console.log(row);
       await this.getTreeData(); //获取渠道树信息
       // this.saleArray = [];
@@ -1020,7 +1009,9 @@ export default {
         ? (this.parentChannelName = row.channelName)
         : (this.parentChannelName = row.parentChannelName);
       row.channelId == null ? (this.isSpan = false) : (this.isSpan = true);
-      type=="sh"?this.modalTitle = "审核【商户】":this.modalTitle="编辑【商户】";
+      type == "sh"
+        ? (this.modalTitle = "审核【商户】")
+        : (this.modalTitle = "编辑【商户】");
       this.getProductType();
       this.isShow = true;
       let array = row.areaIds.split(",");
@@ -1104,7 +1095,9 @@ export default {
               this.loading = false;
               this.channelId = this.$store.state.user.channelId;
               this.getMerchant(); // 重新获取数据
-              this.title=="审核【商户】"?this.$Message.info("审核通过"):this.$Message.info("修改成功");
+              this.title == "审核【商户】"
+                ? this.$Message.info("审核通过")
+                : this.$Message.info("修改成功");
             } else {
               this.loading = false;
               this.$Message.error(res.data.message);
@@ -1132,7 +1125,9 @@ export default {
               this.loading = false;
               this.channelId = this.$store.state.user.channelId;
               this.getMerchant(); // 重新获取数据
-              this.title=="审核【商户】"?this.$Message.info("审核通过"):this.$Message.info("修改成功");
+              this.title == "审核【商户】"
+                ? this.$Message.info("审核通过")
+                : this.$Message.info("修改成功");
             } else {
               this.loading = false;
               this.$Message.error(res.data.message);

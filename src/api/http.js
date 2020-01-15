@@ -857,12 +857,13 @@ export const searchMemberMore = info => {
 };
 
 // 查询会员购买过的订单记录
-export const searchMemberOrder = id => {
-  return axios.request({
-    url: "/order/orderDetail/findMemberOrderDetail",
-    params: {
-      id
-    },
-    method: "get"
-  });
-};
+export const searchMemberOrder = (id, channelId) => {
+         return axios.request({
+           url: "/order/orderDetail/findMemberOrderDetail",
+           params: {
+             id,
+             channelId
+           },
+           method: "get"
+         });
+       };

@@ -28,7 +28,6 @@
         v-model="orderStatus"
         clearable
         placeholder="交易状态"
-        @on-change="orderStatusChange"
         style="width:100px;margin-right:10px"
       >
         <Option v-for="(item,i) in statusList" :value="item.value" :key="item+i">{{ item.label }}</Option>
@@ -70,10 +69,10 @@
         :data="dataTable"
         border
         style="margin:20px 0"
-        @on-select="select"
-        @on-select-cancel="selectCancel"
-        @on-select-all="selectAll"
-        @on-select-all-cancel="selectAllCancel"
+        @on-select="selectTableData"
+        @on-select-cancel="selectTableData"
+        @on-select-all="selectTableData"
+        @on-select-all-cancel="selectTableData"
       >
         <!-- 身份证号 -->
         <template slot-scope="{row,index}" slot="cardNo">
@@ -241,10 +240,6 @@
         </template>
       </Table>
       <div class="textDiv">
-        <div class="leftReason">
-          退款原因：
-          <Input :maxlength="30" v-model.trim="refundReason" />
-        </div>
         <div class="rightPrice">
           使用返利金额：
           <strong>{{couponAmount}}</strong>&nbsp元&nbsp
@@ -296,10 +291,6 @@
         >{{row.productNumber-row.productProduce-row.refundNumber|clearNumText}}</template>
       </Table>
       <div class="textDiv">
-        <div class="leftReason">
-          清算原因：
-          <Input :maxlength="30" v-model.trim="clearingReason" />
-        </div>
         <div class="rightPrice">
           使用返利金额：
           <strong>{{couponAmount}}</strong>&nbsp元&nbsp
@@ -1035,20 +1026,7 @@ export default {
         ? (this.refundStatus = 1)
         : (this.refundStatus = 2);
     },
-    orderStatusChange(value) {},
-    select(selection, row) {
-      this.orderNoList = [];
-      this.selectionData = selection;
-    },
-    selectCancel(selection, row) {
-      this.orderNoList = [];
-      this.selectionData = selection;
-    },
-    selectAll(selection, row) {
-      this.orderNoList = [];
-      this.selectionData = selection;
-    },
-    selectAllCancel(selection, row) {
+    selectTableData(selection, row) {
       this.orderNoList = [];
       this.selectionData = selection;
     },

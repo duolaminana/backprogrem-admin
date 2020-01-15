@@ -148,7 +148,7 @@
           <FormItem label="售价" prop="salePrice" class='modelInput'>
             <Input type='number' v-model.trim.number="formValidate.salePrice" placeholder="请输入售价"/>
           </FormItem>
-          <FormItem v-show='formValidate.categoryId[0]!=drugsID' prop="productDesc" label="商品描述" class='modelInput'>
+          <FormItem v-if='formValidate.categoryId[0]!=drugsID' prop="productDesc" label="商品描述" class='modelInput'>
             <Input v-model.trim="formValidate.productDesc" placeholder="请输入商品描述"/>
           </FormItem>
           <template v-if='formValidate.categoryId[0]==drugsID'>
@@ -391,9 +391,6 @@ export default {
             type: "number",
           },
           { max: 9999, message: "不能超过最大值9999", trigger: "blur",type: "number" }
-        ],
-        productDesc: [
-          { max: 20, message: "长度最多是20个字符", trigger: "blur" }
         ],
         imageAddress: [
           {
@@ -880,6 +877,7 @@ export default {
     Added(value,auditStatus,name) {
       this.sure_loading = true;
       this.$refs[name].validate(valid => {
+        console.log(valid)
         if (valid) {
           let {
             enable,
@@ -897,7 +895,9 @@ export default {
             productIngredient,
             productFunction
           } = value;
-          if (this.showNewlyType == "xz") {
+          console.log(11111)
+          if (this.showNewlyType == "xz") { 
+            console.log(buyPrice)
             let data = {
               buyPrice,
               buyPriceUpper,
@@ -917,6 +917,7 @@ export default {
               operatorName:this.operatorName,
               channelId:this.channelId,
             };
+            console.log(data)
             netWorkGoods('/product/productSave',data).then(res => {
               if (res.result) {
                 this.categoryId = null; //清除掉 筛选id

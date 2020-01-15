@@ -53,7 +53,13 @@ export default {
         ],
         yAxis: [
           {
-            type: 'value'
+            type: 'value',
+            name:'单位：元',
+            nameTextStyle:{
+              fontSize:16,
+              fontWeight:'bold'
+            }
+
           }
         ],
         legend: {

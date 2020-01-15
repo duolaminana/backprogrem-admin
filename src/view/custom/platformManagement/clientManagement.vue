@@ -272,7 +272,7 @@ export default {
         },
         {
           title: "会员姓名",
-          key: "memberName",
+          key: "nickName",
           align: "center",
           minWidth: 100,
           tooltip: true
@@ -399,8 +399,9 @@ export default {
     seeOrder(row) {
       console.log(row);
       this.isShow = true;
-      // this.cardNoOrder = row.cardNo;
       this.idOrder = row.id;
+      console.log(this.channelId);
+      
       this.getOrder();
     },
     searchGetMember() {
@@ -435,7 +436,7 @@ export default {
 
     // 获取订单交易列表
     getOrder() {
-      searchMemberOrder(this.idOrder).then(res => {
+      searchMemberOrder(this.idOrder,this.channelId).then(res => {
         if (res.data.code == 200) {
           this.dataTableOrder = res.data.result;
         }
@@ -445,14 +446,10 @@ export default {
     getMemberMore() {
       let data = {
         cardNo: this.cardNoMore, //主键
-        pageNum: this.pageNumOrder, // 页码
-        pageSize: this.pageSizeOrder // 页容量
       };
       searchMemberMore(data).then(res => {
         if (res.data.code == 200) {
           this.dataTablemodal = res.data.result;
-          // this.totalOrder = res.data.result.total;
-          // this.pageNumOrder = res.data.result.pageNum;
         }
       });
     }

@@ -393,6 +393,13 @@ export default {
           tooltip: true
         },
         {
+          title: "清算数量",
+          key: "settlementNumber",
+          align: "center",
+          minWidth: 50,
+          tooltip: true
+        },
+        {
           title: "交易时间",
           key: "dealDate",
           align: "center",

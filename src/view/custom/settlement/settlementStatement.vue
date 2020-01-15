@@ -70,7 +70,7 @@
       />
     </div>
     <!-- 结算详情弹框的模态框 -->
-    <Modal v-model="isShow" :mask-closable="false" :title="'结算详情('+deductAccount+')'" width="1700">
+    <Modal v-model="isShow" :mask-closable="false" :title="'结算详情('+deductAccount+')'" width="1800">
       <div>
         <strong
           v-if="accountId!=deductAccountId"
@@ -428,6 +428,13 @@ export default {
         {
           title: "退货数量",
           key: "refundNumber",
+          align: "center",
+          minWidth: 50,
+          tooltip: true
+        },
+        {
+          title: "清算数量",
+          key: "settlementNumber",
           align: "center",
           minWidth: 50,
           tooltip: true

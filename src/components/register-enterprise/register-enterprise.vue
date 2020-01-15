@@ -146,14 +146,6 @@
       </FormItem>
       <div style="margin-bottom:10px">
         <strong class="receivablesInfo">收款信息</strong>
-        <!-- <RadioGroup v-model="isReceiveType">
-          <Radio label="1">
-            <span>支付宝</span>
-          </Radio>
-          <Radio label="2">
-            <span>银行卡</span>
-          </Radio>
-        </RadioGroup>-->
       </div>
       <FormItem prop="receiveName" label="收款人" style="margin-bottom:20px">
         <Input :maxlength="30" v-model.trim="form.receiveName" placeholder="请输入收款人姓名"></Input>
@@ -163,7 +155,7 @@
       </FormItem>
       <FormItem
         prop="receiveAccount"
-        :label="this.isReceiveType==2?'收款账号':'支付宝账号'"
+        label="收款账号"
         style="margin-bottom:20px"
       >
         <Input
@@ -176,7 +168,6 @@
       <FormItem
         prop="receiveBank"
         label="开户行"
-        v-show="this.isReceiveType=='2'?true:false "
         style="margin-bottom:20px"
       >
         <Input v-model.trim="form.receiveBank" placeholder="请输入开户行名称"></Input>
@@ -459,7 +450,6 @@ export default {
       checkType: null, //1用户名2手机号
       checkParam: null,
       pswd: false, //密码显示方式
-      isReceiveType: "2", //全局收款方式变量
       saleList: [], //销售范围
       Upload, // 上传文件地址
       cityData,
@@ -699,9 +689,6 @@ export default {
     handleSubmit() {
       this.$refs.registerEnt.validate(valid => {
         if (valid) {
-          // this.isReceiveType == "1"
-          //   ? (this.form.receiveType = 1)
-          //   : (this.form.receiveType = 2);
           this.form.userName = this.form.userNameNew;
           this.form.password = this.form.passwordNew;
           this.form.areaNames = this.form.NewareaNames.join(",");

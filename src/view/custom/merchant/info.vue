@@ -100,14 +100,24 @@
     </div>
     <div class="rightDiv">
       <Input v-model="channelName" style="margin-right:10px" placeholder="请输入商户名称" clearable />
-      <Select v-model="auditStatus" clearable placeholder="审核状态" style="margin-right:10px;width:100px">
+      <Select
+        v-model="auditStatus"
+        clearable
+        placeholder="审核状态"
+        style="margin-right:10px;width:100px"
+      >
         <Option
           v-for="item in auditStatusList"
           :value="item.value"
           :key="item.value"
         >{{ item.label }}</Option>
       </Select>
-      <Select v-model="accountType" clearable placeholder="注册类型" style="margin-right:10px;width:100px">
+      <Select
+        v-model="accountType"
+        clearable
+        placeholder="注册类型"
+        style="margin-right:10px;width:100px"
+      >
         <Option
           v-for="item in accountTypeList"
           :value="item.value"
@@ -275,14 +285,6 @@
           <Divider />
           <div style="margin:10px 0">
             <strong class="receivablesInfo">收款信息</strong>
-            <!-- <RadioGroup v-model="isReceiveType">
-              <Radio label="1" :disabled="isdisabled">
-                <span>支付宝</span>
-              </Radio>
-              <Radio label="2" :disabled="isdisabled">
-                <span>银行卡</span>
-              </Radio>
-            </RadioGroup>-->
           </div>
           <FormItem prop="name" label="收款人" style="margin-bottom:20px">
             <Input
@@ -300,11 +302,7 @@
               :disabled="isdisabled"
             ></Input>
           </FormItem>
-          <FormItem
-            prop="receiveAccount"
-            style="margin-bottom:20px"
-            :label="this.isReceiveType==2?'收款账号':'支付宝账号'"
-          >
+          <FormItem prop="receiveAccount" style="margin-bottom:20px" label="收款账号">
             <Input
               :maxlength="30"
               v-model.trim="formValidatePre.receiveAccount"
@@ -313,12 +311,7 @@
               @on-blur="getBankPre"
             ></Input>
           </FormItem>
-          <FormItem
-            prop="receiveBank"
-            label="开户行"
-            v-show="this.isReceiveType=='2'"
-            style="margin-bottom:20px"
-          >
+          <FormItem prop="receiveBank" label="开户行" style="margin-bottom:20px">
             <Input
               v-model.trim="formValidatePre.receiveBank"
               placeholder="请输入开户行名称"
@@ -587,14 +580,6 @@
           <Divider />
           <div style="margin:10px 0">
             <strong class="receivablesInfo">收款信息</strong>
-            <!-- <RadioGroup v-model="isReceiveType">
-              <Radio label="1" :disabled="isdisabled">
-                <span>支付宝</span>
-              </Radio>
-              <Radio label="2" :disabled="isdisabled">
-                <span>银行卡</span>
-              </Radio>
-            </RadioGroup>-->
           </div>
           <FormItem prop="receiveName" label="收款人" style="margin-bottom:20px">
             <Input
@@ -612,11 +597,7 @@
               :disabled="isdisabled"
             ></Input>
           </FormItem>
-          <FormItem
-            prop="receiveAccount"
-            :label="this.isReceiveType==2?'收款账号':'支付宝账号'"
-            style="margin-bottom:20px"
-          >
+          <FormItem prop="receiveAccount" label="收款账号" style="margin-bottom:20px">
             <Input
               :maxlength="30"
               v-model.trim="formValidateEnt.receiveAccount"
@@ -625,12 +606,7 @@
               @on-blur="getBankEnt"
             ></Input>
           </FormItem>
-          <FormItem
-            prop="receiveBank"
-            label="开户行"
-            v-show="this.isReceiveType=='2'?true:false "
-            style="margin-bottom:20px"
-          >
+          <FormItem prop="receiveBank" label="开户行" style="margin-bottom:20px">
             <Input
               v-model.trim="formValidateEnt.receiveBank"
               placeholder="请输入开户行名称"
@@ -1136,7 +1112,6 @@ export default {
       modalDel: false,
       modal_loading: false, //删除的loading
       delID: null, //删除的ID
-      isReceiveType: "2", //全局收款方式变量
       saleList: [], //销售范围
       parentChannelName: null, //上级商户名
       isregester: false, //是否显示注册表单
@@ -1726,7 +1701,6 @@ export default {
     },
     // 新增点击事件
     addModal() {
-      // this.isReceiveType = "2";
       this.$Spin.show();
       console.log(this.formValidatePre);
       console.log(this.formValidateEnt);
@@ -1842,9 +1816,6 @@ export default {
           this.loading = true;
           if (this.modalTitle == "新增【商户】") {
             if (this.tabIndex == 1) {
-              // this.isReceiveType == "1"
-              //   ? (this.formValidatePre.receiveType = 1)
-              //   : (this.formValidatePre.receiveType = 2);
               this.formValidatePre.areaNames = this.formValidatePre.NewareaNames.join(
                 ","
               );
@@ -1867,9 +1838,6 @@ export default {
                   this.$Message.error(res.data.message);
                 });
             } else if (this.tabIndex == 2) {
-              // this.isReceiveType == "1"
-              //   ? (this.formValidateEnt.receiveType = 1)
-              //   : (this.formValidateEnt.receiveType = 2);
               this.formValidateEnt.areaNames = this.formValidateEnt.NewareaNames.join(
                 ","
               );
@@ -1895,9 +1863,6 @@ export default {
             }
           } else if (this.modalTitle == "编辑【商户】") {
             if (this.tabIndex == 1) {
-              // this.isReceiveType == "1"
-              //   ? (this.formValidatePre.receiveType = 1)
-              //   : (this.formValidatePre.receiveType = 2);
               if (this.strPre == JSON.stringify(this.formValidatePre)) {
                 this.isShow = false;
                 this.loading = false;
@@ -1926,9 +1891,6 @@ export default {
                   });
               }
             } else if (this.tabIndex == 2) {
-              // this.isReceiveType == "1"
-              //   ? (this.formValidateEnt.receiveType = 1)
-              //   : (this.formValidateEnt.receiveType = 2);
               if (this.strEnt == JSON.stringify(this.formValidateEnt)) {
                 this.isShow = false;
                 this.loading = false;
@@ -2164,17 +2126,17 @@ export default {
               }
             }
             .numText {
-              color:#2d8cf0;
+              color: #2d8cf0;
             }
             .numText:hover {
               text-decoration: underline;
-              cursor:pointer;
+              cursor: pointer;
             }
           }
           .eye {
             float: right;
-            img:hover{
-              cursor:pointer;
+            img:hover {
+              cursor: pointer;
             }
           }
         }
