@@ -51,7 +51,7 @@
         <template slot-scope="{row,index}" slot="operation">
           <!-- 结算 -->
           <Button
-            style="margin-right:0px"
+            style="margin-left:0px"
             type="primary"
             size="small"
             @click="getSettlementClick(row)"
@@ -126,7 +126,7 @@
     <!-- 收款人详情弹框的模态框 -->
     <account :isShowAccount.sync="isShowAccount" :formValidate="formValidate" @cancel="cancel"></account>
     <!-- 关联设备弹框的模态框 -->
-    <Modal v-model="isShowEquipment" :mask-closable="false" title="关联设备" width="500">
+    <Modal v-model="isShowEquipment" :mask-closable="false" title="关联设备" width="600">
       <Table
         :columns="columnsEquipment"
         :data="dataTableEquipment"
@@ -138,7 +138,7 @@
         <Button
           type="primary"
           size="large"
-          @click="isShowEquipment=false;accountId=null;channelId=null"
+          @click="isShowEquipment=false;accountId=null"
         >确定</Button>
       </div>
       <div slot="close">
@@ -148,7 +148,7 @@
           color="#515a6e"
           style="margin-top:10px;margin-right:15px"
           class="icon"
-          @click="isShowEquipment=false;accountId=null;channelId=null"
+          @click="isShowEquipment=false;accountId=null"
         />
       </div>
     </Modal>
@@ -297,7 +297,7 @@ export default {
           title: "收款方",
           key: "beneficiary",
           align: "center",
-          minWidth: 80,
+          minWidth: 100,
           tooltip: true
         },
         {
@@ -311,7 +311,7 @@ export default {
           title: "关联设备",
           slot: "facilityNumber",
           align: "center",
-          minWidth: 60,
+          minWidth: 80,
           tooltip: true
         },
         {
@@ -325,28 +325,28 @@ export default {
           title: "上次结算时间",
           key: "lastClearingTime",
           align: "center",
-          minWidth: 80,
+          minWidth: 140,
           tooltip: true
         },
         {
           title: "累计金额(元)",
           key: "gatheringPrice",
           align: "center",
-          minWidth: 70,
+          minWidth: 80,
           tooltip: true
         },
         {
           title: "结算详情",
           slot: "SettlementList",
           align: "center",
-          minWidth: 60,
+          minWidth: 80,
           tooltip: true
         },
         {
           title: "操作",
           align: "center",
           slot: "operation",
-          minWidth: 60,
+          minWidth: 80,
           tooltip: true
         }
       ],
@@ -518,21 +518,18 @@ export default {
           title: "设备编码",
           key: "machineCode",
           align: "center",
-          // minWidth: 60,
           tooltip: true
         },
         {
           title: "设备类型",
           key: "machineName",
           align: "center",
-          // minWidth: 60,
           tooltip: true
         },
         {
           title: "点位名称",
           key: "positionName",
           align: "center",
-          // minWidth: 60,
           tooltip: true
         }
       ],
@@ -645,7 +642,6 @@ export default {
       console.log(row);
       this.isShowEquipment = true;
       this.accountId = row.accountId;
-      this.channelId = row.channelId;
       this.getMachine();
     },
     // 查看收款人信息
@@ -797,7 +793,11 @@ export default {
         id: this.id, //主键id
         orderNo: this.orderNo, //订单编号
         pageNum: this.pageNumMore, // 页码
-        pageSize: this.pageSizeMore // 页容量
+        pageSize: this.pageSizeMore, // 页容量
+        channelId:this.channelId,
+        managerRoute:this.$store.state.user.userVo.managerRoute,
+        userId:this.$store.state.user.userVo.id,
+        userType:this.$store.state.user.userVo.type,
       };
       searchSettlementMore(data).then(res => {
         if (res.data.code == 200) {

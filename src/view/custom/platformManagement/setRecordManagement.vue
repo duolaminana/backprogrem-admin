@@ -67,7 +67,7 @@
         <template slot-scope="{row,index}" slot="operation">
           <!-- 再次结算 -->
           <Button
-            style="margin-right:0px"
+            style="margin-left:0px"
             v-if="hasPerm('set:rec:setmoreback')&&row.clearingStatus==3"
             type="primary"
             size="small"
@@ -154,7 +154,7 @@
         <Button
           type="primary"
           size="large"
-          @click="isShowEquipment=false;accountId=null;channelId=null"
+          @click="isShowEquipment=false;accountId=null"
         >确定</Button>
       </div>
       <div slot="close">
@@ -164,7 +164,7 @@
           color="#515a6e"
           style="margin-top:10px;margin-right:15px"
           class="icon"
-          @click="isShowEquipment=false;accountId=null;channelId=null"
+          @click="isShowEquipment=false;accountId=null"
         />
       </div>
     </Modal>
@@ -271,7 +271,7 @@ export default {
           title: "结算时间段",
           slot: "betweenTime",
           align: "center",
-          minWidth: 100,
+          minWidth: 150,
           tooltip: true
         },
         {
@@ -285,7 +285,7 @@ export default {
           title: "结算金额(元)",
           key: "gatheringPrice",
           align: "center",
-          minWidth: 70,
+          minWidth: 80,
           tooltip: true
         },
         {
@@ -299,14 +299,14 @@ export default {
           title: "结算状态",
           align: "center",
           slot: "clearingStatus",
-          minWidth: 60,
+          minWidth: 80,
           tooltip: true
         },
         {
           title: "操作",
           align: "center",
           slot: "operation",
-          minWidth: 60,
+          minWidth: 80,
           tooltip: true
         }
       ],
@@ -582,6 +582,7 @@ export default {
       this.accountId = null;
       this.clearingStartDate = "";
       this.clearingEndDate = "";
+      this.channelId = this.$store.state.user.channelId;
       this.pageNum = 1;
       this.pageSize = 15;
       this.total = null;
@@ -613,7 +614,6 @@ export default {
       console.log(row);
       this.isShowEquipment = true;
       this.accountId = row.accountId;
-      this.channelId = row.channelId;
       this.getMachine();
     },
     // 查看收款人信息
@@ -719,7 +719,11 @@ export default {
         id: this.id, //主键id
         orderNo: this.orderNo, //订单编号
         pageNum: this.pageNum, // 页码
-        pageSize: this.pageSize // 页容量
+        pageSize: this.pageSize, // 页容量
+        channelId: this.channelId,
+        managerRoute: this.$store.state.user.userVo.managerRoute,
+        userId: this.$store.state.user.userVo.id,
+        userType: this.$store.state.user.userVo.type
       };
       searchSettlementMore(data).then(res => {
         if (res.data.code == 200) {

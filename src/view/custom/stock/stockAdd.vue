@@ -70,39 +70,42 @@ export default {
           title: "设备编码",
           key: "machineCode",
           align: "center",
+          minWidth: 80,
           tooltip: true
         },
         {
           title: "商品出厂批次号",
           key: "batchNo",
           align: "center",
-          minWidth: 60,
+          minWidth: 140,
           tooltip: true
         },
         {
           title: "点位信息",
           slot: "positionName",
           align: "center",
+          minWidth: 100,
           tooltip: true
         },
         {
           title: "货道编码",
           key: "roadNo",
           align: "center",
+          minWidth: 50,
           tooltip: true
         },
         {
           title: "补货商品",
           key: "productName",
           align: "center",
-          minWidth: 60,
+          minWidth: 120,
           tooltip: true
         },
         {
           title: "商品编码",
           key: "productCode",
           align: "center",
-          minWidth: 60,
+          minWidth: 120,
           tooltip: true
         },
 
@@ -110,37 +113,42 @@ export default {
           title: "现有库存数",
           key: "stock",
           align: "center",
+          minWidth: 70,
           tooltip: true
         },
         {
           title: "原始库存数",
           key: "originStock",
           align: "center",
+          minWidth: 70,
           tooltip: true
         },
         {
           title: "补货数量",
           key: "productNumber",
           align: "center",
+          minWidth: 60,
           tooltip: true
         },
         {
           title: "补货类型 ",
           slot: "operateType",
           align: "center",
+          minWidth: 60,
           tooltip: true
         },
         {
           title: "补货人员 ",
           key: "operatorName",
           align: "center",
+          minWidth: 60,
           tooltip: true
         },
         {
           title: "补货时间",
           key: "createDate",
           align: "center",
-          minWidth: 80,
+          minWidth: 140,
           tooltip: true
         }
       ],

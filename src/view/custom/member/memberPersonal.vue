@@ -228,7 +228,6 @@ export default {
       ],
       dataTableOrder: [], //交易记录数据
       cardNoOrder: null, //会员身份证（消费者）
-      idOrder: null,
       total: null, // 总页码数
       pageNum: 1, // 页码
       pageSize: 15, // 页容量
@@ -392,8 +391,11 @@ export default {
     seeOrder(row) {
       console.log(row);
       this.isShow = true;
-      this.idOrder = row.id;
-      this.getOrder();
+      searchMemberOrder(this.$store.state.user.channelId, row.id).then(res => {
+        if (res.data.code == 200) {
+          this.dataTableOrder = res.data.result;
+        }
+      });
     },
     searchGetMember() {
       this.pageNum = 1;
@@ -426,17 +428,11 @@ export default {
     },
 
     // 获取订单交易列表
-    getOrder() {
-      searchMemberOrder(this.idOrder,this.$store.state.user.channelId,).then(res => {
-        if (res.data.code == 200) {
-          this.dataTableOrder = res.data.result;
-        }
-      });
-    },
+    getOrder() {},
     // 根据会员身份证号查询所有
     getMemberMore() {
       let data = {
-        cardNo: this.cardNoMore, //主键
+        cardNo: this.cardNoMore //主键
       };
       searchMemberMore(data).then(res => {
         if (res.data.code == 200) {

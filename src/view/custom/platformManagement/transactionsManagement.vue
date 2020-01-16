@@ -574,28 +574,28 @@ export default {
           title: "订单编号",
           key: "orderNo",
           align: "center",
-          minWidth: 130,
+          minWidth: 140,
           tooltip: true
         },
         {
           title: "消费者",
           slot: "cardNo",
           align: "center",
-          minWidth: 130,
+          minWidth: 80,
           tooltip: true
         },
         {
           title: "设备编码",
           key: "machineCode",
           align: "center",
-          minWidth: 60,
+          minWidth: 80,
           tooltip: true
         },
         {
           title: "点位名称",
           slot: "positionName",
           align: "center",
-          minWidth: 80,
+          minWidth: 100,
           tooltip: true
         },
         {
@@ -609,7 +609,7 @@ export default {
           title: "使用返利金额(元)",
           key: "couponAmount",
           align: "center",
-          minWidth: 50,
+          minWidth: 60,
           tooltip: true
         },
         {
@@ -623,7 +623,7 @@ export default {
           title: "收款金额(元)",
           slot: "payAmount",
           align: "center",
-          minWidth: 50,
+          minWidth: 60,
           tooltip: true
         },
         {
@@ -637,14 +637,14 @@ export default {
           title: "收款方",
           key: "channelName",
           align: "center",
-          minWidth: 100,
+          minWidth: 120,
           tooltip: true
         },
         {
           title: "交易时间",
           key: "createDate",
           align: "center",
-          minWidth: 120,
+          minWidth: 140,
           tooltip: true
         },
         {
@@ -676,7 +676,7 @@ export default {
           tooltip: true
         },
         {
-          title: "退款金额",
+          title: "退款金额(元)",
           align: "center",
           slot: "refundAmount",
           minWidth: 60,
@@ -686,7 +686,7 @@ export default {
           title: "退款时间",
           align: "center",
           key: "refundDate",
-          minWidth: 80,
+          minWidth: 120,
           tooltip: true
         }
       ],

@@ -236,7 +236,7 @@ export default {
       ],
       dataTableOrder: [], //交易记录数据
       cardNoOrder: null, //会员身份证（消费者）
-      idOrder: null,
+      // idOrder: null,
       total: null, // 总页码数
       pageNum: 1, // 页码
       pageSize: 15, // 页容量
@@ -244,7 +244,7 @@ export default {
       buyerId: null, //支付宝唯一买家账号
       cardNo: null, //身份证号码
       id: null, //id
-      channelId: null,
+      channelId: "",
       memberName: null, //姓名
       memberPhone: null, //电话
       memberSex: null, //性别:1 男 2 女
@@ -364,7 +364,7 @@ export default {
       this.cardNo = null;
       this.memberPhone = null;
       this.pageNum = 1;
-      this.channelId = null;
+      this.channelId = "";
       this.getMember();
       this.$refs.channelTree.getTreeData();
     },
@@ -399,10 +399,11 @@ export default {
     seeOrder(row) {
       console.log(row);
       this.isShow = true;
-      this.idOrder = row.id;
-      console.log(this.channelId);
-      
-      this.getOrder();
+      searchMemberOrder(this.channelId, row.id).then(res => {
+        if (res.data.code == 200) {
+          this.dataTableOrder = res.data.result;
+        }
+      });
     },
     searchGetMember() {
       this.pageNum = 1;
@@ -434,18 +435,10 @@ export default {
       });
     },
 
-    // 获取订单交易列表
-    getOrder() {
-      searchMemberOrder(this.idOrder,this.channelId).then(res => {
-        if (res.data.code == 200) {
-          this.dataTableOrder = res.data.result;
-        }
-      });
-    },
     // 根据会员身份证号查询所有
     getMemberMore() {
       let data = {
-        cardNo: this.cardNoMore, //主键
+        cardNo: this.cardNoMore //主键
       };
       searchMemberMore(data).then(res => {
         if (res.data.code == 200) {
