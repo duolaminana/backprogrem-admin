@@ -338,10 +338,14 @@ export default {
               this.modalDel = false;
               this.refresh(); //调用刷新
               this.$Message.info("删除成功");
+            } else {
+              this.modal_loading = false;
+              this.$Message.error(res.data.message);
             }
           })
           .catch(err => {
             this.modal_loading = false;
+            this.$Message.error(res.data.message);
           });
       } else {
         delDictData(this.delID)
@@ -353,10 +357,14 @@ export default {
               this.$Message.success("删除成功");
               this.dataTable.splice(this.delIndex, 1);
               this.delIndex = null; //删除的索引
+            } else {
+              this.modal_loading = false;
+              this.$Message.error(res.data.message);
             }
           })
           .catch(err => {
             this.modal_loading = false;
+            this.$Message.error(res.data.message);
           });
       }
     },
@@ -399,7 +407,7 @@ export default {
     reset() {
       this.dataName = "";
       this.dataValue = "";
-      this.refresh()
+      this.refresh();
       // this.getDictData();
       // this.getDictType();
     },

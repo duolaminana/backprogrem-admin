@@ -385,11 +385,11 @@ export const addChannelApply = info => {
   });
 };
 // 删除商户
-export const delChannelApply = channelApplyId => {
+export const delChannelApply = id => {
   return axios.request({
     url: "/system/channelApply/deleteChannelApply",
     params: {
-      channelApplyId
+      id
     },
     method: "delete"
   });
@@ -857,8 +857,6 @@ export const searchMemberMore = info => {
 };
 
 // 查询会员购买过的订单记录
-           params: {
-             id,
 export const searchMemberOrder = (channelId, id) => {
   return axios.request({
     url: "/order/orderDetail/findMemberOrderDetail",

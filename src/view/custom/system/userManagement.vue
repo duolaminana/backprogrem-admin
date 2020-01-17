@@ -644,35 +644,35 @@ export default {
           title: "真实姓名",
           key: "name",
           align: "center",
-          minWidth: 60,
+          minWidth: 80,
           tooltip: true
         },
         {
           title: "身份证号",
           key: "card",
           align: "center",
-          minWidth: 120,
+          minWidth: 140,
           tooltip: true
         },
         {
           title: "手机号码",
           key: "phone",
           align: "center",
-          minWidth: 80,
+          minWidth: 100,
           tooltip: true
         },
         {
           title: "邮箱",
           key: "email",
           align: "center",
-          minWidth: 60,
+          minWidth: 140,
           tooltip: true
         },
         {
           title: "所属部门",
           key: "deptName",
           align: "center",
-          minWidth: 60,
+          minWidth: 100,
           tooltip: true
         },
         {
@@ -693,7 +693,7 @@ export default {
           title: "管理分区",
           align: "center",
           slot: "userRoutes",
-          minWidth: 80,
+          minWidth: 100,
           tooltip: true
         },
         {
@@ -728,7 +728,7 @@ export default {
     resetPwd(row) {
       console.log(row);
       this.newPswd = false;
-      this.newPswdAgain=false;
+      this.newPswdAgain = false;
       this.isShowPwd = true;
       this.userId = row.id;
     },
@@ -834,10 +834,14 @@ export default {
               this.modalDel = false;
               this.refresh();
               this.$Message.info("删除成功");
+            } else {
+              this.modal_loading = false;
+              this.$Message.error(res.data.message);
             }
           })
           .catch(err => {
             this.modal_loading = false;
+            this.$Message.error(res.data.message);
           });
       } else {
         delUser(this.delID)
@@ -849,10 +853,14 @@ export default {
               this.$Message.success("删除成功");
               this.dataTable.splice(this.delIndex, 1);
               this.delIndex = null; //删除的索引
+            } else {
+              this.modal_loading = false;
+              this.$Message.error(res.data.message);
             }
           })
           .catch(err => {
             this.modal_loading = false;
+            this.$Message.error(res.data.message);
           });
       }
     },

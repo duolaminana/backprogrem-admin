@@ -90,6 +90,7 @@
           <Button
             type="primary"
             size="small"
+            :disabled="row.status==2||(row.status==1&&row.publish)"
             @click="editModal(row)"
             v-if="channelId==$store.state.user.channelId&&hasPerm('act:actList:edit')"
           >编辑</Button>
@@ -665,17 +666,21 @@ export default {
       this.changeData.enable = true;
       changeactivity(this.changeData)
         .then(res => {
-          // if (res.data.code == 200) {
+          if (res.data.code == 200) {
           this.modal_loading = false;
           this.modalDel = false;
           this.delID = null; //删除的ID
           this.$Message.success("删除成功");
           this.dataTable.splice(this.delIndex, 1);
           this.delIndex = null; //删除的索引
-          // }
+          }else {
+            this.modal_loading = false;
+            this.$Message.error(res.data.message);
+          }
         })
         .catch(err => {
           this.modal_loading = false;
+          this.$Message.error(res.data.message);
         });
     },
 

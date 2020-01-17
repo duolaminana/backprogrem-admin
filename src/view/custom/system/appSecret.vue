@@ -256,10 +256,14 @@ export default {
             this.$Message.success("删除成功");
             this.dataTable.splice(this.delIndex, 1);
             this.delIndex = null; //删除的索引
+          }else {
+            this.modal_loading = false;
+            this.$Message.error(res.data.message);
           }
         })
         .catch(err => {
           this.modal_loading = false;
+          this.$Message.error(res.data.message);
         });
     },
 

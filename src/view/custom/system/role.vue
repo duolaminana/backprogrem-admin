@@ -236,10 +236,14 @@ export default {
             this.$Message.success("删除成功");
             this.dataTable.splice(this.delIndex, 1);
             this.delIndex = null; //删除的索引
+          } else {
+            this.modal_loading = false;
+            this.$Message.error(res.data.message);
           }
         })
         .catch(err => {
           this.modal_loading = false;
+          this.$Message.error(res.data.message);
         });
     },
 
@@ -309,7 +313,7 @@ export default {
     // 获取tree组件的选中子节点
     getNodes() {
       let ary = this.$refs.treeData.getCheckedAndIndeterminateNodes();
-      if(ary.length){
+      if (ary.length) {
         const pidsStr = ary.map(i => i.id).join(",");
         permissionToRole({ pids: pidsStr, roleId: this.roleId }).then(res => {
           if (res.data.code == 200) {
@@ -319,7 +323,7 @@ export default {
             this.getRole();
           }
         });
-      }else{
+      } else {
         this.$Message.error("请给该角色选择权限！");
       }
     },
