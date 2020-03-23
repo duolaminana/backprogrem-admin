@@ -114,6 +114,9 @@
         <template slot-scope="{row,index}" slot="flowType">
           <span>{{row.flowType|flowTypeText}}</span>
         </template>
+        <template slot-scope="{row,index}" slot="activityPrice">
+          {{row.activityPrice}}<span v-if="row.buyPrice==0&&row.activityPrice==0">(限免)</span>
+        </template>
       </Table>
       <Page
         :total="totalMore"
@@ -234,7 +237,7 @@ export default {
         },
         {
           title: "收款方",
-          key: "deductAccountName",
+          key: "beneficiary",
           align: "center",
           minWidth: 80,
           tooltip: true
@@ -364,9 +367,9 @@ export default {
         },
         {
           title: "活动售价",
-          key: "activityPrice",
+          slot: "activityPrice",
           align: "center",
-          minWidth: 50,
+          minWidth: 80,
           tooltip: true
         },
         {
@@ -786,11 +789,11 @@ export default {
     text-align: center;
     margin-top: 10px;
   }
-  .leftBox {
-    min-height: 900px;
-    float: left;
-    margin-right: 20px;
-  }
+  // .leftBox {
+  //   min-height: 900px;
+  //   float: left;
+  //   margin-right: 20px;
+  // }
   .lookDetails {
     text-decoration: underline;
   }

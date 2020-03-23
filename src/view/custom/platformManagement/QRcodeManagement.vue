@@ -617,13 +617,13 @@ export default {
 };
 </script>
 <style lang="less" scoped>
-.QRcode {
-  .leftBox {
-    min-height: 900px;
-    float: left;
-    margin-right: 20px;
-  }
-}
+// .QRcode {
+  // .leftBox {
+  //   min-height: 900px;
+  //   float: left;
+  //   margin-right: 20px;
+  // }
+// }
 .ivu-input-wrapper {
   width: 220px;
   margin-right: 5px;

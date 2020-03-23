@@ -163,7 +163,7 @@
             style="width:10px;opacity: 0;position: absolute"
           ></Input>
         </FormItem>
-        <FormItem label="密码" prop="passwordNew" v-if="ispassword" style="display:inline-block">
+        <FormItem label="登陆密码" prop="passwordNew" v-if="ispassword" style="display:inline-block">
           <Input
             v-model="formValidate.password"
             type="password"
@@ -182,11 +182,11 @@
           <Input v-model="formValidate.name" placeholder="请输入真实姓名" style="width:180px"></Input>
         </FormItem>
         <FormItem label="身份证号" prop="card" style="display:inline-block">
-          <Input v-model="formValidate.card" placeholder="请输入身份证号" style="width:180px"></Input>
+          <Input :maxlength="18" v-model="formValidate.card" placeholder="请输入身份证号" style="width:180px"></Input>
         </FormItem>
 
         <FormItem label="手机号码" prop="phone">
-          <Input v-model="formValidate.phone" placeholder="请输入手机号码" style="width:180px"></Input>
+          <Input :maxlength="11" v-model="formValidate.phone" placeholder="请输入手机号码" style="width:180px"></Input>
         </FormItem>
         <FormItem label="邮箱">
           <Input v-model="formValidate.email" placeholder="请输入邮箱" style="width: 220px"></Input>
@@ -1262,10 +1262,9 @@ export default {
             if (item.userRouteVos != null) {
               item.userRouteVos.forEach(v => {
                 ary.push(v.label);
-                v.routerStr = ary.join("/");
               });
             }
-            item.routerStr = ary.join("/");
+            item.routerStr = ary.join(" / ");
           });
         }
       });
@@ -1370,12 +1369,12 @@ export default {
 };
 </script>
 <style lang="less" scoped>
-.leftBox {
-  // min-width: 250px;
-  min-height: 900px;
-  float: left;
-  margin-right: 20px;
-}
+// .leftBox {
+//   // min-width: 250px;
+//   min-height: 900px;
+//   float: left;
+//   margin-right: 20px;
+// }
 .ivu-input-wrapper {
   width: 300px;
   margin-right: 5px;

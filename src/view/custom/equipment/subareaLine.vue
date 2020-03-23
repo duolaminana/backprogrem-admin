@@ -30,7 +30,7 @@
         ></coustom-tree>
       </div>
       <div class='rightDiv'>
-        <position ref='position' :pickTreeData='pickTreeData'></position>
+        <position ref='position' :routeNameList='routeNameList' :pickTreeData='pickTreeData'></position>
         <!-- <Input v-model="routeName"  placeholder="线路名称" clearable class='marginRight'/>
         <Select v-model="routeType"  class='marginRight' placeholder="线路类型" :clearable='true'>
             <Option v-for="item in routeTypeList" :value="item.value" :key="item.value">{{ item.label }}</Option>
@@ -108,6 +108,7 @@ export default {
   name: 'subareaLine',
   data () {
     return {
+      routeNameList:[],
       channelValue:[],
       channelList:[],
       routeType:null,
@@ -141,7 +142,7 @@ export default {
       },
       newlyAdded:false,
       showNewlyType:'xz',
-      routeID:null,
+      routeId:'',
       treeData:[],
       pageNum:1,
       total:null,
@@ -228,7 +229,7 @@ export default {
       this.total = null;
       this.pageSize = 15;
       this.name = null;
-      this.routeID = null;
+      this.routeId = "";
       this.channelId = this.$store.state.user.channelId;
       this.pickTreeData = null;
       this.channelValue = [];
@@ -329,13 +330,14 @@ export default {
       this.pickTreeData = value;
       console.log(this.pickTreeData)
       if(value){
-        this.routeID = value.id;
+        this.routeId = value.id;
         this.routeName = null;
         this.routeType = null;
         this.pageNum = 1;
         this.getPageDatas()
+        this.getRouteName();
       }else{
-        this.routeID = null;
+        this.routeId = "";
       }
       setTimeout(()=>{
         this.$refs.position.getPageDatas();
@@ -366,6 +368,12 @@ export default {
         this.treeData = res.result;
       })
     },
+    getRouteName(){ //根据渠道id查找利益分配模板列表
+      let url = `/route/queryRouteNameByChannelId?channelId=${this.channelId}&&routeId=${this.routeId}&&managerRoute=${this.$store.state.user.userVo.managerRoute}&&userId=${this.$store.state.user.userVo.id}`;
+      netWorkDevice(url,null,'get').then(res => {
+        this.routeNameList = res.result;
+      })
+    },
     getPageDatas(){
       let data = {
         routeType:this.routeType,
@@ -373,7 +381,7 @@ export default {
         pageNum:this.pageNum,
         pageSize:this.pageSize,
         channelId:this.channelId,
-        id:this.routeID,
+        id:this.routeId,
         managerRoute:this.$store.state.user.userVo.managerRoute,
         userId:this.$store.state.user.userVo.id,
         type:this.$store.state.user.userVo.type
@@ -384,6 +392,7 @@ export default {
         this.datas = res.result.list;
       })
     },
+
     getChannelList(){
       let url = `/channel/querySelectChannelTreeByChannelId?channelId=${this.channelId}`
       netWorkHttp(url).then(res => {
@@ -395,6 +404,7 @@ export default {
     this.getPageDatas();
     // this.getChannelList();
     this.getTreeData();
+    this.getRouteName()
   }
 }
 </script>

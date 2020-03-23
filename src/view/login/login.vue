@@ -77,6 +77,12 @@
         </li>
       </ul>
     </div>
+    <div class="internet">
+      <div class="internetText">
+        <span>备案号：</span>
+        <span class="text" @click="toInternet">粤ICP备13076301号-1</span>
+      </div>
+    </div>
   </div>
 </template>
 
@@ -102,7 +108,7 @@ export default {
       channelId: null, //渠道id
       userId: null, //用户id
       userType: null, //用户类型
-      auditStatus: "", //审核状态
+      auditStatus: "" //审核状态
     };
   },
   methods: {
@@ -220,6 +226,9 @@ export default {
       this.$refs.loginForm.$refs.loginForm.resetFields();
       this.$refs.loginMessage.$refs.loginMessage.resetFields();
       this.$refs.loginMessage.clearTimeID();
+    },
+    toInternet() {
+      window.open('http://www.beian.miit.gov.cn',"_blank")
     }
   }
 };

@@ -249,6 +249,7 @@ export default {
               operator:this.operator,
               operatorName:this.operatorName,
               channelId:this.channelId,
+              type:2
             };
             netWorkDevice("/benefitAccount/add", data).then(res => {
               this.getPageDatas(); //刷新页面

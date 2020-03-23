@@ -195,6 +195,14 @@
           <div class="textHead">
             <strong>销售额统计</strong>
             <Icon @click='isAnimate=true;getHeadInfo()' type="md-refresh" :class='{"isAnimate":isAnimate}'  style="cursor: pointer;margin-left:15px;"/>
+            <div class='textHeadBox'>
+              <span>销售额：{{salesData.market}}</span>
+              <p>待处理销售额：{{salesData.pendingMarket}}</p>
+            </div>
+            <div class='textHeadBox'>
+              <span>利润额：{{salesData.profit}}</span>
+              <p>待处理利润额：{{salesData.pendingProfit}}</p>
+            </div>
           </div>
           <div id="tabHead" class="tab-head">
             <ul>
@@ -293,6 +301,7 @@ export default {
   name: "home",
   data() {
     return {
+      salesData:{},
       isAnimate:false,
       timing:null,
       QRcodeList: [],
@@ -340,6 +349,12 @@ export default {
       const store = this.$store.state.user;
       let url = `/report/findSalesVolumeReport?channelId=${store.channelId}&&userId=${store.userId}&&userType=${store.userVo.type}&&dateType=${this.tabIndex}&&managerRoute=${store.userVo.managerRoute}`;
       return netWorkOrder(url, null, "get").then(res => {
+        this.salesData = {
+          market:res.result.market,
+          pendingMarket:res.result.pendingMarket,
+          profit:res.result.profit,
+          pendingProfit:res.result.pendingProfit,
+        }
         this.xAxisData = res.result.dateList;
         this.series = res.result.lineGraphSeriesList;
         // this.series.map(v=>v.smooth=true) //曲线图
@@ -483,11 +498,18 @@ li {
         padding: 20px;
         .head {
           border-bottom: 1px solid #e8e8e8;
-          height: 8%;
+          height: 10%;
           .textHead {
             float: left;
-            font-size: 18px;
+            font-size: 20px;
             margin-top: 5px;
+            .textHeadBox{
+              display: inline-block;
+              vertical-align: top;
+              margin-left: 15px;
+              margin-top: -4px;
+              font-size: 14px;
+            }
           }
           /*Tab栏样式*/
           .tab-head {

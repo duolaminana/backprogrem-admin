@@ -131,8 +131,8 @@
                   <Option v-for="item in ownershipList" :value="item.value" :key="item.value">{{ item.label }}</Option>
               </Select>
             </FormItem> -->
-            <FormItem label="管理年费" v-show='showNewlyType!="sh"' >
-              <Input v-model.trim="formValidate.annualFee" placeholder="元/天" :disabled='showNewlyType=="ck"||showNewlyType=="sh"'/>
+            <FormItem label="管理年费" prop="annualFee" v-if='showNewlyType!="sh"' >
+              <Input :maxlength="4" v-model.trim="formValidate.annualFee" @on-blur='annualFeeChange' placeholder="元/天" :disabled='showNewlyType=="ck"||showNewlyType=="sh"'/>
             </FormItem>
             <template v-if='showNewlyType=="sh"'>
               <Divider/>
@@ -147,7 +147,7 @@
                 </Select>
               </FormItem>
               <FormItem label="管理年费"  prop="annualFee">
-                <Input v-model.trim="formValidate.annualFee" placeholder="元/天"/>
+                <Input :maxlength="4" v-model.trim="formValidate.annualFee" @on-blur='annualFeeChange' placeholder="元/天"/>
               </FormItem>
               <FormItem label="指令发送方式"  prop="hardwareVersion">
                 <Select v-model="formValidate.hardwareVersion" placeholder="指令发送方式" clearable>
@@ -380,6 +380,7 @@ export default {
   },
   data(){
     return{
+      currentId:null,
       recursionData:{},
       machineStatus:null,
       statusList:[
@@ -573,7 +574,7 @@ export default {
           {
             required: true,
             message: "输入不能为空",
-            trigger: "blur"
+            trigger: "blur",
           }
         ],
         hardwareVersion: [
@@ -748,6 +749,11 @@ export default {
     }
   },
   methods:{
+    annualFeeChange(){
+      if(this.formValidate.annualFee<0){
+        this.$set(this.formValidate,'annualFee',parseInt(0));
+      }
+    },
     devDelete(row,index){
       if(row.status!=3){
         this.modalDel=true;
@@ -1059,7 +1065,7 @@ export default {
               machineType:shMachineType,
               status:7,
               machineCode,
-              channelId:this.channelId
+              channelId:this.currentId
             };
             netWorkDevice("/machineInfo/audit", data).then(res => {
               this.getPageDatas(); //刷新页面
@@ -1187,11 +1193,14 @@ export default {
         hardwareVersion:null,
       };
       if(type!='xz'){
-        console.log(row)
+        console.log(row);
         this.formValidate = JSON.parse(JSON.stringify(row));
         this.formValidate.enable = this.formValidate.enable+'';
         this.formValidate.machineType = this.formValidate.machineType+'';
         if(type=='sh'){
+          console.log(row);
+          
+          this.currentId=row.channelId
           const url = `/channelBusiness/queryChannelBusinessByChannelId?channelId=${this.channelId}`
           return netWorkGoods(url,null,'get').then(res=>{
             this.rangeList = res.result.map(v=> {
@@ -1225,7 +1234,8 @@ export default {
             ownership,
             annualFee,
             headingCode,
-            hardwareVersion
+            hardwareVersion,
+            channelId
           } = value;
           if (this.showNewlyType == "xz") {
             let data = {
@@ -1276,7 +1286,7 @@ export default {
               hardwareVersion,
               operator:this.operator,
               operatorName:this.operatorName,
-              channelId:this.channelId,
+              channelId,
               enable,
               ownership,
               annualFee,
@@ -1439,12 +1449,12 @@ export default {
       box-shadow:1px 1px 20px #6d4a4a;
       box-shadow:0px 0px 0px #fff;
     }
-    .leftBox {
-      // min-width: 250px;
-      min-height: 900px;
-      float: left;
-      margin-right: 20px;
-    }
+    // .leftBox {
+    //   // min-width: 250px;
+    //   min-height: 900px;
+    //   float: left;
+    //   margin-right: 20px;
+    // }
   }
   .inputTree{
     width: 160px;

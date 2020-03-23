@@ -20,8 +20,8 @@
       <Table highlight-row :columns="columns" :data="dataTable" border>
         <!-- 状态按钮 -->
         <template slot="enable" slot-scope="{ row, index }">
-          <span v-show="row.enable=='1'" size="small" style="margin-right: 5px;color:#52ce8f">已启用</span>
-          <span type="error" v-show="row.enable=='0'" size="small" style="margin-right: 5px">不启用</span>
+          <span v-show="row.enable=='1'" size="small" class="green">已启用</span>
+          <span v-show="row.enable=='0'" size="small" class='gray'>不启用</span>
         </template>
         <template slot-scope="{ row, index }" slot="operation">
           <!-- 编辑按钮 -->

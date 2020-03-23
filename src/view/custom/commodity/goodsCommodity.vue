@@ -1088,12 +1088,12 @@ export default {
   display: inline-block;
   vertical-align: middle;
 }
-.leftBox {
-  // min-width: 250px;
-  min-height: 900px;
-  float: left;
-  margin-right: 20px;
-}
+// .leftBox {
+//   // min-width: 250px;
+//   min-height: 900px;
+//   float: left;
+//   margin-right: 20px;
+// }
 .elastic{
   margin-left:15px;
   color:red;

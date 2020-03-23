@@ -581,8 +581,18 @@ export default {
     deleteComponent
   },
   name: "merchantManagement",
+  // computed:{
+  //   fffff(){
+  //     return this.saleData.filter(item => {
+  //       return this.aaaaa.some(i => {
+  //         return item.categoryId == i
+  //       });
+  //     });
+  //   }
+  // },
   data() {
     return {
+      // aaaaa:[],
       receiveTerminal: false,
       isSpan: false,
       saleDataList: [],
@@ -836,18 +846,24 @@ export default {
   },
   methods: {
     changeValue(value) {
-      this.formValidatePre.businessScope = value.join(",");
-      this.formValidateEnt.businessScope = value.join(",");
-      let arrSale = [];
-      this.saleList.forEach(item => {
-        value.forEach(i => {
-          if (item.value == i) {
-            item.benefitPercent = 0;
-            arrSale.push(item);
-          }
-        });
-      });
-      this.saleData = arrSale;
+      // this.aaaaa = value;
+      // let arrSale = [];
+      // let arrSale= this.saleData.filter(item => {
+      //   return value.some(i => {
+      //     return item.categoryId == i
+      //   });
+      // });
+      // this.fffff = arrSale;
+      // console.log(this.fffff)
+      if (this.tabIndex == 1) {
+        this.formValidatePre.businessScope = value.join(",");
+        this.businessStr = value.join(",");
+        this.getMerchantCategorySale();
+      } else {
+        this.formValidateEnt.businessScope = value.join(",");
+        this.businessStr = value.join(",");
+        this.getMerchantCategorySale();
+      }
     },
     change(status) {
       this.$Message.info("开关状态：" + status);
@@ -1295,13 +1311,13 @@ export default {
 };
 </script>
 <style lang="less" scoped>
-.channelMerchants {
-  .leftBox {
-    min-height: 900px;
-    float: left;
-    margin-right: 20px;
-  }
-}
+// .channelMerchants {
+// .leftBox {
+//   min-height: 900px;
+//   float: left;
+//   margin-right: 20px;
+// }
+// }
 .ivu-divider-horizontal {
   margin: 0;
 }

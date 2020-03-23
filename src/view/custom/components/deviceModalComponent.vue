@@ -3,7 +3,7 @@
     <div class=headBox>
       <Button type="primary" size="large" class='keep' icon='md-albums' @click='keep'>保存</Button>
       <Button type="primary" size="large" @click='toBack' style="float:left;margin-right:30px;">返回</Button>
-      <Input v-model="query.machineName"  placeholder="模板名称"  clearable class='marginRight'/>
+      <Input v-model="query.machineName" disabled  placeholder="模板名称"  class='marginRight'/>
     </div>
     <Divider />
     <!-- <Select v-model="roadType" style="width:100px;margin-right:10px" >

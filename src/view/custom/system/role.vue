@@ -257,6 +257,7 @@ export default {
     reset() {
       this.roleName = "";
       this.pageNum = 1;
+      this.getRole();
     },
     // 页码改变时触发
     pageChange(value) {

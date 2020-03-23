@@ -4,8 +4,13 @@
       <channel-tree @clickTreeRow="clickTreeRow" ref="channelTree"></channel-tree>
     </div>
     <div class="rightDiv">
-      <Input v-model="orderNo" style="margin-right:10px" placeholder="订单编号" clearable />
-      <Input v-model="machineCode" style="margin-right:10px" placeholder="设备编码" clearable />
+      <Input v-model="orderNo" style="margin-right:5px" placeholder="订单编号" clearable />
+      <Input
+        v-model="machineCode"
+        style="margin-right:5px;width:100px"
+        placeholder="设备编码"
+        clearable
+      />
       <Poptip
         trigger="click"
         placement="bottom"
@@ -28,7 +33,7 @@
         v-model="orderStatus"
         clearable
         placeholder="交易状态"
-        style="width:100px;margin-right:10px"
+        style="width:100px;margin-right:5px"
       >
         <Option v-for="(item,i) in statusList" :value="item.value" :key="item+i">{{ item.label }}</Option>
       </Select>
@@ -37,7 +42,7 @@
         clearable
         placeholder="退款状态"
         @on-change="refundStatusChange"
-        style="width:100px;margin-right:10px"
+        style="width:100px;margin-right:5px"
       >
         <Option v-for="(item,i) in refundList" :value="item.value" :key="item+i">{{ item.label }}</Option>
       </Select>
@@ -49,7 +54,7 @@
         @on-change="handleChangeStart"
         style="width: 160px"
       ></DatePicker>
-      <span>&nbsp至&nbsp&nbsp</span>
+      <span>至&nbsp&nbsp</span>
       <DatePicker
         v-model="endDate"
         type="datetime"
@@ -166,9 +171,9 @@
     <Modal v-model="isShow" :mask-closable="false" title="订单详情" width="1200">
       <Table :columns="columnsMore" :data="dataTableMore" border ref="table" style="margin:20px 0">
         <!-- 订单详情抽成金额 -->
-        <template slot-scope="{row,index}" slot="commissionPriceMore">
+        <!-- <template slot-scope="{row,index}" slot="commissionPriceMore">
           <span>{{parseFloat((row.actualPrice-row.buyPrice)*row.productProduce*(row.commissionPercent/100)).toFixed(2)}}</span>
-        </template>
+        </template>-->
       </Table>
       <div slot="footer">
         <Button type="primary" size="large" @click="isShow=false">确定</Button>
@@ -224,7 +229,10 @@
             style="color:#ff9900"
           >部分出货成功</span>
         </template>
-        <template slot-scope="{row,index}" slot="activityPrice">{{row.activityPrice|activityText}}</template>
+        <template
+          slot-scope="{row,index}"
+          slot="activityPrice"
+        >{{row.activityPrice|activityPriceText}}</template>
         <template slot-scope="{row,index}" slot="productPrice">
           <span v-if="row.activityPrice>0">{{row.productNumber*row.activityPrice}}</span>
           <span v-else>{{row.productNumber*row.actualPrice}}</span>
@@ -280,7 +288,10 @@
             style="color:#ff9900"
           >部分出货成功</span>
         </template>
-        <template slot-scope="{row,index}" slot="activityPrice">{{row.activityPrice|activityText}}</template>
+        <template
+          slot-scope="{row,index}"
+          slot="activityPrice"
+        >{{row.activityPrice|activityPriceText}}</template>
         <template slot-scope="{row,index}" slot="productPrice">
           <span v-if="row.activityPrice>0">{{row.productNumber*row.activityPrice}}</span>
           <span v-else>{{row.productNumber*row.actualPrice}}</span>
@@ -327,7 +338,8 @@ import {
   seeReceiveTerminal,
   searchTreeByUser,
   refundOrder,
-  clearOrder
+  clearOrder,
+  searchSettlementMore
 } from "@/api/http";
 export default {
   components: {
@@ -772,7 +784,7 @@ export default {
         },
         {
           title: "利润抽成金额(元)",
-          slot: "commissionPriceMore",
+          key: "recommendedCoupon",
           align: "center",
           minWidth: 80,
           tooltip: true
@@ -852,8 +864,9 @@ export default {
     refundAmount() {
       let value = this.dataTableMore
         .map((v, i) => {
-          if (v.activityPrice) return v.refundNumber * v.activityPrice;
-          return v.refundNumber * v.actualPrice;
+          if (v.activityPrice != null)
+            return v.refundNumber * (v.activityPrice - v.rebateAmount);
+          return v.refundNumber * (v.actualPrice - v.rebateAmount);
         })
         .reduce((pre, cur) => {
           return pre + cur;
@@ -861,10 +874,16 @@ export default {
       let value2 = this.dataTableMore
         .map((v, i) => {
           if (v.productNumber != v.productProduce) {
-            if (v.activityPrice) {
-              return (v.productNumber - v.productProduce) * v.activityPrice;
+            if (v.activityPrice != null) {
+              return (
+                (v.productNumber - v.productProduce) *
+                (v.activityPrice - v.rebateAmount)
+              );
             } else {
-              return (v.productNumber - v.productProduce) * v.actualPrice;
+              return (
+                (v.productNumber - v.productProduce) *
+                (v.actualPrice - v.rebateAmount)
+              );
             }
           }
         })
@@ -874,8 +893,8 @@ export default {
       return value > this.payAmount
         ? this.payAmount
         : this.once
-        ? value2
-        : value;
+        ? (value2 > this.payAmount?this.payAmount:parseFloat(value2).toFixed(2))
+        : parseFloat(value).toFixed(2);
     },
     startOptions: function() {
       //开始时间的限制，不能选择结束时间之后的时间
@@ -918,6 +937,16 @@ export default {
         realVal = parseFloat(value).toFixed(2);
       } else {
         realVal = 0;
+      }
+      return realVal;
+    },
+    activityPriceText(value) {
+      let realVal = "";
+      if (value != null) {
+        // 截取当前数据到小数点后两位
+        realVal = parseFloat(value).toFixed(2);
+      } else {
+        realVal = "——";
       }
       return realVal;
     },
@@ -1049,7 +1078,7 @@ export default {
     },
     cancel() {
       this.newlyAdded = false;
-      this.positionId=null;
+      this.positionId = null;
     },
     handleChangeStart(value) {
       this.startDate = value;
@@ -1122,6 +1151,7 @@ export default {
       this.couponAmount = row.couponAmount;
       this.payAmount = row.payAmount;
       this.getOrderMore();
+      // this.getSettlementMore()
     },
     refundModalConfirm() {
       let sum = this.dataTableMore
@@ -1245,6 +1275,7 @@ export default {
       this.startDate = format(this.startDate, "YYYY-MM-DD 00:00:00");
       this.endDate = format(this.endDate, "YYYY-MM-DD HH:mm:ss");
       let data = {
+        isAll: 1,
         cardNo: this.cardNo, //会员身份证（消费者）
         channelId: this.channelId, // 渠道ID
         endDate: this.endDate, //结束时间
@@ -1291,6 +1322,24 @@ export default {
         }
       });
     },
+    // 退款结算列表详情
+    // getSettlementMore() {
+    //   let data = {
+    //     orderNo: this.orderNoMore, //订单编号
+    //     pageNum: 1, // 页码
+    //     pageSize: 10000, // 页容量
+    //   };
+    //   searchSettlementMore(data).then(res => {
+    //     if (res.data.code == 200) {
+    //       this.dataTableMore = res.data.result.list;
+    //       this.dataTableMore.forEach(item => {
+    //         item.refundNumber == null
+    //           ? (item.refundNumber = 0)
+    //           : item.refundNumber;
+    //       });
+    //     }
+    //   });
+    // },
     //通过点位id和渠道id查找点位信息
     getmachinePosition() {
       let data = {
@@ -1397,7 +1446,7 @@ export default {
     margin-right: 5px;
   }
   .ivu-btn {
-    margin-left: 10px;
+    margin-left: 5px;
   }
   .ivu-table-wrapper {
     margin-top: 20px;
@@ -1410,10 +1459,10 @@ export default {
     text-align: center;
     margin-top: 10px;
   }
-  .leftBox {
-    float: left;
-    margin-right: 20px;
-  }
+  // .leftBox {
+  //   float: left;
+  //   margin-right: 20px;
+  // }
   .lookDetails {
     text-decoration: underline;
     text-align: center;

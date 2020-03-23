@@ -140,6 +140,8 @@ export default {
         this.$Spin.show()
         let url = `/machineTypeRoad/queryByType?machineType=${this.modal}`;
         netWorkDevice(url,null,'get').then(res => {
+          if(res.code==200){
+          this.$Spin.hide()
           this.categoryId = res.result.categoryId;
           this.maxColumnNo = res.result.maxClomun;
           this.maxLayerNo = res.result.maxLayer;
@@ -160,9 +162,13 @@ export default {
               },1)
             })
           })
-          this.$Spin.hide()
+          }else{
+            this.$Spin.hide()
+            this.$Message.error(res.message)
+          }
         }).catch(err => {
           this.$Spin.hide()
+          this.$Message.error("网络错误")
         });
         this.equipmentList.map(v=>{
           if(v.value==value){
@@ -286,12 +292,18 @@ export default {
             templateName:this.templateName
           }
           await netWorkDevice('/machineTemplate/addMachineTemplate', data).then(res => {
-            this.$Message.success("操作成功");
-            this.templateName = null;
-            this.$emit('toBack')
-            this.$Spin.hide()
+            if(res.code==200){
+              this.$Message.success("操作成功");
+              this.templateName = null;
+              this.$emit('toBack')
+              this.$Spin.hide()
+            }else{
+              this.$Spin.hide()
+              this.$Message.error(res.message);
+            }
           }).catch(()=>{
             this.$Spin.hide()
+            this.$Message.error("网络错误");
           })
         }else{
           this.$Message.error('请输入模板名称生成模板,且选择设备类型！')
@@ -309,16 +321,25 @@ export default {
             templateName:this.templateName
           }
           await netWorkDevice('/machineTemplate/modifyMachineTemplate', data).then(res => {
-            this.$Message.success("操作成功");
-            this.$emit('toBack')
+            if(res.code==200){
+              this.$Message.success("操作成功");
+              this.$emit('toBack')
+              this.$Spin.hide()
+            }else{
+              this.$Spin.hide()
+              this.$Message.error(res.message);
+            }
+          }).catch(()=>{
+            this.$Spin.hide()
+            this.$Message.error("网络错误");
           })
-          this.$Spin.hide()
         }else{
           this.$Message.error('请输入模板名称！')
         }
       }
       
     },
+    // 取消合并
     cancelMerger(index1,index2,num){
       this.$set(this.listData[index1].AddMachineTypeRoadDto[index2],'roadStatus',num);
       this.$set(this.listData[index1].AddMachineTypeRoadDto[index2],'merged',false);
@@ -339,6 +360,7 @@ export default {
         }
       }
     },
+    // 合并
     merge(index1,index2,num){
       if(index2>0){
         if(this.listData[index1].AddMachineTypeRoadDto[index2].goodsShow||this.listData[index1].AddMachineTypeRoadDto[index2-1].goodsShow){
@@ -353,6 +375,7 @@ export default {
         this.$Message.error('不能合并');
       }
     },
+    // 设置宽度
     setWidth(index1,index2){
       let i  = this.isFalse(index1,index2-1);
       let w = parseInt(this.$refs[("box"+index1+""+index2)][0].$el.style.width) //点击合并盒子的宽度

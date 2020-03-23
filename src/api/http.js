@@ -513,11 +513,12 @@ export const searchStock = info => {
   });
 };
 // 根据渠道id查询线路名称列表
-export const searchRouteList = (channelId, managerRoute, userId) => {
+export const searchRouteList = (channelId,routeId, managerRoute, userId) => {
   return axios.request({
     url: "/position/route/queryRouteNameByChannelId",
     params: {
       channelId,
+      routeId,
       managerRoute,
       userId
     },
@@ -640,7 +641,7 @@ export const searchQRcode = info => {
 // 据终端设备收款码应用id查询终端设备收款码信息
 export const searchQRcodeByChannelId = channelId => {
   return axios.request({
-    url: "/system/channelIPayment/queryChannelIPaymentByChannelId",
+    url: "/system/channelIPayment/queryAllChannelIPaymentByChannelId",
     params: {
       channelId
     },
@@ -865,5 +866,15 @@ export const searchMemberOrder = (channelId, id) => {
       id
     },
     method: "get"
+  });
+};
+
+// 导出会员
+export const exportMember = info => {
+  return axios.request({
+    url: "/order/member/exportMemberInfo",
+    data: info,
+    method: "post",
+    responseType: "blob" // 表明返回服务器返回的数据类型
   });
 };

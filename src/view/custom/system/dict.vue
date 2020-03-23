@@ -673,12 +673,12 @@ export default {
 
 <style lang="less" scoped>
 .dict {
-  .leftBox {
-    // min-width: 250px;
-    min-height: 900px;
-    float: left;
-    margin-right: 20px;
-  }
+  // .leftBox {
+  //   // min-width: 250px;
+  //   min-height: 900px;
+  //   float: left;
+  //   margin-right: 20px;
+  // }
   .dictContedataNamet {
     .ivu-menu-item-active {
       padding: 0;

@@ -1,7 +1,7 @@
 <template>
   <div class='pointInformation'>
     <div>
-        <Select v-model="routeId"  class='marginRight' placeholder="线路" :clearable='true'>
+        <Select v-model="routeId" @on-change="changeRouteId"  class='marginRight' placeholder="线路" :clearable='true'>
             <Option v-for="item in routeNameList" :value="item.value" :key="item.value">{{ item.label }}</Option>
         </Select>
         <Cascader :data="cityData" v-model="areaIds" placeholder="区域" class='marginRight'></Cascader>
@@ -211,6 +211,11 @@ export default {
       default:() => {
         return {};
       }
+    },
+    routeNameList:{
+      default:() => {
+        return [];
+      }
     }
   },
   components:{
@@ -274,8 +279,8 @@ export default {
       machineTypeValue:null,
       binding:false,
       examine:false,
-      routeNameList:[],
-      routeId:null,
+      // routeNameList:[],
+      routeId:"",
       areaIds:[],//区域id
       priceTemplateList:[],
       machineCodeList:[],
@@ -495,10 +500,15 @@ export default {
       operator:this.$store.state.user.userId,
       operatorName:this.$store.state.user.userName,
       operatorType:this.$store.state.user.userVo.type,
-      channelId:this.$store.state.user.channelId
+      channelId:this.$store.state.user.channelId,
     }
   },
   methods:{
+    changeRouteId(value){
+      if(this.pickTreeData){
+        this.pickTreeData.id = value;
+      }
+    },
     machineTypeChange(value){
       const item = 
       this.machineList = this.machineTypeList.find(v=>{
@@ -516,7 +526,7 @@ export default {
     },
     reset(){
       this.positionName = null;
-      this.routeId = null;
+      this.routeId = "";
       this.machineCode = null;
       this.pageNum = 1;
       this.total = null;
@@ -842,12 +852,12 @@ export default {
         console.log(this.benefitList)
       })
     },
-    getRouteName(){ //根据渠道id查找利益分配模板列表
-      let url = `/route/queryRouteNameByChannelId?channelId=${this.channelId}&&managerRoute=${this.$store.state.user.userVo.managerRoute}&&userId=${this.$store.state.user.userVo.id}`;
-      netWorkDevice(url,null,'get').then(res => {
-        this.routeNameList = res.result;
-      })
-    },
+    // getRouteName(){ //根据渠道id查找利益分配模板列表
+    //   let url = `/route/queryRouteNameByChannelId?channelId=${this.channelId}&&routeId=${this.routeId}&&managerRoute=${this.$store.state.user.userVo.managerRoute}&&userId=${this.$store.state.user.userVo.id}`;
+    //   netWorkDevice(url,null,'get').then(res => {
+    //     this.routeNameList = res.result;
+    //   })
+    // },
     getPageDatas(){
       let data = {
         positionName:this.positionName,

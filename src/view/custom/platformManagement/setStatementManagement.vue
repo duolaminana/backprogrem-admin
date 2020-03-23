@@ -98,6 +98,9 @@
         <template slot-scope="{row,index}" slot="flowType">
           <span>{{row.flowType|flowTypeText}}</span>
         </template>
+        <template slot-scope="{row,index}" slot="activityPrice">
+          {{row.activityPrice}}<span v-if="row.buyPrice==0&&row.activityPrice==0">(限免)</span>
+        </template>
       </Table>
       <Page
         :total="totalMore"
@@ -187,7 +190,7 @@
             style="width:250px"
           ></Input>
         </FormItem>
-        <FormItem label="活动时间：" class="time" prop="startDate">
+        <FormItem label="结算时间：" class="time" prop="startDate">
           <DatePicker
             type="datetime"
             placeholder="开始时间"
@@ -404,9 +407,9 @@ export default {
         },
         {
           title: "活动售价",
-          key: "activityPrice",
+          slot: "activityPrice",
           align: "center",
-          minWidth: 50,
+          minWidth: 80,
           tooltip: true
         },
         {
@@ -861,11 +864,11 @@ export default {
     text-align: center;
     margin-top: 10px;
   }
-  .leftBox {
-    min-height: 900px;
-    float: left;
-    margin-right: 20px;
-  }
+  // .leftBox {
+  //   min-height: 900px;
+  //   float: left;
+  //   margin-right: 20px;
+  // }
   .lookDetails {
     text-decoration: underline;
   }

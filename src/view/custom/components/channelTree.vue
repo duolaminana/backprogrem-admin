@@ -74,7 +74,7 @@ export default {
 </script>
 <style lang="less" scoped>
 .channelTree {
-  min-width: 20px;
+  min-width: 10px;
   min-height: 900px;
   position: relative;
   .backArrow {

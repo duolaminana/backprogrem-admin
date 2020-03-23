@@ -922,12 +922,13 @@ export default {
     width: 33px;
     height: 33px;
   }
-  .leftBox {
-    // min-width: 250px;
-    max-width: 320px;
-    min-height: 900px;
-    float: left;
-  }
+  // .leftBox {
+  //   // min-width: 250px;
+  //   // max-width: 320px;
+  //   // min-height: 900px;
+  //   float: left;
+  //   margin-right: 20px;
+  // }
   .uploadImg {
     width: 116px;
     height: 116px;

@@ -174,26 +174,16 @@
             disabled
             type="text"
             style="width:360px;height:30px;"
-            v-model="productList[index].boxVo.label"
+            v-model="textList[index]"
           />
           <div v-if="isLimitedEdition==2" style="display:inline-block">
             <span>&nbsp&nbsp活动价格：</span>
-            <Input
-              v-model="item3.activityPrice"
-              placeholder="请输入"
-              :disabled="isdisabled"
-              style="width: 60px"
-            ></Input>
+            <Input v-model="item3.activityPrice" placeholder="请输入" disabled style="width: 60px"></Input>
             <span>&nbsp元&nbsp&nbsp&nbsp&nbsp</span>
           </div>
           <div v-if="isLimitedEdition==1" style="display:inline-block">
             <span>&nbsp&nbsp活动数量：</span>
-            <Input
-              v-model="item3.activityNum"
-              placeholder="请输入"
-              :disabled="isdisabled"
-              style="width: 60px"
-            ></Input>
+            <Input v-model="item3.activityNum" placeholder="请输入" disabled style="width: 60px"></Input>
             <span>&nbsp件&nbsp&nbsp&nbsp</span>
           </div>
           <Button type="error" size="small" :disabled="isdisabled" @click="handleRemove1(index)">删除</Button>
@@ -207,7 +197,7 @@
             <Option
               v-for="item1 in list"
               :value="item1.productCode"
-              :label="'名称:'+item1.productName+'进价:'+item1.buyPrice+'售价:'+item1.salePrice"
+              :label="'名称:'+item1.productName+' 进价:'+item1.buyPrice+' 售价:'+item1.actualPrice"
               :key="item1.id"
             ></Option>
           </Select>
@@ -307,7 +297,7 @@ export default {
     return {
       activitystatus: null,
       isLimitedEdition: null,
-      timer: "",
+      textList: [],
       endDateList: [],
       startDateList: [],
       codeList: [],
@@ -644,10 +634,16 @@ export default {
         if (value <= 0) {
           this.$Message.error("活动数量需大于0，请重新输入");
           this.formDynamic[index].activityNum = "";
+        } else {
+          this.formDynamic[index].activityNum = parseInt(value);
         }
-        this.formDynamic[index].activityNum = parseInt(value);
       } else {
-        this.formDynamic[index].activityPrice = parseFloat(value).toFixed(2);
+        if (value < item.buyPrice || value > item.actualPrice) {
+          this.$Message.error("活动金额应大于成本金额小于销售金额，请重新输入");
+          this.formDynamic[index].activityPrice = "";
+        } else {
+          this.formDynamic[index].activityPrice = parseFloat(value).toFixed(2);
+        }
       }
     },
     handleRemove(index) {
@@ -655,6 +651,7 @@ export default {
     },
     handleRemove1(index) {
       this.formDynamic1.splice(index, 1);
+      this.textList.splice(index, 1);
     },
     // 删除按钮操作
     delCancel() {
@@ -667,13 +664,13 @@ export default {
       changeactivity(this.changeData)
         .then(res => {
           if (res.data.code == 200) {
-          this.modal_loading = false;
-          this.modalDel = false;
-          this.delID = null; //删除的ID
-          this.$Message.success("删除成功");
-          this.dataTable.splice(this.delIndex, 1);
-          this.delIndex = null; //删除的索引
-          }else {
+            this.modal_loading = false;
+            this.modalDel = false;
+            this.delID = null; //删除的ID
+            this.$Message.success("删除成功");
+            this.dataTable.splice(this.delIndex, 1);
+            this.delIndex = null; //删除的索引
+          } else {
             this.modal_loading = false;
             this.$Message.error(res.data.message);
           }
@@ -936,6 +933,7 @@ export default {
               activityPrice,
               activityNum
             });
+            this.textList.push(item.boxVo.label);
           });
         }
       });
@@ -943,11 +941,6 @@ export default {
   },
   mounted() {
     this.getActivity();
-  },
-  beforeDestroy() {
-    if (this.timer) {
-      clearInterval(this.timer);
-    }
   },
   watch: {
     formDynamic1: {
@@ -1006,11 +999,11 @@ export default {
   .ivu-form-item {
     margin-bottom: 0px;
   }
-  .leftBox {
-    min-height: 780px;
-    float: left;
-    margin-right: 20px;
-  }
+  // .leftBox {
+  //   min-height: 780px;
+  //   float: left;
+  //   margin-right: 20px;
+  // }
   .lookDetails {
     text-decoration: underline;
   }
@@ -1028,11 +1021,11 @@ export default {
   .poptipDiv {
     font-size: 12px;
   }
-  .poptipText{
+  .poptipText {
     text-decoration: underline;
     color: #2d8cf0;
   }
-  .poptipText:hover{
+  .poptipText:hover {
     cursor: pointer;
   }
 }

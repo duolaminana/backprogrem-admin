@@ -183,6 +183,7 @@ export default {
       this.productCode = null;
       this.pageNum = 1;
       this.getSearchStockControl();
+      this.getSearchStockControlAll();
     },
     pageChange(value) {
       this.pageNum = value;

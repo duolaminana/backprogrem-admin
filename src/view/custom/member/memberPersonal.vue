@@ -1,7 +1,7 @@
 <template>
   <div class="clientManagement">
     <div class="clientManagementContent">
-      <Input class="input" v-model="memberName" clearable placeholder="会员姓名" />
+      <Input class="input" v-model="nickName" clearable placeholder="会员姓名" />
       <Input class="input" v-model="cardNo" placeholder="身份证号" clearable />
       <Input class="input" v-model="memberPhone" placeholder="联系电话" clearable />
       <Button type="primary" @click="searchGetMember">查询</Button>
@@ -235,7 +235,7 @@ export default {
       buyerId: null, //支付宝唯一买家账号
       cardNo: null, //身份证号码
       id: null, //id
-      memberName: null, //姓名
+      nickName: null, //姓名
       memberPhone: null, //电话
       memberSex: null, //性别:1 男 2 女
       openId: null, //如果用户使用微信支付并且关注了公众号即可获取
@@ -354,7 +354,7 @@ export default {
   methods: {
     // 用户重置按钮
     reset() {
-      this.memberName = null;
+      this.nickName = null;
       this.cardNo = null;
       this.memberPhone = null;
       this.pageNum = 1;
@@ -411,7 +411,7 @@ export default {
         cardNo: this.cardNo,
         channelId: this.$store.state.user.channelId,
         id: this.id,
-        memberName: this.memberName,
+        nickName: this.nickName,
         memberPhone: this.memberPhone,
         memberSex: this.memberSex,
         openId: this.openId,
