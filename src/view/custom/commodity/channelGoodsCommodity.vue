@@ -139,10 +139,13 @@
                 </Select>
               </FormItem>
               <FormItem label="进价" prop="buyPrice" class='modelInput'>
-                <Input type="number" v-model.trim="customFormValidate.buyPrice" placeholder="请输入进价" />
+                <!-- <Input type="number" v-model.trim="customFormValidate.buyPrice" placeholder="请输入进价" />
+                 -->
+              <InputNumber :min="0" style="width: 230px;"  v-model="customFormValidate.buyPrice" @on-change="buyPriceChange"></InputNumber>
               </FormItem>
               <FormItem label="售价" prop="salePrice" class='modelInput'>
-                <Input type="number" v-model.trim="customFormValidate.salePrice" placeholder="请输入售价"/>
+                <!-- <Input type="number" v-model.trim="customFormValidate.salePrice" placeholder="请输入售价"/> -->
+                <InputNumber :min="buyPriceValue" style="width: 230px;"  v-model="customFormValidate.salePrice"></InputNumber>
               </FormItem>
               <FormItem prop="productDesc" v-show='customFormValidate.categoryId!=drugsID' label="商品描述" class='modelInput'>
                 <Input v-model.trim="customFormValidate.productDesc" placeholder="请输入商品描述"/>
@@ -202,6 +205,7 @@ export default {
   name: 'channelGoodsCommodity',
   data () {
     return {
+      buyPriceValue:0,
       codeImg:false,
       drugsID:configs.drugsID,
       rangeList:[],
@@ -238,6 +242,7 @@ export default {
         ],
         buyPrice: [
           {
+            type:"number",
             required: true,
             message: "输入不能为空",
             trigger: "blur"
@@ -245,6 +250,7 @@ export default {
         ],
         salePrice: [
           {
+            type:"number",
             required: true,
             message: "输入不能为空",
             trigger: "blur"
@@ -491,6 +497,10 @@ export default {
     }
   },
   methods: {
+    buyPriceChange(value){
+      this.buyPriceValue=value;
+      this.customFormValidate.salePrice=null;
+    },
     clickQuery(){
       this.pageNum = 1;
       this.getPageDatas();

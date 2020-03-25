@@ -5,7 +5,12 @@
     </div>
     <div class="rightDiv">
       <Input v-model="orderNo" style="margin-right:5px" placeholder="订单编号" clearable />
-      <Input v-model="machineCode" style="margin-right:5px;width:100px" placeholder="设备编码" clearable />
+      <Input
+        v-model="machineCode"
+        style="margin-right:5px;width:100px"
+        placeholder="设备编码"
+        clearable
+      />
       <Poptip
         trigger="click"
         placement="bottom"
@@ -224,7 +229,10 @@
             style="color:#ff9900"
           >部分出货成功</span>
         </template>
-        <template slot-scope="{row,index}" slot="activityPrice">{{row.activityPrice|activityPriceText}}</template>
+        <template
+          slot-scope="{row,index}"
+          slot="activityPrice"
+        >{{row.activityPrice|activityPriceText}}</template>
         <template slot-scope="{row,index}" slot="productPrice">
           <span v-if="row.activityPrice>0">{{row.productNumber*row.activityPrice}}</span>
           <span v-else>{{row.productNumber*row.actualPrice}}</span>
@@ -280,7 +288,10 @@
             style="color:#ff9900"
           >部分出货成功</span>
         </template>
-        <template slot-scope="{row,index}" slot="activityPrice">{{row.activityPrice|activityPriceText}}</template>
+        <template
+          slot-scope="{row,index}"
+          slot="activityPrice"
+        >{{row.activityPrice|activityPriceText}}</template>
         <template slot-scope="{row,index}" slot="productPrice">
           <span v-if="row.activityPrice>0">{{row.productNumber*row.activityPrice}}</span>
           <span v-else>{{row.productNumber*row.actualPrice}}</span>
@@ -880,7 +891,9 @@ export default {
       return value > this.payAmount
         ? this.payAmount
         : this.once
-        ? (value2 > this.payAmount?this.payAmount:parseFloat(value2).toFixed(2))
+        ? value2 > this.payAmount
+          ? this.payAmount
+          : parseFloat(value2).toFixed(2)
         : parseFloat(value).toFixed(2);
     },
     startOptions: function() {
@@ -929,7 +942,7 @@ export default {
     },
     activityPriceText(value) {
       let realVal = "";
-      if (value!=null) {
+      if (value != null) {
         // 截取当前数据到小数点后两位
         realVal = parseFloat(value).toFixed(2);
       } else {
@@ -1125,6 +1138,7 @@ export default {
       this.isShowRefund = true;
       this.couponAmount = row.couponAmount;
       this.payAmount = row.payAmount;
+      this.paymentType = row.paymentType;
       this.getOrderMore();
     },
     refundModalConfirm() {
@@ -1167,7 +1181,8 @@ export default {
             refundAmount: this.refundAmount,
             refundStatus: 3,
             refundType: 1,
-            refundReason: this.refundReason
+            refundReason: this.refundReason,
+            paymentType: this.paymentType
           };
           refundOrder(data)
             .then(res => {
