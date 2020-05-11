@@ -126,7 +126,7 @@ export default {
       newlyAdded:false,
       pageNum:1,
       total:null,
-      pageSize:15,
+      pageSize:10,
       datas: [],
       columns: [
         {

@@ -134,7 +134,7 @@ export default {
       },
       pageNum:1, //当前页数
       total:null,//总条数
-      pageSize:15,//每页条数
+      pageSize:10,//每页条数
       name: null,
       datas: [],
       columns: [

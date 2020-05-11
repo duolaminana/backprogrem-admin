@@ -731,7 +731,7 @@ export default {
       channelId: this.$store.state.user.channelId, // 渠道id
       channelName: "", // 渠道名称
       pageNum: 1, // 页码
-      pageSize: 15, // 页面大小
+      pageSize: 10, // 页面大小
       sourceType: "", // 数据来源
       columns: [
         {

@@ -114,7 +114,7 @@ export default {
       },
       pageNum: 1, //当前页数
       total: null, //总条数
-      pageSize: 15, //每页条数
+      pageSize: 10, //每页条数
       name: null,
       datas: [],
       columns: [
@@ -181,7 +181,6 @@ export default {
       this.rangeValue = null;
       this.pageNum = 1;
       this.total = null;
-      this.pageSize = 15;
       this.name = null;
       this.channelId = this.$store.state.user.channelId;
       this.getPageDatas();

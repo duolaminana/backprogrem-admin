@@ -132,7 +132,8 @@
               </Select>
             </FormItem> -->
             <FormItem label="管理年费" prop="annualFee" v-if='showNewlyType!="sh"' >
-              <Input :maxlength="4" v-model.trim="formValidate.annualFee" @on-blur='annualFeeChange' placeholder="元/天" :disabled='showNewlyType=="ck"||showNewlyType=="sh"'/>
+              <!-- <Input :maxlength="4" v-model.trim="formValidate.annualFee" @on-blur='annualFeeChange' placeholder="元/天" :disabled='showNewlyType=="ck"||showNewlyType=="sh"'/> -->
+              <InputNumber :max="9999" :min="0" v-model.trim="formValidate.annualFee" placeholder="元/天" :disabled='showNewlyType=="ck"||showNewlyType=="sh"'></InputNumber>
             </FormItem>
             <template v-if='showNewlyType=="sh"'>
               <Divider/>
@@ -146,14 +147,16 @@
                   <Option v-for="item in equipmentList" :value="item.value" :key="item.value">{{ item.label }}</Option>
                 </Select>
               </FormItem>
-              <FormItem label="管理年费"  prop="annualFee">
-                <Input :maxlength="4" v-model.trim="formValidate.annualFee" @on-blur='annualFeeChange' placeholder="元/天"/>
-              </FormItem>
               <FormItem label="指令发送方式"  prop="hardwareVersion">
                 <Select v-model="formValidate.hardwareVersion" placeholder="指令发送方式" clearable>
                   <Option v-for="item in hardwareVersionList" :value="item.value" :key="item.value">{{ item.label }}</Option>
                 </Select>
               </FormItem>
+              <FormItem label="管理年费"  prop="annualFee">
+                <!-- <Input :maxlength="4" v-model.trim="formValidate.annualFee" @on-blur='annualFeeChange' placeholder="元/天"/> -->
+                <InputNumber :max="9999" :min="0" v-model.trim="formValidate.annualFee" placeholder="元/天"></InputNumber>
+              </FormItem>
+              
             </template>
           </Form>
            <div slot="footer">
@@ -572,6 +575,7 @@ export default {
         ],
         annualFee: [
           {
+            type:'number',
             required: true,
             message: "输入不能为空",
             trigger: "blur",
@@ -777,7 +781,6 @@ export default {
       this.machineStatus = null;
       this.pageNum = 1;
       this.total = null;
-      this.pageSize = 15;
       this.name = null;
       this.channelId = this.$store.state.user.channelId;
       this.getPageDatas();

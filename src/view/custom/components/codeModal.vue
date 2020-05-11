@@ -24,6 +24,7 @@
               size="small"
               class="toButton"
               @click="toStartWX"
+              title="点击后请保存"
             >去启用</Button>
             <Button
               v-if="idWX&&formValidateWX.auditType!=1&&formValidateWX.configStat==1"
@@ -31,6 +32,7 @@
               size="small"
               class="toButton"
               @click="toEndWX"
+              title="点击禁用"
             >禁用</Button>
           </div>
           <div>
@@ -103,6 +105,7 @@
               size="small"
               class="toButton"
               @click="toStartZFB"
+              title="点击后请保存"
             >去启用</Button>
             <Button
               v-if="idZFB&&formValidateZFB.auditType!=1&&formValidateZFB.configStat==1"
@@ -110,6 +113,7 @@
               size="small"
               class="toButton"
               @click="toEndZFB"
+              title="点击禁用"
             >禁用</Button>
           </div>
           <div>
@@ -361,7 +365,7 @@ export default {
     // 去禁用微信
     async toEndWX() {
       this.isdisabledWX = true;
-      this.formValidateWX.auditType = null;
+      // this.formValidateWX.auditType = null;
       this.formValidateWX.configStat = 2;
       await editQRcode(this.formValidateWX).then(res => {
         if (res.data.code == 200) {
@@ -378,7 +382,7 @@ export default {
     // 去禁用支付宝
     async toEndZFB() {
       this.isdisabledZFB = true;
-      this.formValidateZFB.auditType = null;
+      // this.formValidateZFB.auditType = null;
       this.formValidateZFB.configStat = 2;
       await editQRcode(this.formValidateZFB).then(res => {
         if (res.data.code == 200) {

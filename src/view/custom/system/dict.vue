@@ -259,13 +259,13 @@ export default {
       name: "", // 字典类型名称
       type: "", // 字典类型
       pageNumType: 1, // 字典类型页码
-      pageSizeType: 15, // 字典类型页容量
+      pageSizeType: 10, // 字典类型页容量
       dataName: "", // 字典名称
       dataValue: "", // 字典值
       dictId: "", // 字典类型id
       // dictTypeName: "", //字典类型的名称
       pageNum: 1, // 字典数据页码
-      pageSize: 15, // 字典数据页容量
+      pageSize: 10, // 字典数据页容量
       // 字典类型列表
       dictTypeList: [],
       // 字典数据列表

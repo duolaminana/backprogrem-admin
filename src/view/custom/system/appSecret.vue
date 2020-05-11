@@ -167,7 +167,7 @@ export default {
       mchId: "", // 商户号
       mchName: "", // 商户名
       pageNum: 1, // 页码
-      pageSize: 15, // 页容量
+      pageSize: 10, // 页容量
       enableList: [
         {
           value: "1",

@@ -26,7 +26,13 @@
           >&nbsp&nbsp审核&nbsp&nbsp</Button>
 
           <Button size="small" v-if="row.auditType==2||row.auditType==3" disabled>已审核</Button>
-          <Button type="primary" size="small" :disabled="row.auditType==1" style="margin-right: 0px" @click="seeResult(row)">查看</Button>
+          <Button
+            type="primary"
+            size="small"
+            :disabled="row.auditType==1"
+            style="margin-right: 0px"
+            @click="seeResult(row)"
+          >查看</Button>
 
           <!-- 删除按钮 -->
           <Button
@@ -224,8 +230,8 @@ export default {
   name: "QRcode",
   data() {
     return {
-      modalTitleZFB:null,
-      modalTitleWX:null,
+      modalTitleZFB: null,
+      modalTitleWX: null,
       isSee: false,
       loading: false,
       loadingNo: false,
@@ -270,7 +276,7 @@ export default {
       channelId: this.$store.state.user.channelId, // 渠道id
       merchantName: null, //商户名称
       pageNum: 1, // 页码
-      pageSize: 15, // 页面大小
+      pageSize: 10, // 页面大小
       payType: null, // 支付类型
       columns: [
         {
@@ -440,6 +446,7 @@ export default {
 
     // 用户重置按钮
     reset() {
+      this.pageNum = 1;
       this.merchantName = null; // 商户名称
       this.auditType = null; // 审核状态
       this.payType = null; //支付方式
@@ -456,7 +463,9 @@ export default {
         ? (this.formValidateWX = JSON.parse(JSON.stringify(row)))
         : (this.formValidateZFB = JSON.parse(JSON.stringify(row)));
       row.payType == 1 ? (this.isShowWX = true) : (this.isShowZFB = true);
-      row.payType == 1 ? (this.modalTitleWX="查看【商户收钱码】") : (this.modalTitleZFB="查看【商户收钱码】");
+      row.payType == 1
+        ? (this.modalTitleWX = "查看【商户收钱码】")
+        : (this.modalTitleZFB = "查看【商户收钱码】");
     },
     // 审核点击事件
     checkModal(row) {
@@ -468,7 +477,9 @@ export default {
         ? (this.formValidateWX = JSON.parse(JSON.stringify(row)))
         : (this.formValidateZFB = JSON.parse(JSON.stringify(row)));
       row.payType == 1 ? (this.isShowWX = true) : (this.isShowZFB = true);
-      row.payType == 1 ? (this.modalTitleWX="审核【商户收钱码】") : (this.modalTitleZFB="审核【商户收钱码】");
+      row.payType == 1
+        ? (this.modalTitleWX = "审核【商户收钱码】")
+        : (this.modalTitleZFB = "审核【商户收钱码】");
       row.payType == 1 ? (this.tabIndex = 1) : (this.tabIndex = 2);
       row.payType == 1
         ? (this.formValidateWX.remark = "")
@@ -618,11 +629,11 @@ export default {
 </script>
 <style lang="less" scoped>
 // .QRcode {
-  // .leftBox {
-  //   min-height: 900px;
-  //   float: left;
-  //   margin-right: 20px;
-  // }
+// .leftBox {
+//   min-height: 900px;
+//   float: left;
+//   margin-right: 20px;
+// }
 // }
 .ivu-input-wrapper {
   width: 220px;

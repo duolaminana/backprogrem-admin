@@ -122,7 +122,7 @@ export default {
       appDesc: "", // 应用描述
       appName: "", // 应用名称
       pageNum: 1, // 页码
-      pageSize: 15, // 页容量
+      pageSize: 10, // 页容量
       columns: [
         {
           title: "序号",

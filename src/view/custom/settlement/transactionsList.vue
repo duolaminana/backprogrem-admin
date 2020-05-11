@@ -11,15 +11,11 @@
         placeholder="设备编码"
         clearable
       />
-      <Poptip
-        trigger="click"
-        placement="bottom"
-        @on-popper-hide="popperHide"
-        @on-popper-show="popperShow"
-      >
+      <Poptip trigger="click" placement="bottom" @on-popper-show="popperShow">
         <Input v-model="routeName" placeholder="分区线路" />
         <div slot="content">
           <Tree
+            @on-check-change="treeCheck"
             multiple
             show-checkbox
             check-strictly
@@ -560,8 +556,8 @@ export default {
       refundStatus: null, //是否已退款 1 未退款 2 已退款
       orderStatus: null, //订单状态 1 待支付 2 待出货 3 出货成功 4 出货失败 5 订单关闭 6 部分出货成功
       pageNum: 1, // 页码
-      pageSize: 15, // 页容量
-      paymentType: null, //支付类型 1:微信, 2:支付宝, 3:人脸支付
+      pageSize: 10, // 页容量
+      // paymentType: null, //支付类型 1:微信, 2:支付宝, 3:人脸支付
       positionId: null, //点位id
       routeId: null, //线路id
       routeType: null,
@@ -1010,8 +1006,9 @@ export default {
     popperShow() {
       this.getSearchTreeByUser();
       this.routes = [];
+      this.routeName = null;
     },
-    popperHide() {
+    treeCheck() {
       let ary = [];
       this.$refs.treeData.getCheckedNodes().forEach(item => {
         this.routes.push({
@@ -1117,7 +1114,6 @@ export default {
       this.routeName = null;
       this.routes = [];
       this.pageNum = 1;
-      this.pageSize = 15;
       this.total = null;
       this.channelId = this.$store.state.user.channelId;
       this.getOrder(); // 重新获取数据
@@ -1152,7 +1148,6 @@ export default {
       this.isShowRefund = true;
       this.couponAmount = row.couponAmount;
       this.payAmount = row.payAmount;
-      this.paymentType = row.paymentType;
       this.getOrderMore();
       // this.getSettlementMore()
     },
@@ -1196,8 +1191,8 @@ export default {
             refundAmount: this.refundAmount,
             refundStatus: 3,
             refundType: 1,
-            refundReason: this.refundReason,
-            paymentType: this.paymentType
+            refundReason: this.refundReason
+            // paymentType: this.paymentType
           };
           refundOrder(data)
             .then(res => {
@@ -1288,7 +1283,7 @@ export default {
         orderNo: this.orderNo, //主键
         refundStatus: this.refundStatus,
         orderStatus: this.orderStatus, //订单状态 1 待支付 2 待出货 3 出货成功 4 出货失败 5 订单关闭 6 部分出货成功
-        paymentType: this.paymentType, //支付类型 1:微信, 2:支付宝, 3:人脸支付
+        // paymentType: this.paymentType, //支付类型 1:微信, 2:支付宝, 3:人脸支付
         positionId: this.positionId, //点位id
         routes: this.routes,
         pageNum: this.pageNum, // 页码
@@ -1383,6 +1378,7 @@ export default {
       this.startDate = format(this.startDate, "YYYY-MM-DD 00:00:00");
       this.endDate = format(this.endDate, "YYYY-MM-DD HH:mm:ss");
       let data = {
+        isAll: 1,
         channelId: this.channelId, // 渠道ID
         endDate: this.endDate, //结束时间
         startDate: this.startDate, //开始时间

@@ -104,7 +104,7 @@
         <strong>个人信息</strong>
       </div>
       <FormItem prop="channelName" label="商户名称" style="margin-bottom:20px">
-        <Input v-model.trim="form.channelName" placeholder="请输入商户名称"></Input>
+        <Input :maxlength="60" v-model.trim="form.channelName" placeholder="请输入商户名称"></Input>
       </FormItem>
       <FormItem prop="name" label="真实姓名" style="margin-bottom:20px">
         <Input :maxlength="30" v-model.trim="form.name" placeholder="请输入真实姓名"></Input>
@@ -132,7 +132,7 @@
         ></Cascader>
       </FormItem>
       <FormItem prop="address" label="详细地址" style="margin-bottom:20px">
-        <Input v-model.trim="form.address" placeholder="请输入详细地址"></Input>
+        <Input :maxlength="100" v-model.trim="form.address" placeholder="请输入详细地址"></Input>
       </FormItem>
       <FormItem prop="sale" label="销售范围" style="margin-bottom:20px">
         <Select
@@ -435,6 +435,10 @@ export default {
         ],
         phone: [{ required: true, validator: validatePhone, trigger: "blur" }],
         card: [{ required: true, validator: validateCard, trigger: "blur" }],
+        NewareaNames: [
+          { type: "array", required: true, message: "请选择区域", trigger: "change" }
+        ],
+        address: [{ required: true, message: "输入不能为空", trigger: "blur" }],
         sale: [
           {
             type: "array",

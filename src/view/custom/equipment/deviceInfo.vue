@@ -889,7 +889,7 @@ export default {
       this.routeName = null;
       this.pageNum = 1;
       this.total = null;
-      this.pageSize = 15;
+      this.pageSize = 10;
       this.name = null;
       this.channelId = this.$store.state.user.channelId;
       this.getPageDatas();

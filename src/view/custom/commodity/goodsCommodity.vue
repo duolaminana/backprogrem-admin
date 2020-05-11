@@ -452,7 +452,7 @@ export default {
       selectValue: [],
       pageNum: 1,
       total: null,
-      pageSize: 15,
+      pageSize: 10,
       datas: [],
       columns: [
         {
@@ -538,7 +538,6 @@ export default {
     reset(){
       this.pageNum = 1;
       this.total = null;
-      this.pageSize = 15;
       this.numID = null;
       this.name = null;
       this.channelId = this.$store.state.user.channelId;

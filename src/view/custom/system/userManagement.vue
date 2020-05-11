@@ -613,7 +613,7 @@ export default {
       deptName: "", // 部门名称
       channelId: this.$store.state.user.channelId, // 渠道ID
       pageNum: 1, // 页码
-      pageSize: 15, // 页容量
+      pageSize: 10, // 页容量
       phone: "", // 联系方式
       userName: "", // 用户名
       status: "", // 用户状态

@@ -230,7 +230,7 @@ export default {
       cardNoOrder: null, //会员身份证（消费者）
       total: null, // 总页码数
       pageNum: 1, // 页码
-      pageSize: 15, // 页容量
+      pageSize: 10, // 页容量
       alipayState: "", // 是否已绑定支付宝用户唯一标识 0 未绑定 1绑定
       buyerId: null, //支付宝唯一买家账号
       cardNo: null, //身份证号码

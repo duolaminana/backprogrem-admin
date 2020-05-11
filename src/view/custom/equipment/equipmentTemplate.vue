@@ -54,7 +54,7 @@ export default {
       showNewlyType:'xz',
       pageNum:1,
       total:null,
-      pageSize:15,
+      pageSize:10,
       templateName:null,
 			datas: [],
       columns: [
@@ -115,7 +115,6 @@ export default {
       this.templateName = null;
       this.pageNum = 1;
       this.total = null;
-      this.pageSize = 15;
       this.getPageDatas();
     },
     delCancel(){

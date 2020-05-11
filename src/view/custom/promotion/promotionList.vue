@@ -370,7 +370,7 @@ export default {
       total: null, // 页码数
       channelId: this.$store.state.user.channelId, // 渠道ID
       pageNum: 1, // 页码
-      pageSize: 15, // 页容量
+      pageSize: 10, // 页容量
       activityName: null, //活动名称
       machineCode: null, //设备编码
       activityId: null, //活动id
@@ -692,7 +692,6 @@ export default {
       this.activityName = null;
       this.machineCode = null;
       this.pageNum = 1;
-      this.pageSize = 15;
       this.total = null;
       this.channelId = this.$store.state.user.channelId;
       this.getActivity(); // 重新获取数据
@@ -918,6 +917,7 @@ export default {
     },
     // 获取活动商品列表
     getActivityProduct() {
+      this.textList=[];
       this.formDynamic1 = [];
       let data = {
         channelId: this.channelId,

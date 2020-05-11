@@ -325,7 +325,6 @@ export default {
       this.machineName = null;
       this.pageNum = 1;
       this.total = null;
-      this.pageSize = 15;
       this.categoryId = null;
       this.getPageDatas();
     },

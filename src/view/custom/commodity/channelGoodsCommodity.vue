@@ -139,13 +139,12 @@
                 </Select>
               </FormItem>
               <FormItem label="进价" prop="buyPrice" class='modelInput'>
-                <!-- <Input type="number" v-model.trim="customFormValidate.buyPrice" placeholder="请输入进价" />
-                 -->
-              <InputNumber :min="0" style="width: 230px;"  v-model="customFormValidate.buyPrice" @on-change="buyPriceChange"></InputNumber>
+                <Input type='number' v-model.number="customFormValidate.buyPrice" placeholder="请输入进价" />
+              <!-- <InputNumber :min="0" style="width: 230px;"  v-model="customFormValidate.buyPrice" @on-change="buyPriceChange"></InputNumber> -->
               </FormItem>
               <FormItem label="售价" prop="salePrice" class='modelInput'>
-                <!-- <Input type="number" v-model.trim="customFormValidate.salePrice" placeholder="请输入售价"/> -->
-                <InputNumber :min="buyPriceValue" style="width: 230px;"  v-model="customFormValidate.salePrice"></InputNumber>
+                <Input type='number' v-model.number="customFormValidate.salePrice" placeholder="请输入售价" />
+                <!-- <InputNumber :min="buyPriceValue" style="width: 230px;"  v-model="customFormValidate.salePrice"></InputNumber> -->
               </FormItem>
               <FormItem prop="productDesc" v-show='customFormValidate.categoryId!=drugsID' label="商品描述" class='modelInput'>
                 <Input v-model.trim="customFormValidate.productDesc" placeholder="请输入商品描述"/>
@@ -205,7 +204,7 @@ export default {
   name: 'channelGoodsCommodity',
   data () {
     return {
-      buyPriceValue:0,
+      // buyPriceValue:0,
       codeImg:false,
       drugsID:configs.drugsID,
       rangeList:[],
@@ -304,8 +303,8 @@ export default {
         productName:null, //商品名称
         channelCategorylId:null, //商品类型
         productCode: null, //商品编码
-        buyPrice: null, //进价
-        salePrice:null, //售价
+        buyPrice: "", //进价
+        salePrice:"", //售价
         productDesc:null, //商品描述
         imageAddress: null,
         image: null,
@@ -358,10 +357,10 @@ export default {
       categoryIdValue:[],
       showNewlyType:'xz',
       formValidate:{ //新增字段
-        buyPrice:null, //商品进价
+        buyPrice:"", //商品进价
         categorylId:null,//渠道分类id
         productId:null,//商品id
-        salePrice: null,//商品售价
+        salePrice: "",//商品售价
         actualPrice:null,//实际售价
         remark:null,//备注
         productName:null,
@@ -406,7 +405,7 @@ export default {
       name: '',
       pageNum:1,
       total:null,
-      pageSize:15,
+      pageSize:10,
 			datas: [],
       columns: [
         {
@@ -497,10 +496,6 @@ export default {
     }
   },
   methods: {
-    buyPriceChange(value){
-      this.buyPriceValue=value;
-      this.customFormValidate.salePrice=null;
-    },
     clickQuery(){
       this.pageNum = 1;
       this.getPageDatas();
@@ -528,7 +523,6 @@ export default {
     reset(){
       this.pageNum = 1;
       this.total = null;
-      this.pageSize = 15;
       this.name = null;
       this.channelId = this.$store.state.user.channelId;
       this.status = '-1';
@@ -644,8 +638,8 @@ export default {
         productName:null, //商品名称
         channelCategorylId:null, //商品类型
         productCode: null, //商品编码
-        buyPrice: null, //进价
-        salePrice:null, //售价
+        buyPrice: "", //进价
+        salePrice:"", //售价
         productDesc:null, //商品描述
         imageAddress: null,
         image: null,
@@ -708,6 +702,12 @@ export default {
             }else{ //自定义商品
               this.$refs[name].validate(valid => {
                 if (valid) {
+                  if(value.buyPrice>value.salePrice){
+                    this.$Message.error('实际售价不能小于商品成本价');
+                    value.salePrice="";
+                    this.sure_loading = false;
+                    return
+                  }
                   let  { productName ,channelCategorylId,productCode,buyPrice,salePrice,productDesc,imageAddress,image,dictUnit,categoryId,productSpecification,productIngredient,productFunction} =  value;
                   let data = {
                     productName,

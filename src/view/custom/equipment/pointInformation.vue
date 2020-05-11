@@ -1,7 +1,7 @@
 <template>
   <div class='pointInformation'>
     <div>
-        <Select v-model="routeId" @on-change="changeRouteId"  class='marginRight' placeholder="线路" :clearable='true'>
+        <Select v-model="routeId"  class='marginRight' placeholder="线路" :clearable='true'>
             <Option v-for="item in routeNameList" :value="item.value" :key="item.value">{{ item.label }}</Option>
         </Select>
         <Cascader :data="cityData" v-model="areaIds" placeholder="区域" class='marginRight'></Cascader>
@@ -504,11 +504,6 @@ export default {
     }
   },
   methods:{
-    changeRouteId(value){
-      if(this.pickTreeData){
-        this.pickTreeData.id = value;
-      }
-    },
     machineTypeChange(value){
       const item = 
       this.machineList = this.machineTypeList.find(v=>{
@@ -533,7 +528,9 @@ export default {
       this.pageSize = 10;
       this.areaIds = [];
       this.channelId = this.$store.state.user.channelId;
-      this.getPageDatas();
+      this.$nextTick(()=>{
+        this.getPageDatas();
+      })
     },
     pricePageChange(value){
       this.pricePageNum = value;
@@ -664,6 +661,7 @@ export default {
       await this.initialization('formValidate');
       this.positionRlue = false;
       this.showNewlyType = type;
+      this.getmPriceTemplate()
       //初始化数据
       this.formValidate = { //新增字段
         benefitId:null,//利益模板id
@@ -685,6 +683,8 @@ export default {
         positionName:null,
       };
       if(type=='bj'){
+        console.log(2222);
+        
         this.formValidate.areaIds = this.datas[index].areaIds.split(",").map((item)=>{return parseInt(item)})
         this.formValidate.runDate = this.datas[index].runDate.split("-")
         this.formValidate.positionType = this.datas[index].positionType+'';
@@ -703,6 +703,8 @@ export default {
         this.formValidate.routeId = this.datas[index].routeId+'';
         this.formValidate.id = this.datas[index].id;
         this.formValidate.positionName = this.datas[index].positionName
+        console.log(this.formValidate.priceTemplate);
+        
       }
       this.newlyAdded=true
     },
@@ -827,6 +829,8 @@ export default {
         enable:true
       }
       netWorkGoods('/priceTemplate/findAllPriceTemplate',data).then(res => {
+        console.log(11111);
+        
         let ary = [];
         if(res.result.length){
           res.result.forEach((v,i)=>{
@@ -864,7 +868,8 @@ export default {
         pageNum:this.pageNum,
         pageSize:this.pageSize,
         areaIds:this.areaIds.join(','),
-        routeId:this.pickTreeData&&this.pickTreeData.id?this.pickTreeData.id:this.routeId,
+        // routeId:this.pickTreeData&&this.pickTreeData.id?this.pickTreeData.id:this.routeId,
+        routeId:this.routeId?this.routeId:this.pickTreeData&&this.pickTreeData.id?this.pickTreeData.id:this.routeId,
         channelId:this.channelId,
         userId:this.operator,
         type:this.operatorType,

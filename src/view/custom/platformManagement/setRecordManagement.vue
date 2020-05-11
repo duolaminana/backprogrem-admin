@@ -86,7 +86,7 @@
       />
     </div>
     <!-- 结算详情弹框的模态框 -->
-    <Modal v-model="isShow" :mask-closable="false" :title="'结算详情('+deductAccount+')'" width="1850">
+    <Modal v-model="isShow" :mask-closable="false" :title="'结算详情('+deductAccount+')'" width="1900">
       <div>
         <strong
           v-if="accountId!=deductAccountId"
@@ -222,7 +222,7 @@ export default {
       operator: null, //操作人id
       operatorName: null, //操作人名称
       pageNum: 1, // 页码
-      pageSize: 15, // 页容量
+      pageSize: 10, // 页容量
       userId: this.$store.state.user.userVo.id,
       userType: this.$store.state.user.userVo.type,
       total: null, // 页码数
@@ -334,7 +334,7 @@ export default {
           title: "消费者",
           slot: "cardNo",
           align: "center",
-          minWidth: 90,
+          minWidth: 100,
           tooltip: true
         },
         {
@@ -462,7 +462,7 @@ export default {
           title: "结算时间",
           key: "updateDate",
           align: "center",
-          minWidth: 140,
+          minWidth: 150,
           tooltip: true
         },
         {
@@ -587,7 +587,6 @@ export default {
       this.clearingEndDate = "";
       this.channelId = this.$store.state.user.channelId;
       this.pageNum = 1;
-      this.pageSize = 15;
       this.total = null;
       this.getSettlementOver();
       this.$refs.channelTree.getTreeData();
@@ -631,8 +630,10 @@ export default {
       this.accountId = null;
     },
     //查看结算详情
-    seeSettlementMore(row) {
+    async seeSettlementMore(row) {
       console.log(row);
+      this.pageNumMore=1;
+      this.pageSizeMore=10;
       this.accountId = row.accountId;
       this.deductAccountId = row.deductAccountId;
       this.clearingId = row.id;
@@ -641,7 +642,7 @@ export default {
       this.deductAccount = row.beneficiary;
       this.isShow = true;
       this.columnsMoreText = [...this.columnsMore];
-      this.getSettlementOverMore();
+      await this.getSettlementOverMore();
       if (row.accountId != row.deductAccountId) {
         this.columnsMoreText.splice(
           this.columnsMoreText.findIndex(item => item.key === "couponAmount"),
@@ -721,8 +722,8 @@ export default {
         clearingId: this.clearingId, // 结算主表id
         id: this.id, //主键id
         orderNo: this.orderNo, //订单编号
-        pageNum: this.pageNum, // 页码
-        pageSize: this.pageSize, // 页容量
+        pageNum: this.pageNumMore, // 页码
+        pageSize: this.pageSizeMore, // 页容量
         channelId: this.channelId,
         managerRoute: this.$store.state.user.userVo.managerRoute,
         userId: this.$store.state.user.userVo.id,

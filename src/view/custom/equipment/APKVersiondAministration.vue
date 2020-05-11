@@ -185,7 +185,7 @@ export default {
       machineTypeList: [],
       pageNum: 1,
       total: null,
-      pageSize: 15,
+      pageSize: 10,
       datas: [],
       columns: [
         {

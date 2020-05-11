@@ -260,6 +260,7 @@
           </FormItem>
           <FormItem label="详细地址" prop="address">
             <Input
+            :maxlength="100"
               v-model.trim="formValidatePre.address"
               placeholder="请输入详细地址"
               :disabled="isdisabled"
@@ -511,6 +512,7 @@
           </div>
           <FormItem label="公司名称" prop="channelName">
             <Input
+              :maxlength="60"
               v-model.trim="formValidateEnt.channelName"
               placeholder="请输入公司名称"
               :disabled="isdisabled"
@@ -555,6 +557,7 @@
           </FormItem>
           <FormItem label="详细地址" prop="address">
             <Input
+            :maxlength="100"
               v-model.trim="formValidateEnt.address"
               placeholder="请输入详细地址"
               :disabled="isdisabled"
@@ -1143,6 +1146,15 @@ export default {
         ],
         phone: [{ required: true, validator: validatePhone, trigger: "blur" }],
         card: [{ required: true, validator: validateCard, trigger: "blur" }],
+        NewareaNames: [
+          {
+            type: "array",
+            required: true,
+            message: "请选择区域",
+            trigger: "change"
+          }
+        ],
+        address: [{ required: true, message: "输入不能为空", trigger: "blur" }],
         sale: [
           {
             type: "array",
@@ -1206,6 +1218,15 @@ export default {
         receiveCard: [
           { required: true, validator: validateCard, trigger: "blur" }
         ],
+        NewareaNames: [
+          {
+            type: "array",
+            required: true,
+            message: "请选择区域",
+            trigger: "change"
+          }
+        ],
+        address: [{ required: true, message: "输入不能为空", trigger: "blur" }],
         sale: [
           {
             type: "array",
@@ -1283,7 +1304,7 @@ export default {
       channelId: this.$store.state.user.channelId, // 渠道id
       channelName: null, // 渠道名称
       pageNum: 1, // 页码
-      pageSize: 15, // 页面大小
+      pageSize: 10, // 页面大小
       sourceType: null, // 数据来源
       columns: [
         {
@@ -1304,7 +1325,7 @@ export default {
           title: "经营范围",
           slot: "businessScope",
           align: "center",
-          minWidth: 80,
+          minWidth: 120,
           tooltip: true
         },
         {
@@ -1318,7 +1339,7 @@ export default {
           title: "利润抽成比(%)",
           key: "channelBusinessInfo",
           align: "center",
-          minWidth: 80,
+          minWidth: 100,
           tooltip: true
         },
         {
@@ -1348,6 +1369,20 @@ export default {
           align: "center",
           minWidth: 120,
           tooltip: true
+        },
+        {
+          title: "注册类型",
+          key: "accountType",
+          align: "center",
+          minWidth: 80,
+          tooltip: true,
+          render: (h, param) => {
+            if (param.row.accountType == 1) {
+              return h("div", "个人");
+            } else if (param.row.accountType == 2) {
+              return h("div", "企业");
+            }
+          }
         },
         {
           title: "备注",
@@ -1621,7 +1656,6 @@ export default {
       this.auditStatus = null; // 审核状态
       this.accountType = null; // 注册类型
       this.pageNum = 1;
-      this.pageSize = 15;
       this.total = null;
       this.getMerchant();
       this.$refs.channelTree.getTreeData();
